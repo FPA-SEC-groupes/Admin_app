@@ -1,0 +1,26 @@
+const splashScreenRoute = '/';
+const loginRoute = '/Login';
+const forgetPasswordRoute='/ForgetPassword';
+
+const managerBottomNavigationRoute = '/ManagerBottomNavigation';
+const listWaitersRoute = '/ListWaiters';
+const addWaiterRoute = '/AddWaiter';
+const addProductRoute = '/AddProduct';
+const productDetailsRoute="/ProductDetails";
+const changePasswordRoute='/ChangePassword';
+const listZonesRoute="/ListZones";
+const addSpaceRoute="/AddSpace";
+const addTableRoute="/AddTable";
+const detailsSpaceRoute="/DetailsSpace";
+const listTablesRoute="/ListTables";
+const tableAddedRoute="/TableAdded";
+const listWaitersByZoneIdRoute="/ListWaitersByZoneId";
+const waiterBottomNavigationRoute = 'WaiterBottomNavigation';
+const profileRoute="/Profile";
+const listEventsRoute="/ListEvents";
+const calendarEventsRoute="/CalendarEvents";
+const addNewPartyEventRoute="/AddNewPartyEvent";
+const addPrimaryMaterialRoute="/AddPrimaryMaterial";
+const stockRoute="/Stock";
+const listModeratorsRoute="/ListModerators";
+const spaceLocationRoute="/SpaceLocation";
