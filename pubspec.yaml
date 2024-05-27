@@ -64,7 +64,8 @@ dependencies:
   image_gallery_saver: ^2.0.3
   file_saver: ^0.2.7
   connectivity_plus: ^2.3.0
-
+  flutter_time_picker_spinner: ^2.0.0
+  flutter_speed_dial: ^6.0.0
 
 
 dev_dependencies:

@@ -95,6 +95,19 @@ class _SettingsState extends State<Settings> {
                 ),
                 const Divider(),
                 ListTile(
+                  leading: const Icon(Icons.list_alt),
+                  visualDensity: const VisualDensity(vertical: 0.0),
+                  dense: true,
+                  title:  Text(
+                    'Shift',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  onTap: () async {
+                    Navigator.pushReplacementNamed(context, WaiterShift);
+                  },
+                ),
+                const Divider(),
+                ListTile(
                   leading: const Icon(Icons.logout_rounded),
                   visualDensity: const VisualDensity(vertical: 0.0),
                   dense: true,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart'; // Import the package
 
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:file_saver/file_saver.dart';
@@ -294,20 +295,35 @@ class _ListWaitersState extends State<ListWaiters> {
           ),
         ),
       ),
-      floatingActionButton: DraggableFab(
-          child: FloatingActionButton(
-        onPressed: () async {
-          final resultat=await Navigator.pushNamed(context, addWaiterRoute);
-          if(resultat!=null){
-
-            setState(() {
-              _fetchWaitersBySpaceId();
-            });
-          }
-        },
-        backgroundColor: orange,
-        child: const Icon(Icons.person_add),
-      )),
+      floatingActionButton: SpeedDial(
+        icon: Icons.person_add,
+        backgroundColor: Colors.orange,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.4,
+        children: [
+          SpeedDialChild(
+            child: Icon(Icons.person_add),
+            label: 'Add Waiter',
+            backgroundColor: Colors.orange,
+            onTap: () async {
+              final resultat = await Navigator.pushNamed(context, addWaiterRoute);
+              if (resultat != null) {
+                setState(() {
+                  _fetchWaitersBySpaceId();
+                });
+              }
+            },
+          ),
+          SpeedDialChild(
+            child: Icon(Icons.add), // Choose a different icon for the second button
+            label: 'add Shift', // Customize the label
+            backgroundColor: Colors.green,  // Use a different color for distinction
+            onTap: () {
+              Navigator.pushNamed(context, shift);
+            },
+          ),
+        ],
+      ),
     );
   }
 }

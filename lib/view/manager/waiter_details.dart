@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hello_way/models/user.dart';
+import 'package:hello_way/view/manager/updateShift.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -281,7 +282,18 @@ class _WaiterDetailsState extends State<WaiterDetails> {
               },
             ),
                   ],
-                ))
+                )),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UpdateShiftPage(waiterId: widget.waiter.id),
+                  ),
+                );
+              },
+              child: Text('Update Shifts'),
+            ),
           ],
         ),
       ):Center(

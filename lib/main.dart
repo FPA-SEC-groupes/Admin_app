@@ -17,6 +17,7 @@ import 'package:hello_way/view/manager/add_primary_material.dart';
 import 'package:hello_way/view/manager/add_product.dart';
 import 'package:hello_way/view/manager/add_space.dart';
 import 'package:hello_way/view/manager/list_events.dart';
+import 'package:hello_way/view/manager/shift.dart';
 import 'package:hello_way/view/manager/space.dart';
 
 import 'package:hello_way/view/manager/list_waiters.dart';
@@ -26,6 +27,7 @@ import 'package:hello_way/view/manager/space_location.dart';
 import 'package:hello_way/view/manager/stock.dart';
 import 'package:hello_way/view/profile.dart';
 import 'package:hello_way/view/splash_screen.dart';
+import 'package:hello_way/view/waiter/listShift.dart';
 import 'package:hello_way/view_model/language_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -124,6 +126,10 @@ class MyApp extends StatelessWidget {
             return
               const ManagerBottomNavigation();
           },
+          shift: (context) {
+            return
+              const ShiftPage();
+          },
         listWaitersRoute: (context) {
             return
               const ListWaiters();
@@ -159,6 +165,10 @@ class MyApp extends StatelessWidget {
           waiterBottomNavigationRoute: (context) {
             return
               WaiterBottomNavigation();
+          },
+          WaiterShift: (context) {
+            return
+              WaiterShiftPage();
           },
           profileRoute: (context) {
             return

@@ -3,6 +3,7 @@ const loginRoute = '/Login';
 const forgetPasswordRoute='/ForgetPassword';
 
 const managerBottomNavigationRoute = '/ManagerBottomNavigation';
+const shift ='/shift';
 const listWaitersRoute = '/ListWaiters';
 const addWaiterRoute = '/AddWaiter';
 const addProductRoute = '/AddProduct';
@@ -16,6 +17,7 @@ const listTablesRoute="/ListTables";
 const tableAddedRoute="/TableAdded";
 const listWaitersByZoneIdRoute="/ListWaitersByZoneId";
 const waiterBottomNavigationRoute = 'WaiterBottomNavigation';
+const WaiterShift ='/WaiterShift';
 const profileRoute="/Profile";
 const listEventsRoute="/ListEvents";
 const calendarEventsRoute="/CalendarEvents";
