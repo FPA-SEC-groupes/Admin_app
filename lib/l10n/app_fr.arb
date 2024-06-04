@@ -198,6 +198,29 @@
     "noBooking": "Vous n'avez reçu aucune réservation pour le moment",
     "noNotifications": "Aucune notification",
     "noEvents":"Aucun événement n'a été organisé pour le moment.",
-    "area":"Surface en"
-
-       }
+    "area":"Surface en",
+    "appBarTitle": "Gestion des Horaires",
+    "selectWaiter": "Sélectionner Serveur",
+    "saveShift": "Enregistrer Horaires",
+    "start": "Début:",
+    "end": "Fin:",
+    "selectTimeForDay": "Sélectionner l'heure pour {day}:",
+    "updateShifts": "Mettre à jour les horaires",
+    "errorLoadingShifts": "Erreur : ",
+    "noShiftsFound": "Aucun horaire trouvé.",
+    "updateShift": "Modifier l'horaire",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "shift": "Quart",
+    "pleaseSelectDate": "Veuillez d'abord sélectionner une date.",
+    "addShift": "Ajouter un quart",
+    "selectDate": "Sélectionnez une date pour voir les quarts",
+    "gps": "GPS",
+    "wifi": "WiFi",
+    "wifiName": "Nom du WiFi",
+    "wifiPassword": "Mot de passe WiFi",
+    "addAnotherWifi": "Ajouter un autre WiFi"
+}

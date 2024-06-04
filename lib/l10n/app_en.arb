@@ -202,11 +202,31 @@
     "noBooking": "You haven't received any bookings at the moment",
     "noNotifications": "No notifications",
     "noEvents":"No events have been organized at the moment.",
-    "area":"Area in m²"
-
-
-
-
-    }
+    "area":"Area in m²",
+    "appBarTitle": "Shift Management",
+    "selectWaiter": "Select Waiter",
+    "saveShift": "Save Shift",
+    "start": "Start:",
+    "end": "End:",
+    "selectTimeForDay": "Select Time for {day}:",
+    "updateShifts": "Update Shifts",
+    "errorLoadingShifts": "Error: ",
+    "noShiftsFound": "No shifts found.",
+    "updateShift": "Update Shift",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "cancel": "Cancel",
+    "save": "Save",
+    "shift": "Shift",
+    "pleaseSelectDate": "Please select a date first.",
+    "noShifts": "No shifts",
+    "addShift": "Add Shift",
+    "selectDate": "Select a date to see the shifts",
+    "gps": "GPS",
+    "wifi": "WiFi",
+    "wifiName": "WiFi Name",
+    "wifiPassword": "WiFi Password",
+    "addAnotherWifi": "Add another WiFi"
+}
 
 

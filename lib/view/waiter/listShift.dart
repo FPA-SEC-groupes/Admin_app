@@ -1,95 +1,124 @@
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/shift.dart';
 import 'package:hello_way/view_model/ShiftViewModel.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WaiterShiftPage extends StatefulWidget {
-  const WaiterShiftPage({Key? key}) : super(key: key);
+  WaiterShiftPage({Key? key}) : super(key: key);
 
   @override
   _WaiterShiftPageState createState() => _WaiterShiftPageState();
 }
 
 class _WaiterShiftPageState extends State<WaiterShiftPage> {
+  bool _isSearching = false;
+  String _searchQuery = '';
+  DateTime? _selectedDate;
+  List<Shift> _shifts = [];
+  List<Shift> _selectedShifts = [];
   late ShiftViewModel shiftViewModel;
-  late Future<List<Shift>> futureShifts;
 
   @override
   void initState() {
     super.initState();
     shiftViewModel = ShiftViewModel(context);
-    futureShifts = shiftViewModel.getShiftsByWaiterId();
+    _fetchShifts();
+  }
+
+  void _fetchShifts() async {
+    try {
+      List<Shift> fetchedShifts = await shiftViewModel.getShiftsByWaiterId();
+      setState(() {
+        _shifts = fetchedShifts;
+      });
+    } catch (e) {
+      print("Error fetching shifts: $e");
+    }
+  }
+
+  List<Shift> _getShiftsForDay(DateTime day) {
+    return _shifts.where((shift) => shift.date == DateFormat('yyyy-MM-dd').format(day)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title: Text('Shifts'),
+        automaticallyImplyLeading: true,
         backgroundColor: Colors.orange,
+        title: _isSearching
+            ? TextField(
+          onChanged: (value) {
+            setState(() {
+              _searchQuery = value;
+            });
+          },
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.search,
+            border: InputBorder.none,
+          ),
+        )
+            : Text(AppLocalizations.of(context)!.shift),
+        actions: [
+          IconButton(
+            icon: Icon(_isSearching ? Icons.close_rounded : Icons.search),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                _searchQuery = '';
+              });
+            },
+          ),
+        ],
       ),
-      body: FutureBuilder<List<Shift>>(
-        future: futureShifts,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error.toString()}"));
-          } else if (snapshot.hasData) {
-            return buildShiftList(snapshot.data!);
-          } else {
-            return Center(child: Text("No shifts found."));
-          }
-        },
-      ),
-    );
-  }
-
-  Widget buildShiftList(List<Shift> shifts) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Column(
         children: [
-          for (var shift in shifts) ...[
-            Card(
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      shift.dayOfWeek,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.access_time, color: Colors.orange),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Start: ${shift.startTime.substring(0, 5)}',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.access_time_outlined, color: Colors.orange),
-                        const SizedBox(width: 8),
-                        Text(
-                          'End: ${shift.endTime.substring(0, 5)}',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+          Container(
+            height: 500, // Increase this height to make the calendar bigger
+            child: SfCalendar(
+              view: CalendarView.month,
+              monthViewSettings: MonthViewSettings(
+                showAgenda: true,
+                agendaItemHeight: 0, // Set the agenda item height to 0 to remove "No events"
               ),
+              onTap: (CalendarTapDetails details) {
+                if (details.targetElement == CalendarElement.calendarCell) {
+                  setState(() {
+                    _selectedDate = details.date;
+                    _selectedShifts = _getShiftsForDay(_selectedDate!);
+                  });
+                }
+              },
             ),
-          ],
+          ),
+          Expanded(
+            child: _selectedDate != null
+                ? _selectedShifts.isNotEmpty
+                ? ListView.builder(
+              itemCount: _selectedShifts.length,
+              itemBuilder: (context, index) {
+                Shift shift = _selectedShifts[index];
+                return ListTile(
+                  title: Text('${shift.date} (${shift.dayOfWeek})'),
+                  subtitle: Text('${shift.startTime} - ${shift.endTime}'),
+                );
+              },
+            )
+                : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(AppLocalizations.of(context)!.noShifts),
+                ],
+              ),
+            )
+                : Center(
+              child: Text(AppLocalizations.of(context)!.selectDate),
+            ),
+          ),
         ],
       ),
     );

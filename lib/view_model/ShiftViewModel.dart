@@ -14,36 +14,18 @@ class ShiftViewModel {
       : dioInterceptor = DioInterceptor(context);
   final SecureStorage secureStorage = SecureStorage();
 
-  Future<void> saveShift(int waiterId,
-      List<Map<String, String>> shiftTimes) async {
+  Future<Shift> createShift(Shift shift) async {
     final url = '$baseUrl/api/shiftsystems';
-    Map<String, dynamic> requestBody = {
-      'waiterId': waiterId,
-      'shiftTimes': shiftTimes,
-    };
-  print(shiftTimes);
     try {
-      Response response = await dioInterceptor.dio.post(
-        url,
-        data: requestBody,
-      );
-
+      Response response = await dioInterceptor.dio.post(url, data: shift.toJson());
       if (response.statusCode == 200) {
-        print('Shift saved successfully');
+        return Shift.fromJson(response.data);
       } else {
-        print('Failed to save shift: ${response.statusCode}');
+        throw Exception("Request failed with status code: ${response.statusCode}");
       }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        // DioError with response
-        print('Dio error occurred: ${e.response!.statusCode} ${e.response!
-            .data}');
-      } else {
-        // Error before response is available
-        print('Dio error before response: ${e.message}');
-      }
-    } catch (e) {
-      print('An unexpected error occurred: $e');
+    } catch (error) {
+      print('Error: $error');
+      throw Exception("Error: $error'");
     }
   }
 

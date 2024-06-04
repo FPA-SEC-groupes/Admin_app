@@ -56,7 +56,18 @@ class _LoginState extends State<Login> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.asset("assets/images/logo.png"),
+                Container(
+                  height: 100,
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(
+                    top: 30.0, // Increase top margin to push the content down
+                  ),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    fit: BoxFit.contain, // This will keep the aspect ratio of the image
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Column(

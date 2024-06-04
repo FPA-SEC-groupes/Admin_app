@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+// import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:multi_image_picker_plus/multi_image_picker_plus.dart';
 import 'package:provider/provider.dart';
 import '../../models/space.dart';
 import '../../res/app_colors.dart';
@@ -63,8 +64,8 @@ class _EditSpaceImagesState extends State<EditSpaceImages> {
 
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
-        enableCamera: true,
+        // maxImages: 5,
+        // enableCamera: true,
         selectedAssets: _images,
       );
 

@@ -7,7 +7,7 @@ import 'package:hello_way/models/product.dart';
 import 'package:hello_way/view_model/products_view_model.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:provider/provider.dart';
-
+import 'package:multi_image_picker_plus/multi_image_picker_plus.dart';
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
 import '../../utils/const.dart';

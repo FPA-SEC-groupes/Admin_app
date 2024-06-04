@@ -126,10 +126,6 @@ class MyApp extends StatelessWidget {
             return
               const ManagerBottomNavigation();
           },
-          shift: (context) {
-            return
-              const ShiftPage();
-          },
         listWaitersRoute: (context) {
             return
               const ListWaiters();

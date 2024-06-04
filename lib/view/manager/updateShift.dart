@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/shift.dart';
 import 'package:hello_way/view_model/ShiftViewModel.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:intl/intl.dart';
 
 class UpdateShiftPage extends StatefulWidget {
@@ -27,7 +29,7 @@ class _UpdateShiftPageState extends State<UpdateShiftPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Update Shifts"),
+        title: Text(AppLocalizations.of(context)!.updateShifts),
         backgroundColor: Colors.orange, // Adjusted the color for better contrast
       ),
       body: FutureBuilder<List<Shift>>(
@@ -36,7 +38,12 @@ class _UpdateShiftPageState extends State<UpdateShiftPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}", style: TextStyle(color: Colors.red, fontSize: 16)));
+            return Center(
+                child: Text(
+                    "${AppLocalizations.of(context)?.errorLoadingShifts ?? 'Error: '}${snapshot.error}",
+                    style: TextStyle(color: Colors.red, fontSize: 16)
+                )
+            );
           } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -60,7 +67,7 @@ class _UpdateShiftPageState extends State<UpdateShiftPage> {
               },
             );
           } else {
-            return Center(child: Text("No shifts found.", style: TextStyle(fontSize: 16)));
+            return Center(child: Text(AppLocalizations.of(context)!.noShiftsFound, style: TextStyle(fontSize: 16)));
           }
         },
       ),
@@ -76,27 +83,27 @@ class _UpdateShiftPageState extends State<UpdateShiftPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Update Shift"),
+          title: Text(AppLocalizations.of(context)!.updateShift),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: startTimeController,
-                decoration: InputDecoration(labelText: "Start Time"),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.startTime),
               ),
               TextField(
                 controller: endTimeController,
-                decoration: InputDecoration(labelText: "End Time"),
+                decoration: InputDecoration(labelText:AppLocalizations.of(context)!.endTime),
               ),
             ],
           ),
           actions: [
             TextButton(
-              child: Text("Cancel"),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text("Save"),
+              child: Text(AppLocalizations.of(context)!.save),
               onPressed: () {
                 setState(() {
                   shift.startTime = startTimeController.text;

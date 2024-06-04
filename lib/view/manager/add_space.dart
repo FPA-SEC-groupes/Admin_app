@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hello_way/models/WifiInfo.dart';
 import 'package:hello_way/models/space.dart';
 import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/view_model/space_view_model.dart';
 import 'package:im_stepper/stepper.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:multi_image_picker_plus/multi_image_picker_plus.dart';
 import 'package:provider/provider.dart';
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
@@ -26,7 +27,7 @@ class AddSpace extends StatefulWidget {
 
 class _AddSpaceState extends State<AddSpace> {
   int activeStep = 0; // Initial step set to 5.
-  int upperBound = 2; // upperBound MUST BE total number of icons minus 1.
+  int upperBound = 3; // upperBound MUST BE total number of icons minus 1.
   final SecureStorage secureStorage = SecureStorage();
   late SpaceViewModel _spaceViewModel;
   // Step 1
@@ -38,17 +39,18 @@ class _AddSpaceState extends State<AddSpace> {
       _phoneNumberController,
       _descriptionController;
 
-  // Step 2
-
-
+  String _selectedRadioValue = 'gps';
+  List<Map<String, TextEditingController>> wifiControllers = [];
+  List<WifiInfo> wifis = [];
   List<Asset> _images = [];
 
   Future<void> _pickImages() async {
     List<Asset> resultList = [];
     try {
       resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
-        enableCamera: true,
+
+        // maxImages: 5,
+        // enableCamera: true,
         selectedAssets: _images,
       );
 
@@ -69,15 +71,25 @@ class _AddSpaceState extends State<AddSpace> {
   @override
   void initState() {
     super.initState();
-
-
     _spaceViewModel = SpaceViewModel(context);
     _spaceNameController = TextEditingController();
     _surfaceController = TextEditingController();
     _phoneNumberController = TextEditingController();
     _descriptionController = TextEditingController();
+    for (var wifiController in wifiControllers) {
+      wifiController['name']!.dispose();
+      wifiController['password']!.dispose();
+    }
+    // super.dispose();
   }
-
+  void addWifiController() {
+    setState(() {
+      wifiControllers.add({
+        'name': TextEditingController(),
+        'password': TextEditingController(),
+      });
+    });
+  }
   getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -130,13 +142,16 @@ class _AddSpaceState extends State<AddSpace> {
                 lineColor: orange,
                 stepColor: gray,
                 enableNextPreviousButtons: false,
-                icons: const [
+                icons: [
                   Icon(
                     Icons.info_outline_rounded,
                     color: Colors.white,
                   ),
-                    Icon(Icons.image_outlined,color: Colors.white),
-                  Icon(Icons.location_on_outlined, color: Colors.white),
+                  Icon(Icons.image_outlined,color: Colors.white),
+                  Icon(Icons.verified,color: Colors.white),
+                  _selectedRadioValue=="gps"?
+                  Icon(Icons.location_on_outlined, color: Colors.white):
+                  Icon(Icons.wifi, color: Colors.white),
                 ],
 
                 // activeStep property set to activeStep variable defined above.
@@ -154,7 +169,7 @@ class _AddSpaceState extends State<AddSpace> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   activeStep == 0 ? const SizedBox() : previousButton(),
-                  activeStep == 2
+                  activeStep == 3
                       ? nextButton( AppLocalizations.of(context)!.validate)
                       : nextButton( AppLocalizations.of(context)!.next),
                 ],
@@ -237,71 +252,86 @@ class _AddSpaceState extends State<AddSpace> {
             ],
           ),
         ),
-        onTap: () async {
+        onTap: () async
+        {
           var category;
 
           final userId = await secureStorage.readData(authentifiedUserId);
 
           if (activeStep == 0) {
-    if (_addSpaceFormKey.currentState!.validate()) {
-    _addSpaceFormKey.currentState!.save();
-    if(_selectedCategorie=="Restaurant"){
-      category=1;
-    }
-    else if(_selectedCategorie=="Bar"){
-      category=3;
-    }
-    else if(_selectedCategorie=="Café"){
-      category=2;
-    }
+            if (_addSpaceFormKey.currentState!.validate()) {
+              _addSpaceFormKey.currentState!.save();
+              if (_selectedCategorie == "Restaurant") {
+                category = 1;
+              }
+              else if (_selectedCategorie == "Bar") {
+                category = 3;
+              }
+              else if (_selectedCategorie == "Café") {
+                category = 2;
+              }
 
-    print(category);
-    setState(() {
-      activeStep++;
-    });
-
-
-    }
-    }
-          else if(activeStep==1){
-            await getLocation();
+              print(category);
+              setState(() {
+                activeStep++;
+              });
+            }
+          }
+          else if (activeStep == 1) {
             setState(() {
               activeStep++;
             });
-
-
-          }else if(activeStep==2){
-
-            if(_selectedCategorie=="Restaurant"){
-              category=1;
-            }
-              else if(_selectedCategorie=="Bar"){
-              category=2;
-            }
-              else if(_selectedCategorie=="Café"){
-              category=3;
-            }
-
-              print(category);
-            Space space= Space(title: _spaceNameController.text.trim(),
-                latitude: _currentPosition!.latitude,
-                longitude: _currentPosition!.longitude,
-                description:_descriptionController.text.trim().toString(),
-                phoneNumber: int.parse(_phoneNumberController.text.trim()),
-                surfaceEnM2: double.parse(_surfaceController.text),numberOfRatings: 0);
-            await _spaceViewModel.addSpaceByIdManager(space,int.parse(userId!),category).then((space) async {
-
-               await _spaceViewModel.uploadImages(_images,space.id!).then((_) async {
-                 Navigator.pushNamed(context,managerBottomNavigationRoute);
-
-               }).catchError((error) {
-
-               });
-            }).catchError((error) {
-              print(error);
+          } else if (activeStep == 2) {
+            setState(() {
+              activeStep++;
             });
+            _selectedRadioValue == "gps" ?
+            await getLocation() : print("test");
 
           }
+          else if (activeStep == 3) {
+            if (_selectedCategorie == "Restaurant") {
+              category = 1;
+            }
+            else if (_selectedCategorie == "Bar") {
+              category = 2;
+            }
+            else if (_selectedCategorie == "Café") {
+              category = 3;
+            }
+            for (var wifiController in wifiControllers) {
+              wifis.add(WifiInfo(
+              ssid: wifiController['name']!.text.trim(),
+              password: wifiController['password']!.text.trim(),
+              ));
+              }
+              print(category);
+              Space space = Space(
+                  title: _spaceNameController.text.trim(),
+                  latitude: _selectedRadioValue == "gps" ? _currentPosition!
+                      .latitude : 0.0,
+                  longitude: _selectedRadioValue == "gps" ? _currentPosition!
+                      .longitude : 0.0,
+                  description: _descriptionController.text.trim().toString(),
+                  phoneNumber: int.parse(_phoneNumberController.text.trim()),
+                  surfaceEnM2: double.parse(_surfaceController.text),
+                  numberOfRatings: 0,
+                  validation: _selectedRadioValue,
+                  wifis: wifis);
+              print(space.toJson());
+              await _spaceViewModel.addSpaceByIdManager(
+                  space, int.parse(userId!), category).then((space) async {
+                await _spaceViewModel.uploadImages(_images, space.id!).then((
+                    _) async {
+                  Navigator.pushNamed(context, managerBottomNavigationRoute);
+                }).catchError((error) {
+
+                });
+              });
+              //     .catchError((error) {
+              //   print(error);
+              // });
+            }
         });
   }
 
@@ -477,7 +507,6 @@ class _AddSpaceState extends State<AddSpace> {
             ),
           ),
         );
-
       case 1:
         return  Padding(
           padding: const EdgeInsets.all(15),
@@ -519,39 +548,120 @@ class _AddSpaceState extends State<AddSpace> {
           ),
         );
       case 2:
-        return _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : GoogleMap(
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: CameraPosition(
-                  target: _currentPosition!,
-                  zoom: 16.0,
-                ),
-                // enable user location
-
-                // padding: EdgeInsets.only(bottom: 75.0),
-                zoomControlsEnabled: true,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                markers: _markers,
-                onTap: (newPosition) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              RadioListTile(
+                title: const Text("GPS"),
+                value: 'gps',
+                groupValue: _selectedRadioValue,
+                onChanged: (value) {
                   setState(() {
-                    _markers = {
-                      Marker(
-                        markerId: MarkerId("marker_1"),
-                        position: newPosition,
-                        draggable: true,
-                        onDragEnd: (newPosition) {
-                          setState(() {
-                            _currentPosition = newPosition;
-                          });
-                        },
-                      ),
-                    };
-                    _currentPosition = newPosition;
+                    _selectedRadioValue = value.toString();
                   });
                 },
-              );
+              ),
+              const SizedBox(height: 10),
+              RadioListTile(
+                title: const Text("WIFI"),
+                value: 'wifi',
+                groupValue: _selectedRadioValue,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRadioValue = value.toString();
+                  });
+                },
+              ),
+            ],
+          ),
+        );
+      case 3:
+        return _selectedRadioValue == 'wifi' ?Form(
+          key: _addSpaceFormKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                ...wifiControllers.map((wifiController) {
+                  return Column(
+                    children: [
+                      InputForm(
+                        hint: 'Nom du WiFi',
+                        controller: wifiController['name']!,
+                        contentPadding: const EdgeInsets.all(10),
+                        validator: MultiValidator([
+                          RequiredValidator(
+                              errorText: AppLocalizations.of(context)!.inputRequiredError),
+                        ]),
+                      ),
+                      const SizedBox(height: 10),
+                      InputForm(
+                        hint: 'Mot de passe WiFi',
+                        controller: wifiController['password']!,
+                        contentPadding: const EdgeInsets.all(10),
+                        validator: MultiValidator([
+                          RequiredValidator(
+                              errorText: AppLocalizations.of(context)!.inputRequiredError),
+                        ]),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                }).toList(),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: addWifiController,
+                      child: const Text('Ajouter un autre WiFi'),
+                    ),
+                    const Spacer(),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_addSpaceFormKey.currentState!.validate()) {
+                          // Validation logic
+                        }
+                      },
+                      child: const Text('Valider'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ):
+        _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : GoogleMap(
+          onMapCreated: _onMapCreated,
+          initialCameraPosition: CameraPosition(
+            target: _currentPosition!,
+            zoom: 16.0,
+          ),
+          zoomControlsEnabled: true,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: true,
+          markers: _markers,
+          onTap: (newPosition) {
+            setState(() {
+              _markers = {
+                Marker(
+                  markerId: MarkerId("marker_1"),
+                  position: newPosition,
+                  draggable: true,
+                  onDragEnd: (newPosition) {
+                    setState(() {
+                      _currentPosition = newPosition;
+                    });
+                  },
+                ),
+              };
+              _currentPosition = newPosition;
+            });
+          },
+        ) ; // This checks if the value is not 'wifi'// Optionally handle the case when none of the conditions are met.
       default:
         return Container();
     }
