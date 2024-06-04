@@ -11,7 +11,7 @@ class GalleryViewModel extends ChangeNotifier  {
   File? get image => _image;
 
   Future<bool> requestGalleryPermission(BuildContext context) async {
-    if (await Permission.storage.request().isGranted) {
+    if (await Permission.photos.request().isGranted) {
       return true;
     } else {
 
