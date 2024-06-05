@@ -227,7 +227,14 @@
     "wifi": "WiFi",
     "wifiName": "WiFi Name",
     "wifiPassword": "WiFi Password",
-    "addAnotherWifi": "Add another WiFi"
+    "addAnotherWifi": "Add another WiFi",
+    "addRestriction": "Add Restriction",
+    "restrictionType": "Restriction Type",
+    "restrictionDescription": "Restriction Description",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "restrictionAdded": "Restriction added",
+    "errorOccurred": "An error occurred"
 }
 
 

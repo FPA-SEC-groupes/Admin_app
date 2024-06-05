@@ -6,11 +6,14 @@ import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 import '../../models/board.dart';
+import '../../models/restriction.dart';
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
+import '../../view_model/RestrictionsViewModel.dart';
 import '../../view_model/reservations_view_model.dart';
 import '../../view_model/tables_view_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class ReservationDetails extends StatefulWidget {
   final Reservation reservation;
 
@@ -26,22 +29,22 @@ class ReservationDetails extends StatefulWidget {
 class _ReservationDetailsState extends State<ReservationDetails> {
   late ReservationsViewModel _reservationsViewModel;
   final GlobalKey<ScaffoldMessengerState> _reservationDetailsScaffoldKey =
-      GlobalKey<ScaffoldMessengerState>();
+  GlobalKey<ScaffoldMessengerState>();
 
   late final TablesViewModel _tablesViewModel;
   List<Board> tables = [];
   List<Board> assignedTables = [];
+
   @override
   void initState() {
     super.initState();
     _tablesViewModel = TablesViewModel(context);
     _reservationsViewModel = ReservationsViewModel(context);
-    if(widget.reservation.status == "NOT_YET" ){
+    if (widget.reservation.status == "NOT_YET") {
       _fetchBoards(formatDateToIso(widget.reservation.startDate));
-    }else{
+    } else {
       _fetchTablesByIdReservation(widget.reservation.idReservation!);
     }
-
   }
 
   String formatDateToIso(DateTime date) {
@@ -50,23 +53,21 @@ class _ReservationDetailsState extends State<ReservationDetails> {
   }
 
   Future<List<Board>> _fetchBoards(String date) async {
-    // fetch the list of categories using
     List<Board> boards =
-        await _tablesViewModel.getTablesByDisponibilities(date);
+    await _tablesViewModel.getTablesByDisponibilities(date);
     setState(() {
       tables = boards;
       _items = tables
           .map((table) => MultiSelectItem<Board>(
-              table, "${AppLocalizations.of(context)!.table}${table.numTable} (${table.placeNumber}${AppLocalizations.of(context)!.places})"))
+          table, "${AppLocalizations.of(context)!.table}${table.numTable} (${table.placeNumber}${AppLocalizations.of(context)!.places})"))
           .toList();
     });
     return boards;
   }
 
   Future<List<Board>> _fetchTablesByIdReservation(int reservationId) async {
-    // fetch the list of categories using
     List<Board> boards =
-        await _tablesViewModel.getTablesByReservationId(reservationId);
+    await _tablesViewModel.getTablesByReservationId(reservationId);
     setState(() {
       assignedTables = boards;
     });
@@ -90,7 +91,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
               style: const TextStyle(color: Colors.white),
             ),
           ),
-          body:networkStatus == NetworkStatus.Online
+          body: networkStatus == NetworkStatus.Online
               ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -114,18 +115,18 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                               color: widget.reservation.status == "NOT_YET"
                                   ? Colors.orangeAccent
                                   : widget.reservation.status == "CONFIRMED"
-                                      ? Colors.green
-                                      : Colors.red,
+                                  ? Colors.green
+                                  : Colors.red,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Text(
                               widget.reservation.status == "NOT_YET"
                                   ? AppLocalizations.of(context)!.pendingStatus
                                   : widget.reservation.status == "REFUSED"
-                                      ? AppLocalizations.of(context)!.refusedStatus
-                                      : widget.reservation.status == "CONFIRMED"
-                                          ? AppLocalizations.of(context)!.confirmedStatus
-                                          :AppLocalizations.of(context)!.canceledStatus,
+                                  ? AppLocalizations.of(context)!.refusedStatus
+                                  : widget.reservation.status == "CONFIRMED"
+                                  ? AppLocalizations.of(context)!.confirmedStatus
+                                  : AppLocalizations.of(context)!.canceledStatus,
                               style: const TextStyle(color: Colors.white),
                             ),
                           )
@@ -136,8 +137,8 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                       ),
                       Text(
                           widget.reservation.eventTitle
-                                  .substring(0, 1)
-                                  .toUpperCase() +
+                              .substring(0, 1)
+                              .toUpperCase() +
                               widget.reservation.eventTitle.substring(1),
                           style: const TextStyle(fontSize: 16)),
                       const SizedBox(
@@ -158,16 +159,15 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                       RichText(
                         text: TextSpan(
                           children: <TextSpan>[
-                             TextSpan(
-                              text:"${AppLocalizations.of(context)!.numberOfGuests}:",
+                            TextSpan(
+                              text: "${AppLocalizations.of(context)!.numberOfGuests}:",
                               style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black),
                             ),
                             TextSpan(
-                              text:
-                                  "${widget.reservation.numberOfGuests}${AppLocalizations.of(context)!.people}",
+                              text: "${widget.reservation.numberOfGuests}${AppLocalizations.of(context)!.people}",
                               style: const TextStyle(
                                   fontSize: 16, color: Colors.black),
                             ),
@@ -177,19 +177,58 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                       const SizedBox(
                         height: 10,
                       ),
-                       Text("${AppLocalizations.of(context)!.description}:",
+                      Text("${AppLocalizations.of(context)!.description}:",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       Text(
                           widget.reservation.description!
-                                  .substring(0, 1)
-                                  .toUpperCase() +
+                              .substring(0, 1)
+                              .toUpperCase() +
                               widget.reservation.description!.substring(1),
+                          style: const TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.firstname}:",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                          widget.reservation.user!.name!,
+                          style: const TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.lastname}:",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                          widget.reservation.user!.lastname!,
+                          style: const TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.phoneNumber}:",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                          widget.reservation.user!.phone!,
+                          style: const TextStyle(fontSize: 16)),
+                      Text("${AppLocalizations.of(context)!.email}:",
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(
+                          widget.reservation.user!.email!,
                           style: const TextStyle(fontSize: 16)),
                       const SizedBox(
                         height: 10,
                       ),
-                       Text("${AppLocalizations.of(context)!.tables}:",
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AddRestrictionDialog(viewModel: RestrictionsViewModel(context), userId: widget.reservation.user!.id!);
+                            },
+                          );
+                        },
+
+                        child: Text('Add Restriction'),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text("${AppLocalizations.of(context)!.tables}:",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       const SizedBox(
@@ -212,7 +251,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                             Icons.table_restaurant_sharp,
                             color: Colors.orange,
                           ),
-                          buttonText:  Text(
+                          buttonText: Text(
                             AppLocalizations.of(context)!.assignTables,
                             style: const TextStyle(
                               color: gray,
@@ -223,36 +262,35 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                             setState(() {
                               _selectedTables = results;
                             });
-
                             print(_selectedTables);
                           },
                         ),
                       if (widget.reservation.status != "NOT_YET" && assignedTables.isNotEmpty)
                         Expanded(
                             child: GridView.builder(
-                          gridDelegate:
+                              gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2, // Number of columns
-                            crossAxisSpacing: 10.0, // Spacing between columns
-                            mainAxisSpacing: 10.0,
-                            childAspectRatio: 4.5, // Spacing between rows
-                          ),
-                          itemCount: assignedTables.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30.0),
-                                color: Colors.orange.withOpacity(0.4),
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 10.0,
+                                mainAxisSpacing: 10.0,
+                                childAspectRatio: 4.5,
                               ),
-                              child: Center(
-                                child: Text(
-                                  "${AppLocalizations.of(context)!.table}${assignedTables[index].numTable}(${assignedTables[index].placeNumber} ${AppLocalizations.of(context)!.places})",
-                                  style: TextStyle(fontSize: 16, color: orange),
-                                ),
-                              ),
-                            );
-                          },
-                        )),
+                              itemCount: assignedTables.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    color: Colors.orange.withOpacity(0.4),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "${AppLocalizations.of(context)!.table}${assignedTables[index].numTable}(${assignedTables[index].placeNumber} ${AppLocalizations.of(context)!.places})",
+                                      style: TextStyle(fontSize: 16, color: orange),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )),
                     ],
                   ),
                 ),
@@ -270,7 +308,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
                                 color:
-                                    _selectedTables.length == 0 ? gray : orange,
+                                _selectedTables.length == 0 ? gray : orange,
                               ),
                               child: MaterialButton(
                                 height: 50,
@@ -283,21 +321,21 @@ class _ReservationDetailsState extends State<ReservationDetails> {
 
                                     _reservationsViewModel
                                         .assignReservationToTables(boardIds,
-                                            widget.reservation.idReservation!)
+                                        widget.reservation.idReservation!)
                                         .then((reservation) async {
                                       _reservationsViewModel
                                           .acceptReservation(
-                                              widget.reservation.idReservation!)
+                                          widget.reservation.idReservation!)
                                           .then((reservation) async {
                                         if (reservation != null) {
                                           setState(() {
                                             widget.reservation.status =
-                                                "CONFIRMED";
+                                            "CONFIRMED";
                                           });
                                           _fetchTablesByIdReservation(widget.reservation.idReservation!);
                                           var snackBar = customSnackBar(
                                               context,
-                                             AppLocalizations.of(context)!.reservationConfirmed,
+                                              AppLocalizations.of(context)!.reservationConfirmed,
                                               Colors.green);
                                           _reservationDetailsScaffoldKey
                                               .currentState
@@ -307,8 +345,8 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                                     }).catchError((error) {});
                                   }
                                 },
-                                child:  Text(
-    AppLocalizations.of(context)!.confirmReservation,
+                                child: Text(
+                                  AppLocalizations.of(context)!.confirmReservation,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 18.0,
@@ -324,7 +362,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                             onTap: () {
                               _reservationsViewModel
                                   .refuseReservation(
-                                      widget.reservation.idReservation!)
+                                  widget.reservation.idReservation!)
                                   .then((reservation) async {
                                 if (reservation != null) {
                                   setState(() {
@@ -360,7 +398,8 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                       )),
                 ),
             ],
-          ):Center(
+          )
+              : Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -390,13 +429,9 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    onPressed:(){
-                      setState(() {
-
-                      });
+                    onPressed: () {
+                      setState(() {});
                     },
-
-
                     child: Text(
                       AppLocalizations.of(context)!.retry,
                       style: const TextStyle(
@@ -404,12 +439,87 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
                     ),
-
                   )
                 ],
               ),
             ),
           ),
         ));
+  }
+}
+
+class AddRestrictionDialog extends StatefulWidget {
+  final RestrictionsViewModel viewModel;
+  final int userId;
+
+  const AddRestrictionDialog({Key? key, required this.viewModel, required this.userId}) : super(key: key);
+
+  @override
+  _AddRestrictionDialogState createState() => _AddRestrictionDialogState();
+}
+
+class _AddRestrictionDialogState extends State<AddRestrictionDialog> {
+  final _formKey = GlobalKey<FormState>();
+  String _restrictionType = '';
+  String _restrictionDescription = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(AppLocalizations.of(context)!.addRestriction),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.restrictionDescription,
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _restrictionDescription = value;
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(AppLocalizations.of(context)!.cancel),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        ElevatedButton(
+          child: Text(AppLocalizations.of(context)!.submit),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              Restriction newRestriction = Restriction(
+                description: _restrictionDescription,
+                userId: widget.userId,
+              );
+              widget.viewModel.createRestriction(newRestriction).then((_) {
+                Navigator.of(context).pop();
+                var snackBar = customSnackBar(
+                  context,
+                  AppLocalizations.of(context)!.restrictionAdded,
+                  Colors.green,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }).catchError((error) {
+                var snackBar = customSnackBar(
+                  context,
+                  AppLocalizations.of(context)!.errorOccurred,
+                  Colors.red,
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              });
+            }
+          },
+        ),
+      ],
+    );
   }
 }
