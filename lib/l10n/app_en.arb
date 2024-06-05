@@ -45,6 +45,7 @@
     "phoneLengthError": "Please enter a valid phone number.",
     "phonePatternError": "Please enter a valid Tunisian phone number.",
     "inputRequiredError":"Required Field*",
+    "invalidPercentageError": "The percentage must not exceed 99.",
     "invalidEmail":"Invalid email",
     "addSpace": "Add a space",
     "validate": "Validate",

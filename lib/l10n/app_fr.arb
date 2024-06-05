@@ -42,6 +42,7 @@
     "phoneLengthError": "Veuillez saisir un numéro de téléphone valide.",
     "phonePatternError": "Veuillez saisir un numéro de téléphone tunisien valide.",
     "inputRequiredError":"Champ obligatoire*",
+    "invalidPercentageError": "Le pourcentage ne doit pas dépasser 99.",
     "invalidEmail":"E-mail invalide",
     "addSpace": "Ajouter un espace",
     "validate": "Valider",

@@ -43,6 +43,7 @@
 "phoneLengthError": "يرجى إدخال رقم هاتف صالح.",
 "phonePatternError": "يرجى إدخال رقم هاتف تونسي صالح.",
 "inputRequiredError":"حقل إلزامي*",
+  "invalidPercentageError" :"يجب ألا تتجاوز النسبة99 ",
 "invalidEmail":"بريد إلكتروني غير صالح",
 "addSpace": "إضافة مساحة",
 "validate": "تحقق",

@@ -143,6 +143,13 @@ class _AddPartyEventState extends State<AddPartyEvent> {
         child: Column(
           children: [
             Expanded(
+              child:  GestureDetector(
+              onTap: () {
+                  final FocusScopeNode currentFocus = FocusScope.of(context);
+                  if (!currentFocus.hasPrimaryFocus) {
+                    currentFocus.unfocus();
+                        }
+                       },
               child: SingleChildScrollView(
                 child: Column(children: [
                   Padding(
@@ -298,11 +305,11 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                           maxLines: 5,
                           hint: AppLocalizations.of(context)!.description,
                           controller: _descriptionController,
-                          validator: MultiValidator([
-                            RequiredValidator(
-                                errorText: AppLocalizations.of(context)!
-                                    .inputRequiredError),
-                          ]),
+                          // validator: MultiValidator([
+                          //   RequiredValidator(
+                          //       errorText: AppLocalizations.of(context)!
+                          //           .inputRequiredError),
+                          // ]),
                         ),
                         const SizedBox(
                           height: 10,
@@ -385,7 +392,7 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                     ),
                   ),
                 ]),
-              ),
+              )),
             ),
             Align(
               alignment: Alignment.bottomCenter,

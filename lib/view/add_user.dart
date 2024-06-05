@@ -81,7 +81,14 @@ class _AddUserState extends State<AddUser> {
               ? Center(
               child: Form(
             key: _addUserFormKey,
-            child: SingleChildScrollView(
+            child: GestureDetector(
+              onTap: () {
+                final FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              child:  SingleChildScrollView(
               child: Column(
                 children: [
                   Container(
@@ -354,7 +361,7 @@ class _AddUserState extends State<AddUser> {
                   ),
                 ],
               ),
-            ),
+            )),
           )):Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),

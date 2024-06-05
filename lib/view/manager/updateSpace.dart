@@ -162,7 +162,14 @@ class _UpdateSpaceState extends State<UpdateSpace> {
       body: networkStatus == NetworkStatus.Online
           ? Form(
         key: _updateSpaceFormKey,
-        child: SingleChildScrollView(
+        child:  GestureDetector(
+          onTap: () {
+            final FocusScopeNode currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+          },
+          child: SingleChildScrollView(
           child: Column(
             children: [
               Stack(
@@ -269,9 +276,9 @@ class _UpdateSpaceState extends State<UpdateSpace> {
                       maxLines: 5,
                       hint: AppLocalizations.of(context)!.description,
                       controller: _descriptionController,
-                      validator: MultiValidator([
-                        RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
-                      ]),
+                      // validator: MultiValidator([
+                      //   RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
+                      // ]),
                     ),
                     const SizedBox(height: 20),
                     // Validation Method Selection
@@ -378,7 +385,7 @@ class _UpdateSpaceState extends State<UpdateSpace> {
               ),
             ],
           ),
-        ),
+        )),
       )
           : Center(
         child: Padding(

@@ -378,7 +378,14 @@ class _AddSpaceState extends State<AddSpace> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(children: [
+                  child:  GestureDetector(
+                    onTap: () {
+                      final FocusScopeNode currentFocus = FocusScope.of(context);
+                      if (!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                      }
+                    },
+                    child: Column(children: [
                     const SizedBox(
                       height: 20,
                     ),
@@ -497,11 +504,11 @@ class _AddSpaceState extends State<AddSpace> {
                       maxLines: 5,
                       hint:  AppLocalizations.of(context)!.description,
                       controller: _descriptionController,
-                      validator: MultiValidator([
-                        RequiredValidator(errorText:  AppLocalizations.of(context)!.inputRequiredError),
-                      ]),
+                      // validator: MultiValidator([
+                      //   RequiredValidator(errorText:  AppLocalizations.of(context)!.inputRequiredError),
+                      // ]),
                     ),
-                  ]),
+                  ])),
                 ),
               ],
             ),

@@ -149,7 +149,14 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
         body:networkStatus == NetworkStatus.Online
             ? Form(
           key: _addNewPromotionFormKey,
-          child: SingleChildScrollView(
+          child: GestureDetector(
+            onTap: () {
+              final FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child:  SingleChildScrollView(
             child: Column(
               children: [
                 widget.product!=null?
@@ -175,11 +182,11 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                     InputForm(
                       hint: AppLocalizations.of(context)!.title,
                       controller: _eventTitleController,
-                      validator: MultiValidator([
-                        RequiredValidator(
-                            errorText: AppLocalizations.of(context)!
-                                .inputRequiredError),
-                      ]),
+                      // validator: MultiValidator([
+                      //   RequiredValidator(
+                      //       errorText: AppLocalizations.of(context)!
+                      //           .inputRequiredError),
+                      // ]),
                     ),
                     const SizedBox(
                       height: 10,
@@ -190,8 +197,12 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                       controller: _percentageController,
                       validator: MultiValidator([
                         RequiredValidator(
-                            errorText: AppLocalizations.of(context)!
-                                .inputRequiredError),
+                            errorText: AppLocalizations.of(context)!.inputRequiredError),
+                        RangeValidator(
+                            min: 0,
+                            max: 99,
+                            errorText: AppLocalizations.of(context)!.invalidPercentageError
+                        ),
                       ]),
                     ),
                     const SizedBox(
@@ -300,11 +311,11 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                       maxLines: 3,
                       hint: AppLocalizations.of(context)!.description,
                       controller: _descriptionController,
-                      validator: MultiValidator([
-                        RequiredValidator(
-                            errorText: AppLocalizations.of(context)!
-                                .inputRequiredError),
-                      ]),
+                      // validator: MultiValidator([
+                      //   RequiredValidator(
+                      //       errorText: AppLocalizations.of(context)!
+                      //           .inputRequiredError),
+                      // ]),
                     ),
                     const SizedBox(
                       height: 20,
@@ -352,7 +363,7 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                 ),
               ],
             ),
-          ),
+          )),
         ):Center(
           child: Padding(
             padding: const EdgeInsets.all(20.0),

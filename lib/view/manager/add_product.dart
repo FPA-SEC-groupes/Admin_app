@@ -76,7 +76,14 @@ class _AddProductState extends State<AddProduct> {
         body:networkStatus == NetworkStatus.Online
             ? Form(
           key: _addProductFormKey,
-          child: SingleChildScrollView(
+          child: GestureDetector(
+            onTap: () {
+              final FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child:  SingleChildScrollView(
             child: Column(
               children: [
                 MultiProvider(
@@ -169,11 +176,11 @@ class _AddProductState extends State<AddProduct> {
                       maxLines: 5,
                       hint: AppLocalizations.of(context)!.description,
                       controller: _descriptionController,
-                      validator: MultiValidator([
-                        RequiredValidator(
-                            errorText: AppLocalizations.of(context)!
-                                .inputRequiredError),
-                      ]),
+                      // validator: MultiValidator([
+                      //   RequiredValidator(
+                      //       errorText: AppLocalizations.of(context)!
+                      //           .inputRequiredError),
+                      // ]),
                     ),
                     const SizedBox(
                       height: 20,
@@ -260,7 +267,7 @@ class _AddProductState extends State<AddProduct> {
                 ),
               ],
             ),
-          ),
+          )),
         ):Center(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
