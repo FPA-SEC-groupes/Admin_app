@@ -17,7 +17,6 @@ import 'package:hello_way/view/manager/add_primary_material.dart';
 import 'package:hello_way/view/manager/add_product.dart';
 import 'package:hello_way/view/manager/add_space.dart';
 import 'package:hello_way/view/manager/list_events.dart';
-import 'package:hello_way/view/manager/shift.dart';
 import 'package:hello_way/view/manager/space.dart';
 
 import 'package:hello_way/view/manager/list_waiters.dart';

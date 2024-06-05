@@ -169,4 +169,20 @@ class TablesViewModel {
       throw Exception('Error updating zone: $e');
     }
   }
+  Future<void> updateBoardActivation(int boardId, bool activated) async {
+    try {
+      final response = await dioInterceptor.dio.put(
+          '$baseUrl/api/boards/$boardId/activate',
+          queryParameters: {'activated': activated});
+
+      if (response.statusCode == 200) {
+        print('Board activation status updated successfully.');
+      } else {
+        throw Exception('Failed to update board activation status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error updating board activation status: $e');
+      throw Exception('Error updating board activation status: $e');
+    }
+  }
 }

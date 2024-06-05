@@ -102,6 +102,7 @@ class MenuViewModel {
         final List<dynamic> parsedJson = response.data;
         final List<Product> products =
             parsedJson.map((json) => Product.fromJson(json)).toList();
+        products.sort((a, b) => a.price.compareTo(b.price));
         return products;
       }else {
         // Handle other HTTP errors

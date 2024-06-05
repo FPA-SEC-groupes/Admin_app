@@ -14,7 +14,6 @@ class WaiterShiftPage extends StatefulWidget {
 
 class _WaiterShiftPageState extends State<WaiterShiftPage> {
   bool _isSearching = false;
-  String _searchQuery = '';
   DateTime? _selectedDate;
   List<Shift> _shifts = [];
   List<Shift> _selectedShifts = [];
@@ -47,32 +46,14 @@ class _WaiterShiftPageState extends State<WaiterShiftPage> {
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Colors.orange,
-        title: _isSearching
-            ? TextField(
-          onChanged: (value) {
-            setState(() {
-              _searchQuery = value;
-            });
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
           },
-          decoration: InputDecoration(
-            hintText: AppLocalizations.of(context)!.search,
-            border: InputBorder.none,
-          ),
-        )
-            : Text(AppLocalizations.of(context)!.shift),
-        actions: [
-          IconButton(
-            icon: Icon(_isSearching ? Icons.close_rounded : Icons.search),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                _searchQuery = '';
-              });
-            },
-          ),
-        ],
+        ),
+        backgroundColor: Colors.orange,
+        title: Text('Shifts'),
       ),
       body: Column(
         children: [

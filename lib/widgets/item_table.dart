@@ -16,11 +16,11 @@ class ItemTable extends StatefulWidget {
   final Zone zone;
   final VoidCallback onDelete;
   final VoidCallback onUpdate;
-
+  final ValueChanged<bool> onToggleActivation;
   const ItemTable({
     Key? key,
     required this.table,
-    required this.zone, required this.onDelete, required this.onUpdate,
+    required this.zone, required this.onDelete, required this.onUpdate,required this.onToggleActivation,
   }) : super(key: key);
 
   @override
@@ -99,7 +99,10 @@ class _ItemTableState extends State<ItemTable> {
                           ),
                         ],
                       ),),
-
+                    Switch(
+                      value: widget.table.isActive,
+                      onChanged: widget.onToggleActivation,
+                    ),
                     PopupMenuButton<String>(
                       color: Colors.white,
                       offset: const Offset(0, 40),

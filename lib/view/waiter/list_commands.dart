@@ -27,7 +27,7 @@ class _ListCommandsState extends State<ListCommands> {
 
   Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
     List<CommandWithNumTable> products =
-        await _listCommandsViewModel.getCommandsByWaiterId(status);
+    await _listCommandsViewModel.getCommandsByWaiterId(status);
     return products;
   }
 
@@ -35,11 +35,12 @@ class _ListCommandsState extends State<ListCommands> {
     double sum = await _listCommandsViewModel.getSumOfCommand(commandId);
     return sum;
   }
+
   @override
   void initState() {
     // TODO: implement initState
     _listCommandsViewModel = CommandsViewModel(context);
-    getCommandsByWaiterId( status);
+    getCommandsByWaiterId(status);
     super.initState();
   }
 
@@ -53,7 +54,7 @@ class _ListCommandsState extends State<ListCommands> {
         title: Text(AppLocalizations.of(context)!.orderList),
       ),
       body: networkStatus == NetworkStatus.Online
-          ?Column(
+          ? Column(
         children: [
           CommandStatusTabBar(
             onChanged: (index) {
@@ -66,6 +67,9 @@ class _ListCommandsState extends State<ListCommands> {
                   break;
                 case 2:
                   status = "CONFIRMED";
+                  break;
+                case 3:
+                  status = "PAYED";
                   break;
                 default:
                   status = "ALL";
@@ -83,26 +87,31 @@ class _ListCommandsState extends State<ListCommands> {
               future: getCommandsByWaiterId(status),
               builder: (BuildContext context,
                   AsyncSnapshot<List<CommandWithNumTable>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return ListView.separated(
                     itemCount: 10,
-                    separatorBuilder: (context, index) =>  Container(color:lightGray,height: 10),
+                    separatorBuilder: (context, index) =>
+                        Container(color: lightGray, height: 10),
                     itemBuilder: (context, index) {
-                      return const ItemCommandShimmer() ;
+                      return const ItemCommandShimmer();
                     },
                   );
                 } else if (snapshot.hasError) {
-                  return  Center(
-                    child: Text(AppLocalizations.of(context)!.errorRetrievingData),
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!
+                        .errorRetrievingData),
                   );
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                } else if (!snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
                   return Center();
                 } else {
                   final commands = snapshot.data!;
                   return ListView.separated(
                     itemCount: commands.length,
                     itemBuilder: (context, index) {
-                      CommandWithNumTable commandWithNumTable = commands[index];
+                      CommandWithNumTable commandWithNumTable =
+                      commands[index];
                       return FutureBuilder(
                         future: getSumOfCommand(
                             commandWithNumTable.command.idCommand),
@@ -110,29 +119,34 @@ class _ListCommandsState extends State<ListCommands> {
                             AsyncSnapshot<double> sumSnapshot) {
                           if (sumSnapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const SizedBox
-                                .shrink(); // or a loading widget
+                            return const SizedBox.shrink();
                           } else if (sumSnapshot.hasError) {
-                            return  Text(AppLocalizations.of(context)!.errorRetrievingData);
+                            return Text(AppLocalizations.of(context)!
+                                .errorRetrievingData);
                           } else {
                             final sum = sumSnapshot.data!;
                             return GestureDetector(
                               child: ItemCommand(
-                                commandWithNumTable: commandWithNumTable,
+                                commandWithNumTable:
+                                commandWithNumTable,
                                 sum: sum,
                               ),
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => CommandDetails(
-                                      commandWithNumTable: commandWithNumTable,
-                                    ),
+                                    builder: (context) =>
+                                        CommandDetails(
+                                          commandWithNumTable:
+                                          commandWithNumTable,
+                                        ),
                                   ),
                                 ).then((user) {
                                   setState(() {
                                     getCommandsByWaiterId("ALL");
-                                    getSumOfCommand(commandWithNumTable.command.idCommand);
+                                    getSumOfCommand(
+                                        commandWithNumTable
+                                            .command.idCommand);
                                   });
                                 }).catchError((error) {
                                   print(error);
@@ -155,7 +169,8 @@ class _ListCommandsState extends State<ListCommands> {
             ),
           )
         ],
-      ):Center(
+      )
+          : Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -178,20 +193,18 @@ class _ListCommandsState extends State<ListCommands> {
                 style: const TextStyle(fontSize: 22, color: gray),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               MaterialButton(
                 color: orange,
                 height: 40,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                onPressed:(){
-                  setState(() {
-
-                  });
+                onPressed: () {
+                  setState(() {});
                 },
-
-
                 child: Text(
                   AppLocalizations.of(context)!.retry,
                   style: const TextStyle(
@@ -199,7 +212,6 @@ class _ListCommandsState extends State<ListCommands> {
                       color: Colors.white,
                       fontWeight: FontWeight.bold),
                 ),
-
               )
             ],
           ),

@@ -277,9 +277,7 @@ class _ListTablesState extends State<ListTables> {
                             table: board,
                             zone: widget.zone,
                             onDelete: () {
-                              _tablesViewModel
-                                  .deleteTable(board.id!)
-                                  .then((_) async {
+                              _tablesViewModel.deleteTable(board.id!).then((_) async {
                                 setState(() {
                                   _fetchBoards(widget.zone.id!);
                                 });
@@ -289,6 +287,9 @@ class _ListTablesState extends State<ListTables> {
                             },
                             onUpdate: () {
                               tableDialog(widget.zone, table: board);
+                            },
+                            onToggleActivation: (isActive) {
+                              _toggleActivation(board, isActive);
                             },
                           ),
                           index != boards.length - 1
@@ -351,5 +352,12 @@ class _ListTablesState extends State<ListTables> {
             ),
           ),
         ),);
+  }
+
+  void _toggleActivation(Board board, bool isActive) async {
+    await _tablesViewModel.updateBoardActivation(board.id!, isActive);
+    setState(() {
+      board.isActive = isActive;
+    });
   }
 }

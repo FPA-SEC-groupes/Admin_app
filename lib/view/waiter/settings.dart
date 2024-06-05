@@ -103,7 +103,7 @@ class _SettingsState extends State<Settings> {
                     style: const TextStyle(fontSize: 16),
                   ),
                   onTap: () async {
-                    Navigator.pushReplacementNamed(context, WaiterShift);
+                    Navigator.pushNamed(context, WaiterShift);
                   },
                 ),
                 const Divider(),

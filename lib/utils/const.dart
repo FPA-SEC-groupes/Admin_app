@@ -40,6 +40,7 @@ List<String> initListOrdersStatus(BuildContext context) {
   return [
     AppLocalizations.of(context)!.all,
     AppLocalizations.of(context)!.pendingStatus,
-    AppLocalizations.of(context)!.confirmedStatus
+    AppLocalizations.of(context)!.confirmedStatus,
+    AppLocalizations.of(context)!.payedStatus
   ];
 }
