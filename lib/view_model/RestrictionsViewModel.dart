@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hello_way/utils/const.dart';
 
 import '../interceptors/dio_interceptor.dart';
-import '../models/restriction.dart';
+import '../../models/Restriction.dart';
 import '../utils/secure_storage.dart';
 
 class RestrictionsViewModel {
@@ -63,6 +63,21 @@ class RestrictionsViewModel {
       throw Exception('Failed to create restriction: $error');
     }
   }
+  Future<Restriction> getRestrictionByReservationId(int reservationId) async {
+    try {
+      var response = await dioInterceptor.dio.get('$baseUrl/api/restrictions/restrictions/$reservationId');
+
+      if (response.statusCode == 200) {
+        return Restriction.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load restriction by reservation ID: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Exception: $error');
+      throw Exception('Failed to load restriction by reservation ID: $error');
+    }
+  }
+
 
   Future<Restriction> updateRestriction(int id, Restriction restriction) async {
     try {

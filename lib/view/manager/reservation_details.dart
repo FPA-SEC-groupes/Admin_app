@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/reservation.dart';
+import 'package:hello_way/models/user.dart';
 import 'package:hello_way/widgets/snack_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
+import '../../models/Restriction.dart';
 import '../../models/board.dart';
-import '../../models/restriction.dart';
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
 import '../../view_model/RestrictionsViewModel.dart';
 import '../../view_model/reservations_view_model.dart';
 import '../../view_model/tables_view_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'AddRestrictionDialog.dart';
 
 class ReservationDetails extends StatefulWidget {
   final Reservation reservation;
@@ -28,18 +31,21 @@ class ReservationDetails extends StatefulWidget {
 
 class _ReservationDetailsState extends State<ReservationDetails> {
   late ReservationsViewModel _reservationsViewModel;
+  late RestrictionsViewModel _restrictionsViewModel;
   final GlobalKey<ScaffoldMessengerState> _reservationDetailsScaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
 
   late final TablesViewModel _tablesViewModel;
   List<Board> tables = [];
   List<Board> assignedTables = [];
-
+  bool res=true;
   @override
   void initState() {
     super.initState();
     _tablesViewModel = TablesViewModel(context);
     _reservationsViewModel = ReservationsViewModel(context);
+    _restrictionsViewModel = RestrictionsViewModel(context);
+    _fetchres();
     if (widget.reservation.status == "NOT_YET") {
       _fetchBoards(formatDateToIso(widget.reservation.startDate));
     } else {
@@ -72,6 +78,26 @@ class _ReservationDetailsState extends State<ReservationDetails> {
       assignedTables = boards;
     });
     return boards;
+  }
+
+  Future<void> _fetchres() async {
+    try {
+      final id = widget.reservation!.idReservation!;
+      print('id $id');
+      Restriction restriction = await _restrictionsViewModel.getRestrictionByReservationId(id);
+      if (restriction != null) {
+        setState(() {
+          res = false;
+        });
+      } else {
+        setState(() {
+          res = true;
+        });
+      }
+    } catch (e) {
+      print("Error loading restriction: $e");
+      // Handle the error here, e.g., show a message to the user
+    }
   }
 
   List<MultiSelectItem<Board>> _items = [];
@@ -212,18 +238,6 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                           style: const TextStyle(fontSize: 16)),
                       const SizedBox(
                         height: 10,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AddRestrictionDialog(viewModel: RestrictionsViewModel(context), userId: widget.reservation.user!.id!);
-                            },
-                          );
-                        },
-
-                        child: Text('Add Restriction'),
                       ),
                       const SizedBox(
                         height: 10,
@@ -396,7 +410,47 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                           ),
                         ],
                       )),
-                ),
+                )
+              else if (res)
+                Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0),
+                              color:
+                               orange,
+                            ),
+                            child: MaterialButton(
+                              height: 50,
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AddRestrictionDialog(viewModel: RestrictionsViewModel(context), user: widget.reservation.user!, reservion: widget.reservation);
+                                  },
+                                );
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.addRestriction,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+              )
+                    else
+                      Text(""),
             ],
           )
               : Center(
@@ -448,78 +502,4 @@ class _ReservationDetailsState extends State<ReservationDetails> {
   }
 }
 
-class AddRestrictionDialog extends StatefulWidget {
-  final RestrictionsViewModel viewModel;
-  final int userId;
 
-  const AddRestrictionDialog({Key? key, required this.viewModel, required this.userId}) : super(key: key);
-
-  @override
-  _AddRestrictionDialogState createState() => _AddRestrictionDialogState();
-}
-
-class _AddRestrictionDialogState extends State<AddRestrictionDialog> {
-  final _formKey = GlobalKey<FormState>();
-  String _restrictionType = '';
-  String _restrictionDescription = '';
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context)!.addRestriction),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.restrictionDescription,
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _restrictionDescription = value;
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: Text(AppLocalizations.of(context)!.cancel),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        ElevatedButton(
-          child: Text(AppLocalizations.of(context)!.submit),
-          onPressed: () {
-            if (_formKey.currentState!.validate()) {
-              Restriction newRestriction = Restriction(
-                description: _restrictionDescription,
-                userId: widget.userId,
-              );
-              widget.viewModel.createRestriction(newRestriction).then((_) {
-                Navigator.of(context).pop();
-                var snackBar = customSnackBar(
-                  context,
-                  AppLocalizations.of(context)!.restrictionAdded,
-                  Colors.green,
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              }).catchError((error) {
-                var snackBar = customSnackBar(
-                  context,
-                  AppLocalizations.of(context)!.errorOccurred,
-                  Colors.red,
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-              });
-            }
-          },
-        ),
-      ],
-    );
-  }
-}

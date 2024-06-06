@@ -11,9 +11,8 @@ class User {
   String? image;
   bool? activated;
   List<dynamic>? role;
-  Zone? zone;
 
-  User({ required this.username,this.name,this.lastname,required this.email, this.password, this.role, this.phone,this.id,this.image, this.activated,this.zone});
+  User({ required this.username,this.name,this.lastname,required this.email, this.password, this.role, this.phone,this.id,this.image, this.activated});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
@@ -38,14 +37,7 @@ class User {
   }
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final zoneData = json['zone'];
-    Zone? userZone;
 
-    if (zoneData != null) {
-      final int zoneId = zoneData['idZone'];
-      final String zoneTitle = zoneData['zoneTitle'];
-      userZone = Zone(id: zoneId, title: zoneTitle);
-    }
     return User(
       id: json['id'],
       username: json['username'],
@@ -56,7 +48,6 @@ class User {
       role: json['roles'],
       activated: json['activated'],
       image: json['image']!=null? json['image']['data']:null,
-      zone: userZone
 
     );
   }

@@ -2,6 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/models/user.dart';
+import 'package:hello_way/models/zone.dart';
 import 'package:hello_way/widgets/item_waiter.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +19,8 @@ import '../../widgets/dropdown_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ListWaitersByZone extends StatefulWidget {
   final int zoneId;
-  const ListWaitersByZone({super.key, required this.zoneId});
+  final Zone zone;
+  const ListWaitersByZone({super.key, required this.zoneId, required this.zone});
 
   @override
   State<ListWaitersByZone> createState() => _ListWaitersByZoneState();
@@ -43,9 +45,9 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
   }
 
 
-  Future<  List<User>> _fetchWaitersByZoneId(int zoneId) async {
+  Future <User> _fetchWaitersByZoneId(int zoneId) async {
     // fetch the list of categories using
-    List<User> boards = await _waitersViewModel.getWaitersByZoneId(zoneId);
+    User boards = await _waitersViewModel.getWaitersByZoneId(zoneId);
     return boards;
   }
 
@@ -81,17 +83,19 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
 
                 hint:
                   "Assign",
-                items:listWaiters.where((user) => user.zone?.id != widget.zoneId).map((User waiter) {
+                items:listWaiters
+                    .where((user) => user?.id != widget.zone.server?.id)
+                    .map((User waiter) {
                   final int id = waiter.id!;
                   final String name = "${waiter.name!} ${waiter.lastname!}";
-                  final String zoneTitle=" (${waiter.zone?.title})";
+                  // final String zoneTitle=" (${waiter.zone?.title})";
                   return DropdownMenuItem<String>(
                     value: id.toString(),
                     child: Row(
                       children: [
                         Text(name),
-                        if(waiter.zone?.title !=null)
-                        Text(zoneTitle,style: TextStyle(color: gray),)
+                        // if(waiter.zone?.title !=null)
+                        // Text(zoneTitle,style: TextStyle(color: gray),)
                       ],
                     ),
                   );
@@ -135,23 +139,25 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
             ),
             Expanded(
             child: FutureBuilder(
-                future: _fetchWaitersByZoneId(widget.zoneId) ,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ListView.separated(
-                      itemCount: 5,
-                      separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        return const ItemWaiterShimmer();
-                      },
+              future: _fetchWaitersByZoneId(widget.zoneId),
+              builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return ListView.separated(
+                    itemCount: 5,
+                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) => const ItemWaiterShimmer(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.errorRetrievingData),
+                  );
+                } else {
+                  if (snapshot.data == null) {
+                    return Center(
+                      child: Text('No data available'),
                     );
-                  } else if (snapshot.hasError) {
-                    return  Center(
-                      child: Text( AppLocalizations.of(context)!.errorRetrievingData),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return  Center(
+                  } else if (snapshot.data!.id == null) {
+                    return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
@@ -161,12 +167,12 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
                             const Icon(
                               Icons.group_off_rounded,
                               size: 150,
-                              color: gray,
+                              color: Colors.grey,
                             ),
                             const SizedBox(height: 20),
                             Text(
                               AppLocalizations.of(context)!.thisZoneHasNoServers,
-                              style: const TextStyle(fontSize: 22, color: gray),
+                              style: const TextStyle(fontSize: 22, color: Colors.grey),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -174,58 +180,135 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
                       ),
                     );
                   } else {
-
                     final waiters = snapshot.data!;
-                    return ListView.builder(
-                        itemCount: waiters.length,
-                        itemBuilder: (context, index) {
-                          User waiter = waiters[index];
-
-
-                          return  Column(
-                            children: [
-
-                              ItemWaiter(  user: waiter, onDelete: () async {
-                                await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CustomAlertDialog(
-                                      title: AppLocalizations.of(context)!.deleteWaiterFromZone,
-                                      message: AppLocalizations.of(context)!.confirmWaiterDeletion,
-                                      submit: () {
-                                        _waitersViewModel.removeServerFromZone(waiter.id!, widget.zoneId).then((space) async {
-
-
-                                          setState(() {
-                                            _fetchWaitersByZoneId(widget.zoneId);
-                                            _fetchWaitersBySpaceId();
-                                          });
-                                          Navigator.of(context).pop();
-                                        }).catchError((error) {
-
-                                        });
-                                      },
-                                      cancel: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      textSubmitButton: AppLocalizations.of(context)!.delete,
-                                      textCancelButton: AppLocalizations.of(context)!.cancel);
-                                });
-                             },),
-                              index!=waiters.length-1?Container(
-                                color: lightGray,
-                                height: 10,
-                              ):SizedBox()
-                            ],
-
-
-                          );
-
-
-
-                        });
+                    return Column(
+                      children: [
+                        ItemWaiter(
+                          user: waiters,
+                          onDelete: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
+                                  title: AppLocalizations.of(context)!.deleteWaiterFromZone,
+                                  message: AppLocalizations.of(context)!.confirmWaiterDeletion,
+                                  submit: () {
+                                    _waitersViewModel.removeServerFromZone(waiters.id!, widget.zoneId)
+                                        .then((space) async {
+                                      setState(() {
+                                        _fetchWaitersByZoneId(widget.zoneId);
+                                        _fetchWaitersBySpaceId();
+                                      });
+                                      Navigator.of(context).pop();
+                                    }).catchError((error) {});
+                                  },
+                                  cancel: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  textSubmitButton: AppLocalizations.of(context)!.delete,
+                                  textCancelButton: AppLocalizations.of(context)!.cancel,
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    );
                   }
-                }),
+                }
+              },
+            ),
+              // FutureBuilder(
+            // future: _fetchWaitersByZoneId(widget.zoneId),
+            //         builder: (BuildContext context, AsyncSnapshot snapshot) {
+            //         if (snapshot.connectionState == ConnectionState.waiting) {
+            //     return
+            //       ListView.separated(
+            //           itemCount: 5,
+            //           separatorBuilder: (context, index) => const SizedBox(height: 10),
+            //           itemBuilder: (context, index) => const ItemWaiterShimmer(),
+            //             );
+            //         } else if (snapshot.hasError) {
+            //             return Center(
+            //             child: Text(AppLocalizations.of(context)!.errorRetrievingData),
+            //             );
+            //     } else {
+            //           if (snapshot.data == null) {
+            //             return Center(
+            //               child: Text('No data available'),
+            //             );
+            //           } else if (snapshot.data is User) {
+            //             return Center(
+            //               child: Padding(
+            //                 padding: const EdgeInsets.all(20.0),
+            //                 child: Column(
+            //                   crossAxisAlignment: CrossAxisAlignment.center,
+            //                   mainAxisAlignment: MainAxisAlignment.center,
+            //                   children: [
+            //                     const Icon(
+            //                       Icons.group_off_rounded,
+            //                       size: 150,
+            //                       color: gray,
+            //                     ),
+            //                     const SizedBox(height: 20),
+            //                     Text(
+            //                       AppLocalizations.of(context)!
+            //                           .thisZoneHasNoServers,
+            //                       style: const TextStyle(
+            //                           fontSize: 22, color: gray),
+            //                       textAlign: TextAlign.center,
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //             );
+            //           } else {
+            //             final waiters = widget.zone.server!;
+            //             return Column(
+            //               children: [
+            //                 ItemWaiter(
+            //                   user: waiters,
+            //                   onDelete: () async {
+            //                     await showDialog(
+            //                       context: context,
+            //                       builder: (BuildContext context) {
+            //                         return CustomAlertDialog(
+            //                           title: AppLocalizations.of(context)!
+            //                               .deleteWaiterFromZone,
+            //                           message: AppLocalizations.of(context)!
+            //                               .confirmWaiterDeletion,
+            //                           submit: () {
+            //                             _waitersViewModel
+            //                                 .removeServerFromZone(
+            //                                 waiters.id!, widget.zoneId)
+            //                                 .then((space) async {
+            //                               setState(() {
+            //                                 _fetchWaitersByZoneId(
+            //                                     widget.zoneId);
+            //                                 _fetchWaitersBySpaceId();
+            //                               });
+            //                               Navigator.of(context).pop();
+            //                             }).catchError((error) {});
+            //                           },
+            //                           cancel: () {
+            //                             Navigator.of(context).pop();
+            //                           },
+            //                           textSubmitButton: AppLocalizations.of(
+            //                               context)!.delete,
+            //                           textCancelButton: AppLocalizations.of(
+            //                               context)!.cancel,
+            //                         );
+            //                       },
+            //                     );
+            //                   },
+            //                 ),
+            //                 SizedBox(height: 10),
+            //               ],
+            //             );
+            //           }
+            //         }
+            //     }),
           ),
         ],
       ):Center(

@@ -84,113 +84,125 @@ class _ListZonesState extends State<ListZones> {
     return null;
   }
   addTable(Zone zone) async {
+    if (zone.server != null) {
       errorText = null; // Set the errorText to display the error message
 
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, update) {
-            return AlertDialog(
-              title: Text(AppLocalizations.of(context)!.addNewTableTitle),
-              content: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(AppLocalizations.of(context)!.addNewTableMessage),
-                  const SizedBox(height: 20),
-                  Form(
-                    key: _dialogFormKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InputForm(
-                          validator: MultiValidator([
-                            RequiredValidator(
-                                errorText: AppLocalizations.of(context)!
-                                    .inputRequiredError),
-                          ]),
-                          controller: _tableNumberController,
-                          hint: AppLocalizations.of(context)!.numTable,
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InputForm(
-                          validator:_validation,
-                          controller: _nbPlacesController,
-                          hint: AppLocalizations.of(context)!.numPlaces,
-                          keyboardType: TextInputType.number,
-                        ),
-                      ],
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, update) {
+              return AlertDialog(
+                title: Text(AppLocalizations.of(context)!.addNewTableTitle),
+                content: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(AppLocalizations.of(context)!.addNewTableMessage),
+                    const SizedBox(height: 20),
+                    Form(
+                      key: _dialogFormKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InputForm(
+                            validator: MultiValidator([
+                              RequiredValidator(
+                                  errorText: AppLocalizations.of(context)!
+                                      .inputRequiredError),
+                            ]),
+                            controller: _tableNumberController,
+                            hint: AppLocalizations.of(context)!.numTable,
+                            keyboardType: TextInputType.number,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          InputForm(
+                            validator: _validation,
+                            controller: _nbPlacesController,
+                            hint: AppLocalizations.of(context)!.numPlaces,
+                            keyboardType: TextInputType.number,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.cancel,
+                      style: TextStyle(color: orange),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (_dialogFormKey.currentState!.validate()) {
+                        _dialogFormKey.currentState!.save();
+                        int numTable =
+                        int.parse(_tableNumberController.text.toString());
+                        int nbPlaces =
+                        int.parse(_nbPlacesController.text.toString());
+                        Board table = Board(
+                          numTable: numTable,
+                          availability: true,
+                          placeNumber: nbPlaces,
+                        );
+
+                        await _addTableViewModel
+                            .addTable(table, zone.id!)
+                            .then((table) async {
+                          await _addTableViewModel
+                              .addBasketByTableId(table.id!.toString())
+                              .then((basket) {
+                            Navigator.of(context).pop();
+                          }).catchError((error) {
+                            // Handle addBasketByTableId error here
+                          });
+                        }).catchError((error) {
+                          if (error is DioError) {
+                            if (error.response?.statusCode == 400) {
+                              // Handle 400 status code error (Bad Request)
+                              update(() {
+                                errorText = AppLocalizations.of(context)!
+                                    .tableAlreadyExists;
+                              });
+                            }
+                          } else {
+                            // Handle other errors
+                            print("Error: $error");
+                          }
+                        });
+                      }
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)!.confirm,
+                      style: TextStyle(color: orange),
                     ),
                   ),
                 ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.cancel,
-                    style: TextStyle(color:orange),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    if (_dialogFormKey.currentState!.validate()) {
-                      _dialogFormKey.currentState!.save();
-                      int numTable =
-                          int.parse(_tableNumberController.text.toString());
-                      int nbPlaces =
-                          int.parse(_nbPlacesController.text.toString());
-                      Board table = Board(
-                        numTable: numTable,
-                        availability: true,
-                        placeNumber: nbPlaces,
-                      );
-
-                      await _addTableViewModel
-                          .addTable(table, zone.id!)
-                          .then((table) async {
-                        await _addTableViewModel
-                            .addBasketByTableId(table.id!.toString())
-                            .then((basket) {
-                          Navigator.of(context).pop();
-                        }).catchError((error) {
-                          // Handle addBasketByTableId error here
-                        });
-                      }).catchError((error) {
-                        if (error is DioError) {
-                          if (error.response?.statusCode == 400) {
-                            // Handle 400 status code error (Bad Request)
-                            update(() {
-                              errorText = AppLocalizations.of(context)!
-                                  .tableAlreadyExists;
-                            });
-                          }
-                        } else {
-                          // Handle other errors
-                          print("Error: $error");
-                        }
-                      });
-                    }
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.confirm,
-                    style: TextStyle(color: orange),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+              );
+            },
+          );
+        },
+      );
+    }
+    else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ListWaitersByZone(
+              zoneId: zone.id!,
+              zone: zone!
+          ),
+        ),
+      );
+    }
   }
-
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
@@ -332,6 +344,7 @@ class _ListZonesState extends State<ListZones> {
                               MaterialPageRoute(
                                 builder: (context) => ListWaitersByZone(
                                   zoneId: zone.id!,
+                                  zone: zone!
                                 ),
                               ),
                             );

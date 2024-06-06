@@ -23,7 +23,7 @@ Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
 
     if (response.statusCode == 200) {
       final List<dynamic> parsedJson = response.data;
-      print(response.data);
+      print(waiterId);
       if(status=="ALL"){
         final List<CommandWithNumTable> commands =
         parsedJson.map((json) => CommandWithNumTable.fromJson(json))

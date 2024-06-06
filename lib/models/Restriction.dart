@@ -1,27 +1,35 @@
+import 'package:hello_way/models/user.dart';
+import 'package:hello_way/models/reservation.dart';
+
 class Restriction {
   int? id;
   String description;
-  int userId;
+  User? user;
+  Reservation? reservation;
 
   Restriction({
-    this.id,
     required this.description,
-    required this.userId,
+    this.user,
+    this.reservation,
+    this.id,
   });
 
   factory Restriction.fromJson(Map<String, dynamic> json) {
     return Restriction(
       id: json['id'],
       description: json['description'],
-      userId: json['userId'],
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
+      reservation: json['reservation'] != null ? Reservation.fromJson(json['reservation']) : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> data = {
       'id': id,
       'description': description,
-      'userId': userId,
+      'user': user?.toJson(),
+      'reservation': reservation?.toJson(),
     };
+    return data;
   }
 }
