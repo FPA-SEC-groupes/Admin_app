@@ -14,18 +14,25 @@ class ShiftViewModel {
       : dioInterceptor = DioInterceptor(context);
   final SecureStorage secureStorage = SecureStorage();
 
-  Future<Shift> createShift(Shift shift) async {
+  Future<List<Shift>> createShift(List<Shift> shifts) async {
     final url = '$baseUrl/api/shiftsystems';
     try {
-      Response response = await dioInterceptor.dio.post(url, data: shift.toJson());
+      // Convert the list of Shift objects to JSON
+      List<Map<String, dynamic>> shiftListJson = shifts.map((shift) => shift.toJson()).toList();
+
+      Response response = await dioInterceptor.dio.post(url, data: {'shifts': shiftListJson});
+
       if (response.statusCode == 200) {
-        return Shift.fromJson(response.data);
+        // Assuming the API returns a list of shifts
+        List<dynamic> responseData = response.data;
+        List<Shift> createdShifts = responseData.map((shiftData) => Shift.fromJson(shiftData)).toList();
+        return createdShifts;
       } else {
         throw Exception("Request failed with status code: ${response.statusCode}");
       }
     } catch (error) {
       print('Error: $error');
-      throw Exception("Error: $error'");
+      throw Exception("Error: $error");
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/shift.dart';
+import 'package:hello_way/view/manager/add_shift.dart';
 import 'package:hello_way/view_model/ShiftViewModel.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,29 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId> {
     super.initState();
     shiftViewModel = ShiftViewModel(context);
     _fetchShifts();
+  }
+  void _navigateToShiftDialog(BuildContext context, DateTime selectedDate) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ShiftDialogPage(
+          date: selectedDate,
+          waiterId: widget.waiterId,
+        ),
+      ),
+    );
+
+    if (result == true) {
+      // Refresh the data if shifts were created successfully
+      _refreshShifts();
+    }
+  }
+
+  void _refreshShifts() {
+    _fetchShifts();
+    setState(() {
+      _selectedShifts = _getShiftsForDay(_selectedDate!);
+    });
   }
 
   void _fetchShifts() async {
@@ -134,9 +158,9 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId> {
                     endTime: _endTimeController.text,
                   );
                   try {
-                    final createdShift = await shiftViewModel.createShift(shift);
+                    final createdShift = await shiftViewModel.createShift(shift as List<Shift>);
                     setState(() {
-                      _shifts.add(createdShift);
+                      _shifts.add(createdShift as Shift);
                       _selectedShifts = _getShiftsForDay(date);
                     });
                   } catch (e) {
@@ -188,7 +212,7 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_selectedDate != null) {
-            _showShiftDialog(context, _selectedDate!);
+            _navigateToShiftDialog(context, _selectedDate!);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -233,7 +257,7 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId> {
                   trailing: IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
-                      _showShiftDialog(context, DateFormat('yyyy-MM-dd').parse(shift.date), shiftToUpdate: shift);
+                      // _showShiftDialog(context, DateFormat('yyyy-MM-dd').parse(shift.date), shiftToUpdate: shift);
                     },
                   ),
                 );
@@ -246,7 +270,7 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId> {
                   Text(AppLocalizations.of(context)!.noShifts),
                   ElevatedButton(
                     onPressed: () {
-                      _showShiftDialog(context, _selectedDate!);
+                      // _showShiftDialog(context, _selectedDate!);
                     },
                     child: Text(AppLocalizations.of(context)!.addShift),
                   ),

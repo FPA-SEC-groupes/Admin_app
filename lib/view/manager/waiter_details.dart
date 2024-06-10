@@ -271,6 +271,7 @@ class _WaiterDetailsState extends State<WaiterDetails> {
                       );
                     } else {
                       double sum = snapshot.data!;
+                      sum = double.parse(sum.toStringAsFixed(2));
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

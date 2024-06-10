@@ -36,4 +36,8 @@ class Shift {
       'endTime': endTime,
     };
   }
+  @override
+  String toString() {
+    return 'Shift(waiterId: $waiterId, dayOfWeek: $dayOfWeek, date: $date, startTime: $startTime, endTime: $endTime)';
+  }
 }

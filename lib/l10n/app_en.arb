@@ -234,7 +234,21 @@
     "cancel": "Cancel",
     "submit": "Submit",
     "restrictionAdded": "Restriction added",
-    "errorOccurred": "An error occurred"
+    "errorOccurred": "An error occurred",
+    "oneDay": "1 day",
+    "oneWeek": "1 week",
+    "twoWeeks": "2 weeks",
+    "threeWeeks": "3 weeks",
+    "oneMonth": "1 month",
+    "none": "None",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+
 }
 
 

@@ -230,5 +230,18 @@
     "cancel": "Annuler",
     "submit": "Soumettre",
     "restrictionAdded": "Restriction ajoutée",
-    "errorOccurred": "Une erreur est survenue"
+    "errorOccurred": "Une erreur est survenue",
+    "oneDay": "1 jour",
+    "oneWeek": "1 semaine",
+    "twoWeeks": "2 semaines",
+    "threeWeeks": "3 semaines",
+    "oneMonth": "1 mois",
+    "none": "Aucun",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
 }

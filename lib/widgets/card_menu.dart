@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -14,6 +13,7 @@ class CardMenu extends StatefulWidget {
 }
 
 class _CardMenuState extends State<CardMenu> {
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -31,11 +31,11 @@ class _CardMenuState extends State<CardMenu> {
                 fit: BoxFit.fill,
                 child: widget.product.images!.isEmpty
                     ? Icon(
-                        Icons.image_outlined,
-                        color: Colors.grey.withOpacity(0.5),
-                      )
+                  Icons.image_outlined,
+                  color: Colors.grey.withOpacity(0.5),
+                )
                     : Image.memory(
-                        base64.decode(widget.product.images![widget.product.images!.length-1].data)),
+                    base64.decode(widget.product.images![widget.product.images!.length - 1].data)),
               ),
             ),
             Padding(
@@ -51,30 +51,71 @@ class _CardMenuState extends State<CardMenu> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}"),
+                if (widget.product.hasActivePromotion == true && widget.product.percentage != null)
+                  PromotionWidget(product: widget.product)
+                else
+                  Text("${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}"),
                 GestureDetector(
                   onTap: widget.onTap,
                   child: widget.product.hasActivePromotion!
                       ? Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "- ${widget.product.percentage}%",
-                            style: const TextStyle(color: Colors.white),
-                          ))
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "- ${widget.product.percentage}%",
+                        style: const TextStyle(color: Colors.white),
+                      ))
                       : const Icon(
-                          Icons.local_offer_rounded,
-                          color: Colors.orange,
-                        ),
+                    Icons.local_offer_rounded,
+                    color: Colors.orange,
+                  ),
                 ),
               ],
             )
           ],
         ),
       ),
+    );
+  }
+}
+
+class PromotionWidget extends StatelessWidget {
+  final Product product;
+
+  PromotionWidget({required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    double originalPrice = product.price;
+    double discountedPrice = originalPrice;
+    if (product.hasActivePromotion == true && product.percentage != null) {
+      discountedPrice = originalPrice - (originalPrice * (product.percentage! / 100));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${discountedPrice.toStringAsFixed(2)} ${AppLocalizations.of(context)!.tunisianDinar}',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(width: 10),
+        Text(
+          '${originalPrice.toString()} ${AppLocalizations.of(context)!.tunisianDinar}',
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 18,
+            decoration: TextDecoration.lineThrough,
+          ),
+        ),
+      ],
     );
   }
 }

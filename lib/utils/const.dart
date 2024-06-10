@@ -44,3 +44,25 @@ List<String> initListOrdersStatus(BuildContext context) {
     AppLocalizations.of(context)!.payedStatus
   ];
 }
+List<String> initListDurations(BuildContext context) {
+  return [
+    AppLocalizations.of(context)!.oneDay,
+    AppLocalizations.of(context)!.oneWeek,
+    AppLocalizations.of(context)!.twoWeeks,
+    AppLocalizations.of(context)!.threeWeeks,
+    AppLocalizations.of(context)!.oneMonth
+  ];
+}
+
+List<String> initListDaysOff(BuildContext context) {
+  return [
+    AppLocalizations.of(context)!.none,
+    AppLocalizations.of(context)!.monday,
+    AppLocalizations.of(context)!.tuesday,
+    AppLocalizations.of(context)!.wednesday,
+    AppLocalizations.of(context)!.thursday,
+    AppLocalizations.of(context)!.friday,
+    AppLocalizations.of(context)!.saturday,
+    AppLocalizations.of(context)!.sunday
+  ];
+}

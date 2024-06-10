@@ -232,5 +232,18 @@
   "cancel": "إلغاء",
   "submit": "إرسال",
   "restrictionAdded": "تم إضافة التقييد",
-  "errorOccurred": "حدث خطأ"
+  "errorOccurred": "حدث خطأ",
+  "oneDay": "يوم واحد",
+  "oneWeek": "أسبوع واحد",
+  "twoWeeks": "أسبوعين",
+  "threeWeeks": "3 أسابيع",
+  "oneMonth": "شهر واحد",
+  "none": "لا شيء",
+  "monday": "الاثنين",
+  "tuesday": "الثلاثاء",
+  "wednesday": "الأربعاء",
+  "thursday": "الخميس",
+  "friday": "الجمعة",
+  "saturday": "السبت",
+  "sunday": "الأحد"
 }

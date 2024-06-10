@@ -98,7 +98,6 @@ class MenuViewModel {
           .get('$baseUrl/api/products/all/dto/id_categorie/$categoryId');
 
       if (response.statusCode == 200) {
-        print(response.data);
         final List<dynamic> parsedJson = response.data;
         final List<Product> products =
             parsedJson.map((json) => Product.fromJson(json)).toList();
