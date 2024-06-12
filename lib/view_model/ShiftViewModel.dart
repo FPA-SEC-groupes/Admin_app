@@ -82,18 +82,51 @@ class ShiftViewModel {
       throw Exception('An unexpected error occurred: $e');
     }
   }
-  Future<void> updateShift(Shift shift) async {
-    print('shif'+shift.toString());
-    final url = '$baseUrl/api/shiftsystems/${shift.shiftId}';
+  Future<List<Shift>> updateShifts(List<Shift> shifts) async {
+    final url = '$baseUrl/api/shiftsystems/update';
     try {
-      final response = await dioInterceptor.dio.put(url, data: shift.toJson());
+      List<Map<String, dynamic>> shiftListJson = shifts.map((shift) => shift.toJson()).toList();
+      print(shiftListJson.toString());
+      Response response = await dioInterceptor.dio.put(url, data: shiftListJson);
+
       if (response.statusCode == 200) {
-        print("Shift updated successfully");
+        List<dynamic> responseData = response.data;
+        List<Shift> updatedShifts = responseData.map((shiftData) => Shift.fromJson(shiftData)).toList();
+        return updatedShifts;
       } else {
-        print("Failed to update shift: ${response.statusCode}");
+        throw Exception("Request failed with status code: ${response.statusCode}");
       }
-    } catch (e) {
-      print("Failed to update shift: $e");
+    } catch (error) {
+      print('Error: $error');
+      throw Exception("Error: $error");
     }
   }
+  Future<void> updateDayOff(int waiterId, String newDayOff, String startDate, int durationInWeeks) async {
+    final url = '$baseUrl/api/shiftsystems/updateDayOff';
+    print('Waiter ID: $waiterId, New Day Off: $newDayOff, Start Date: $startDate, Duration: $durationInWeeks');
+    final data={
+      'waiterId': waiterId,
+      'newDayOff': newDayOff,
+      'startDate': startDate,
+      'durationInWeeks': durationInWeeks
+    };
+    print(data);
+    try {
+      final response = await dioInterceptor.dio.put(url,
+          data: data,
+      );
+
+      if (response.statusCode == 200) {
+        print("Day off updated successfully");
+      } else {
+        print("Failed to update day off: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Failed to update day off: $e");
+    }
+  }
+
+
+
+
 }

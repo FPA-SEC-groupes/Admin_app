@@ -243,5 +243,7 @@
     "thursday": "Jeudi",
     "friday": "Vendredi",
     "saturday": "Samedi",
-    "sunday": "Dimanche"
+    "sunday": "Dimanche",
+    "duration": "Durée",
+    "dayOff": "Jour de congé"
 }

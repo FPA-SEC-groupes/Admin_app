@@ -81,16 +81,19 @@ class WaitersViewModel {
 
 
 
-  Future<User> getWaitersByZoneId(int zoneId) async {
+  Future<List<User>> getWaitersByZoneId(int zoneId) async {
     try {
       final response = await dioInterceptor.dio.get('$baseUrl/api/zones/servers/$zoneId');
 
       if (response.statusCode == 200) {
-        final dynamic jsonData = response.data;
-        final User waiter = User.fromJson(jsonData);
-        return waiter;
+        final List<dynamic> parsedJson = response.data;
+        if (parsedJson == null || parsedJson.isEmpty) {
+          return [];
+        }
+        final List<User> waiters = parsedJson.map((json) => User.fromJson(json as Map<String, dynamic>)).toList();
+        return waiters;
       } else {
-        throw Exception('Failed to load waiter: ${response.statusCode}');
+        throw Exception('Failed to load servers: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Failed to load waiter: $e');

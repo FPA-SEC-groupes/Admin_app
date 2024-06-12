@@ -247,8 +247,9 @@
     "thursday": "Thursday",
     "friday": "Friday",
     "saturday": "Saturday",
-    "sunday": "Sunday"
-
+    "sunday": "Sunday",
+    "duration": "Duration",
+    "dayOff": "Day Off"
 }
 
 

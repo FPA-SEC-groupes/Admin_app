@@ -45,9 +45,9 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
   }
 
 
-  Future <User> _fetchWaitersByZoneId(int zoneId) async {
+  Future<  List<User>> _fetchWaitersByZoneId(int zoneId) async {
     // fetch the list of categories using
-    User boards = await _waitersViewModel.getWaitersByZoneId(zoneId);
+    List<User> boards = await _waitersViewModel.getWaitersByZoneId(zoneId);
     return boards;
   }
 
@@ -131,33 +131,27 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
                   });
 
                 },
-           
+
 
               ),
 
 
             ),
-            Expanded(
+          Expanded(
             child: FutureBuilder(
-              future: _fetchWaitersByZoneId(widget.zoneId),
-              builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return ListView.separated(
-                    itemCount: 5,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
-                    itemBuilder: (context, index) => const ItemWaiterShimmer(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(AppLocalizations.of(context)!.errorRetrievingData),
-                  );
-                } else {
-                  if (snapshot.data == null) {
-                    return Center(
-                      child: Text('No data available'),
+                future: _fetchWaitersByZoneId(widget.zoneId) ,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return ListView.separated(
+                      itemCount: 5,
+                      separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        return const ItemWaiterShimmer();
+                      },
                     );
-                  } else if (snapshot.data!.id == null) {
-                    return Center(
+                  } else if (snapshot.hasError) {
+                    return  Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
@@ -167,12 +161,35 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
                             const Icon(
                               Icons.group_off_rounded,
                               size: 150,
-                              color: Colors.grey,
+                              color: gray,
                             ),
                             const SizedBox(height: 20),
                             Text(
                               AppLocalizations.of(context)!.thisZoneHasNoServers,
-                              style: const TextStyle(fontSize: 22, color: Colors.grey),
+                              style: const TextStyle(fontSize: 22, color: gray),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return  Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.group_off_rounded,
+                              size: 150,
+                              color: gray,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              AppLocalizations.of(context)!.thisZoneHasNoServers,
+                              style: const TextStyle(fontSize: 22, color: gray),
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -180,135 +197,57 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
                       ),
                     );
                   } else {
+
                     final waiters = snapshot.data!;
-                    return Column(
-                      children: [
-                        ItemWaiter(
-                          user: waiters,
-                          onDelete: () async {
-                            await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return CustomAlertDialog(
-                                  title: AppLocalizations.of(context)!.deleteWaiterFromZone,
-                                  message: AppLocalizations.of(context)!.confirmWaiterDeletion,
-                                  submit: () {
-                                    _waitersViewModel.removeServerFromZone(waiters.id!, widget.zoneId)
-                                        .then((space) async {
-                                      setState(() {
-                                        _fetchWaitersByZoneId(widget.zoneId);
-                                        _fetchWaitersBySpaceId();
-                                      });
-                                      Navigator.of(context).pop();
-                                    }).catchError((error) {});
-                                  },
-                                  cancel: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  textSubmitButton: AppLocalizations.of(context)!.delete,
-                                  textCancelButton: AppLocalizations.of(context)!.cancel,
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        SizedBox(height: 10),
-                      ],
-                    );
+                    return ListView.builder(
+                        itemCount: waiters.length,
+                        itemBuilder: (context, index) {
+                          User waiter = waiters[index];
+
+                          return  Column(
+                            children: [
+
+                              ItemWaiter(  user: waiter, onDelete: () async {
+                                await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return CustomAlertDialog(
+                                          title: AppLocalizations.of(context)!.deleteWaiterFromZone,
+                                          message: AppLocalizations.of(context)!.confirmWaiterDeletion,
+                                          submit: () {
+                                            _waitersViewModel.removeServerFromZone(waiter.id!, widget.zoneId).then((space) async {
+
+
+                                              setState(() {
+                                                _fetchWaitersByZoneId(widget.zoneId);
+                                                _fetchWaitersBySpaceId();
+                                              });
+                                              Navigator.of(context).pop();
+                                            }).catchError((error) {
+
+                                            });
+                                          },
+                                          cancel: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          textSubmitButton: AppLocalizations.of(context)!.delete,
+                                          textCancelButton: AppLocalizations.of(context)!.cancel);
+                                    });
+                              },),
+                              index!=waiters.length-1?Container(
+                                color: lightGray,
+                                height: 10,
+                              ):SizedBox()
+                            ],
+
+
+                          );
+
+
+
+                        });
                   }
-                }
-              },
-            ),
-              // FutureBuilder(
-            // future: _fetchWaitersByZoneId(widget.zoneId),
-            //         builder: (BuildContext context, AsyncSnapshot snapshot) {
-            //         if (snapshot.connectionState == ConnectionState.waiting) {
-            //     return
-            //       ListView.separated(
-            //           itemCount: 5,
-            //           separatorBuilder: (context, index) => const SizedBox(height: 10),
-            //           itemBuilder: (context, index) => const ItemWaiterShimmer(),
-            //             );
-            //         } else if (snapshot.hasError) {
-            //             return Center(
-            //             child: Text(AppLocalizations.of(context)!.errorRetrievingData),
-            //             );
-            //     } else {
-            //           if (snapshot.data == null) {
-            //             return Center(
-            //               child: Text('No data available'),
-            //             );
-            //           } else if (snapshot.data is User) {
-            //             return Center(
-            //               child: Padding(
-            //                 padding: const EdgeInsets.all(20.0),
-            //                 child: Column(
-            //                   crossAxisAlignment: CrossAxisAlignment.center,
-            //                   mainAxisAlignment: MainAxisAlignment.center,
-            //                   children: [
-            //                     const Icon(
-            //                       Icons.group_off_rounded,
-            //                       size: 150,
-            //                       color: gray,
-            //                     ),
-            //                     const SizedBox(height: 20),
-            //                     Text(
-            //                       AppLocalizations.of(context)!
-            //                           .thisZoneHasNoServers,
-            //                       style: const TextStyle(
-            //                           fontSize: 22, color: gray),
-            //                       textAlign: TextAlign.center,
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //             );
-            //           } else {
-            //             final waiters = widget.zone.server!;
-            //             return Column(
-            //               children: [
-            //                 ItemWaiter(
-            //                   user: waiters,
-            //                   onDelete: () async {
-            //                     await showDialog(
-            //                       context: context,
-            //                       builder: (BuildContext context) {
-            //                         return CustomAlertDialog(
-            //                           title: AppLocalizations.of(context)!
-            //                               .deleteWaiterFromZone,
-            //                           message: AppLocalizations.of(context)!
-            //                               .confirmWaiterDeletion,
-            //                           submit: () {
-            //                             _waitersViewModel
-            //                                 .removeServerFromZone(
-            //                                 waiters.id!, widget.zoneId)
-            //                                 .then((space) async {
-            //                               setState(() {
-            //                                 _fetchWaitersByZoneId(
-            //                                     widget.zoneId);
-            //                                 _fetchWaitersBySpaceId();
-            //                               });
-            //                               Navigator.of(context).pop();
-            //                             }).catchError((error) {});
-            //                           },
-            //                           cancel: () {
-            //                             Navigator.of(context).pop();
-            //                           },
-            //                           textSubmitButton: AppLocalizations.of(
-            //                               context)!.delete,
-            //                           textCancelButton: AppLocalizations.of(
-            //                               context)!.cancel,
-            //                         );
-            //                       },
-            //                     );
-            //                   },
-            //                 ),
-            //                 SizedBox(height: 10),
-            //               ],
-            //             );
-            //           }
-            //         }
-            //     }),
+                }),
           ),
         ],
       ):Center(

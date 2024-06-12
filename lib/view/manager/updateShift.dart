@@ -109,7 +109,7 @@ class _UpdateShiftPageState extends State<UpdateShiftPage> {
                   shift.startTime = startTimeController.text;
                   shift.endTime = endTimeController.text;
                 });
-                _shiftViewModel.updateShift(shift);
+                // _shiftViewModel.updateShift(shift);
                 Navigator.of(context).pop();
               },
             ),

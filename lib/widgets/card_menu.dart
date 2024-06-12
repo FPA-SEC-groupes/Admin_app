@@ -51,28 +51,25 @@ class _CardMenuState extends State<CardMenu> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (widget.product.hasActivePromotion == true && widget.product.percentage != null)
-                  PromotionWidget(product: widget.product)
-                else
                   Text("${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}"),
-                GestureDetector(
-                  onTap: widget.onTap,
-                  child: widget.product.hasActivePromotion!
-                      ? Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: Colors.orange,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        "- ${widget.product.percentage}%",
-                        style: const TextStyle(color: Colors.white),
-                      ))
-                      : const Icon(
-                    Icons.local_offer_rounded,
-                    color: Colors.orange,
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: widget.onTap,
+                //   child: widget.product.hasActivePromotion!
+                //       ? Container(
+                //       padding: EdgeInsets.all(5),
+                //       decoration: BoxDecoration(
+                //         color: Colors.orange,
+                //         borderRadius: BorderRadius.circular(8),
+                //       ),
+                //       child: Text(
+                //         "- ${widget.product.promotions.percentage}%",
+                //         style: const TextStyle(color: Colors.white),
+                //       ))
+                //       : const Icon(
+                //     Icons.local_offer_rounded,
+                //     color: Colors.orange,
+                //   ),
+                // ),
               ],
             )
           ],
@@ -82,40 +79,4 @@ class _CardMenuState extends State<CardMenu> {
   }
 }
 
-class PromotionWidget extends StatelessWidget {
-  final Product product;
 
-  PromotionWidget({required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    double originalPrice = product.price;
-    double discountedPrice = originalPrice;
-    if (product.hasActivePromotion == true && product.percentage != null) {
-      discountedPrice = originalPrice - (originalPrice * (product.percentage! / 100));
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '${discountedPrice.toStringAsFixed(2)} ${AppLocalizations.of(context)!.tunisianDinar}',
-          style: TextStyle(
-            color: Colors.red,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(width: 10),
-        Text(
-          '${originalPrice.toString()} ${AppLocalizations.of(context)!.tunisianDinar}',
-          style: TextStyle(
-            color: Colors.grey,
-            fontSize: 18,
-            decoration: TextDecoration.lineThrough,
-          ),
-        ),
-      ],
-    );
-  }
-}

@@ -6,6 +6,7 @@ import 'package:hello_way/models/shift.dart';
 import 'package:hello_way/view_model/ShiftViewModel.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 import '../../utils/const.dart';
 
@@ -21,6 +22,7 @@ class ShiftDialogPage extends StatefulWidget {
 }
 
 class _ShiftDialogPageState extends State<ShiftDialogPage> {
+  final _formKey = GlobalKey<FormState>();
   late TextEditingController _startTimeController;
   late TextEditingController _endTimeController;
   late String _selectedDuration;
@@ -59,34 +61,71 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              DateFormat('EEEE, MMM d, yyyy').format(widget.date),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            _buildTimePickerField(
-              context: context,
-              controller: _startTimeController,
-              label: AppLocalizations.of(context)!.startTime,
-            ),
-            SizedBox(height: 16),
-            _buildTimePickerField(
-              context: context,
-              controller: _endTimeController,
-              label: AppLocalizations.of(context)!.endTime,
-            ),
-            SizedBox(height: 16),
-            _buildDurationDropdown(),
-            if (_selectedDuration != AppLocalizations.of(context)!.oneDay) _buildDayOffDropdown(),
-            Spacer(),
-            ElevatedButton(
-              onPressed: _saveShift,
-              child: Text(AppLocalizations.of(context)!.save),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                DateFormat('EEEE, MMM d, yyyy').format(widget.date),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 16),
+              _buildTimePickerField(
+                context: context,
+                controller: _startTimeController,
+                label: AppLocalizations.of(context)!.startTime,
+                validator: MultiValidator([
+                  RequiredValidator(
+                      errorText: AppLocalizations.of(context)!.inputRequiredError),
+                ]),
+              ),
+              SizedBox(height: 16),
+              _buildTimePickerField(
+                context: context,
+                controller: _endTimeController,
+                label: AppLocalizations.of(context)!.endTime,
+                validator: MultiValidator([
+                  RequiredValidator(
+                      errorText: AppLocalizations.of(context)!.inputRequiredError),
+                ]),
+              ),
+              SizedBox(height: 16),
+              _buildDropdown(
+                label: AppLocalizations.of(context)!.duration,
+                value: _selectedDuration,
+                items: initListDurations(context),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedDuration = newValue!;
+                    if (_selectedDuration == AppLocalizations.of(context)!.oneDay) {
+                      _selectedDayOff = AppLocalizations.of(context)!.none;
+                    }
+                  });
+                },
+              ),
+              if (_selectedDuration != AppLocalizations.of(context)!.oneDay)
+                _buildDropdown(
+                  label: AppLocalizations.of(context)!.dayOff,
+                  value: _selectedDayOff,
+                  items: initListDaysOff(context),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedDayOff = newValue!;
+                    });
+                  },
+                ),
+              Spacer(),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _saveShift();
+                  }
+                },
+                child: Text(AppLocalizations.of(context)!.save),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -96,13 +135,15 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
     required BuildContext context,
     required TextEditingController controller,
     required String label,
+    required String? Function(String?)? validator,
   }) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(),
       ),
+      validator: validator,
       onTap: () async {
         TimeOfDay? picked = await showTimePicker(
           context: context,
@@ -121,40 +162,31 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
     );
   }
 
-  Widget _buildDurationDropdown() {
-    return DropdownButton<String>(
-      value: _selectedDuration,
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedDuration = newValue!;
-          if (_selectedDuration == AppLocalizations.of(context)!.oneDay) {
-            _selectedDayOff = AppLocalizations.of(context)!.none;
-          }
-        });
-      },
-      items: initListDurations(context).map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
+  Widget _buildDropdown({
+    required String label,
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
           value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildDayOffDropdown() {
-    return DropdownButton<String>(
-      value: _selectedDayOff,
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedDayOff = newValue!;
-        });
-      },
-      items: initListDaysOff(context).map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+          isExpanded: true,
+          onChanged: onChanged,
+          items: items.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
