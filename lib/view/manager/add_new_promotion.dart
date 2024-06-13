@@ -5,6 +5,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/models/event.dart';
 import 'package:hello_way/models/product.dart';
 import 'package:hello_way/res/app_colors.dart';
+import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -167,8 +168,9 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                     child: FittedBox(
                         fit: BoxFit.fill,
                         child: widget.product!.images!.isNotEmpty
-                            ? Image.memory(
-                                base64.decode(widget.product!.images![widget.product!.images!.length-1].data))
+                            ? Image.network(baseUrl+productUrl+widget.product!.images![widget.product!.images!.length-1].fileName)
+                        // Image.memory(
+                        //         base64.decode(widget.product!.images![widget.product!.images!.length-1].data))
                             : const Icon(
                                 Icons.restaurant_menu_rounded,
                                 color: gray,

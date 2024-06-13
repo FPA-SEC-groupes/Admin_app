@@ -47,7 +47,7 @@ class User {
       email: json['email'],
       role: json['roles'],
       activated: json['activated'],
-      image: json['image']!=null? json['image']['data']:null,
+      image: json['image']!=null? json['image']['fileName']:null,
 
     );
   }

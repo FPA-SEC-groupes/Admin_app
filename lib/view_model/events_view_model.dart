@@ -112,23 +112,41 @@ class EventsViewModel {
       quality: 90,
     );
 
+    // Create a filename with a valid format
+    String timestamp = DateTime.now().toIso8601String().replaceAll(':', '-');
+    String validFileName = fileName.split('.').first + "_" + timestamp + "." + fileName.split('.').last;
+
     // Convert the compressed file to a multipart file
-    MultipartFile multipartFile = MultipartFile.fromBytes(compressedFile,
-        filename: fileName,
-        contentType: MediaType('image', fileName.split('.').last));
-    final formData = FormData.fromMap({'file': multipartFile});
-    var response = await dioInterceptor.dio.post(
-      uri,
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+    MultipartFile multipartFile = MultipartFile.fromBytes(
+      compressedFile,
+      filename: validFileName,
+      contentType: MediaType('image', fileName.split('.').last),
     );
-    if (response.statusCode == 200) {
-      print('Image added successfully!');
-    } else {
-      print('Failed to add image. Error code: ${response.statusCode}');
-      throw Exception("Failed to add image.");
+    final formData = FormData.fromMap({'file': multipartFile});
+
+    try {
+      var response = await dioInterceptor.dio.post(
+        uri,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      if (response.statusCode == 200) {
+        print('Image added successfully!');
+      } else {
+        print('Failed to add image. Error code: ${response.statusCode}');
+        throw Exception("Failed to add image.");
+      }
+      print('success');
+    } on DioError catch (e) {
+      print('DioError: ${e.message}');
+      if (e.response != null) {
+        print('DioError Response: ${e.response?.data}');
+      }
+      throw e;
+    } catch (e) {
+      print('Unexpected error: $e');
+      throw e;
     }
-    print('success');
   }
 
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/view/manager/updateSpace.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -57,9 +58,10 @@ class _DetailsSpaceState extends State<DetailsSpace> {
           child: ClipRRect(
             child: FittedBox(
               fit: BoxFit.fill,
-              child: Image.memory(
-                base64.decode(_space.images![index].data),
-              ),
+              child: Image.network(baseUrl+spaceUrl+_space!.images![index].fileName)
+              // Image.memory(
+              //   base64.decode(_space.images![index].data),
+              // ),
             ),
           ),
         ),

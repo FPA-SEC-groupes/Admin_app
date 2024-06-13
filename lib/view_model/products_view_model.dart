@@ -3,37 +3,35 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:hello_way/models/product.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../interceptors/dio_interceptor.dart';
 import '../response/ProductResponse.dart';
 import '../utils/const.dart';
-import 'package:http_parser/http_parser.dart';
 
 class ProductsViewModel {
   final DioInterceptor dioInterceptor;
   ProductsViewModel(BuildContext context)
       : dioInterceptor = DioInterceptor(context);
+
   Future<ProductResponse> addProductByIdCategory(
       String categoryId, Product product) async {
+    final url = '$baseUrl/api/products/add/id_categorie/$categoryId';
+    final response = await dioInterceptor.dio.post(
+      url,
+      data: product.toJson(),
+    );
 
-      // Define the API endpoint URL
-      final url = '$baseUrl/api/products/add/id_categorie/$categoryId';
-      final response = await dioInterceptor.dio.post(
-        url,
-        data: product.toJson(),
-      );
-
-      if (response.statusCode == 200) {
-
-        var product = ProductResponse.fromJson(response.data);
-        return product;
-      } else {
-        print('Failed to add product. Error code: ${response.statusCode}');
-        throw Exception("Failed to add product.");
-      }
+    if (response.statusCode == 200) {
+      var product = ProductResponse.fromJson(response.data);
+      return product;
+    } else {
+      print('Failed to add product. Error code: ${response.statusCode}');
+      throw Exception("Failed to add product.");
+    }
   }
 
   Future<void> uploadImage(File image, int productId) async {
@@ -67,25 +65,22 @@ class ProductsViewModel {
       print('Failed to add image. Error code: ${response.statusCode}');
       throw Exception("Failed to add image.");
     }
-    print('success');
   }
+
   Future<Product> updateProduct(Product product, int productId) async {
+    String url = '$baseUrl/api/products/update/$productId';
+    // Assuming your Product model has a toJson() method to convert it to a Map
+    Response response =
+    await dioInterceptor.dio.put(url, data: product.toJson());
 
-      String url = '$baseUrl/api/products/update/$productId';
-     // Assuming your Product model has a toJson() method to convert it to a Map
-
-      Response response = await dioInterceptor.dio.put(url, data: product.toJson());
-
-      if (response.statusCode == 200) {
-        var product = Product.fromJson(response.data);
-        return product;
-      } else {
-        print('Failed to update product. Error code: ${response.statusCode}');
-        throw Exception("Failed to update product.");
-      }
-
+    if (response.statusCode == 200) {
+      var product = Product.fromJson(response.data);
+      return product;
+    } else {
+      print('Failed to update product. Error code: ${response.statusCode}');
+      throw Exception("Failed to update product.");
+    }
   }
-
 
   Future<void> deleteProduct(int id) async {
     final String url = '$baseUrl/api/products/delete/$id';

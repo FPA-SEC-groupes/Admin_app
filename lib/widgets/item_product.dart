@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/product.dart';
 import 'package:hello_way/res/app_colors.dart';
+import 'package:hello_way/utils/const.dart';
 
 import '../view_model/products_view_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,7 +36,8 @@ class _ItemProductState extends State<ItemProduct> {
               fit: BoxFit.fill,
               child: widget.product.images!.isEmpty
                   ? Icon(Icons.image_outlined, color: gray.withOpacity(0.5))
-                  : Image.memory(base64.decode(widget.product.images![widget.product.images!.length-1].data)),
+                  : Image.network(baseUrl+productUrl+widget.product.images![widget.product.images!.length-1].fileName),
+              // Image.memory(base64.decode(widget.product.images![widget.product.images!.length-1].data)),
             ),
           ),
           Padding(

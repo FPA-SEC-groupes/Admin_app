@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/view_model/profile_view_model.dart';
 
 import 'package:provider/provider.dart';
@@ -126,6 +127,7 @@ class _ProfileState extends State<Profile> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final user = snapshot.data!;
+                    print('$baseUrl + $userUrl + ${user.image}');
                     return Column(
                       children: [
                         Center(
@@ -162,11 +164,12 @@ class _ProfileState extends State<Profile> {
                                                               color: Colors.white,
                                                               size: 100,
                                                             )
-                                                          : Image.memory(
-                                                              base64.decode(
-                                                                  user.image!),
-                                                              fit: BoxFit.cover,
-                                                            ),
+                                                          :Image.network('$baseUrl$userUrl${user.image}')
+                                                  // Image.memory(
+                                                  //             base64.decode(
+                                                  //                 user.image!),
+                                                  //             fit: BoxFit.cover,
+                                                  //           ),
                                                 ),
                                               ),
                                             ),

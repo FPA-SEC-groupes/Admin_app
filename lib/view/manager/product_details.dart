@@ -161,11 +161,13 @@ class _ProductDetailsState extends State<ProductDetails>
                                   Icons.restaurant_menu_rounded,
                                   color: gray,
                                 ))
-                              : Image.memory(
-                                  base64.decode(
-                                      widget.product.images![widget.product.images!.length-1].data),
-                                  fit: BoxFit.cover,
-                                )),
+                              : Image.network(baseUrl+productUrl+widget.product!.images![widget.product!.images!.length-1].fileName)
+                      // Image.memory(
+                      //             base64.decode(
+                      //                 widget.product.images![widget.product.images!.length-1].data),
+                      //             fit: BoxFit.cover,
+                      //           )
+                  ),
 
             Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 20),

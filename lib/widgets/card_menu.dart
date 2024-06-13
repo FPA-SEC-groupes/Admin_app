@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:hello_way/utils/const.dart';
 
 class CardMenu extends StatefulWidget {
   final Product product;
@@ -13,6 +14,7 @@ class CardMenu extends StatefulWidget {
 }
 
 class _CardMenuState extends State<CardMenu> {
+@override
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +36,9 @@ class _CardMenuState extends State<CardMenu> {
                   Icons.image_outlined,
                   color: Colors.grey.withOpacity(0.5),
                 )
-                    : Image.memory(
-                    base64.decode(widget.product.images![widget.product.images!.length - 1].data)),
+                    : Image.network(baseUrl+productUrl+widget.product.images![widget.product.images!.length - 1].fileName)
+                // Image.memory(
+                //     base64.decode(widget.product.images![widget.product.images!.length - 1].data)),
               ),
             ),
             Padding(

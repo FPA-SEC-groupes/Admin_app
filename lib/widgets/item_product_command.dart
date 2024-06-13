@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hello_way/utils/const.dart';
 
 import '../res/app_colors.dart';
 import '../response/product_with_quantities.dart';
@@ -33,7 +34,8 @@ class ItemProductCommand extends StatelessWidget {
                   Icons.image_outlined,
                   color: gray.withOpacity(0.5),
                 )
-                    : Image.memory(base64.decode(productWithQuantities.product.images![productWithQuantities.product.images!.length-1].data)),
+                    : Image.network(baseUrl+productUrl+productWithQuantities.product.images![productWithQuantities.product.images!.length-1].fileName)
+                // Image.memory(base64.decode(productWithQuantities.product.images![productWithQuantities.product.images!.length-1].data)),
               ),
             ),
           ),

@@ -58,26 +58,36 @@ class ProfileViewModel {
     );
 
     // Convert the compressed file to a multipart file
-    MultipartFile multipartFile = MultipartFile.fromBytes(compressedFile,
-        filename: fileName,
-        contentType: MediaType('image', fileName.split('.').last));
-    final formData = FormData.fromMap({'image': multipartFile});
-    var response = await dioInterceptor.dio.post(
-      url,
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+    MultipartFile multipartFile = MultipartFile.fromBytes(
+      compressedFile,
+      filename: fileName,
+      contentType: MediaType('image', fileName.split('.').last),
     );
-    if (response.statusCode == 200) {
-      print('Image added successfully!');
-    } else {
-      // Category addition failed, display an error message to the user
-      print('Failed to add image. Error code: ${response.statusCode}');
-      throw Exception("Failed to add image.");
-    }
-    print('success');
-  }
+    final formData = FormData.fromMap({'image': multipartFile});
 
-  Future<void> logout() async {
+    try {
+      var response = await dioInterceptor.dio.post(
+        url,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      if (response.statusCode == 200) {
+        print('Image added successfully!');
+      } else {
+        print('Failed to add image. Error code: ${response.statusCode}');
+        throw Exception("Failed to add image.");
+      }
+    } on DioError catch (e) {
+      print('DioError: ${e.message}');
+      if (e.response != null) {
+        print('DioError Response: ${e.response?.data}');
+      }
+      throw e;
+    } catch (e) {
+      print('Unexpected error: $e');
+      throw e;
+    }
+  }  Future<void> logout() async {
     final url = '$baseUrl/api/auth/signout';
     try {
       final response = await dioInterceptor.dio.post(

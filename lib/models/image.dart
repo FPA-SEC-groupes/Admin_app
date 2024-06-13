@@ -2,13 +2,13 @@ class ImageModel {
   String id;
   String fileName;
   String fileType;
-  String data;
+  // String data;
 
   ImageModel({
     required this.id,
     required this.fileName,
     required this.fileType,
-    required this.data,
+    // required this.data,
   });
 
 
@@ -17,7 +17,7 @@ class ImageModel {
       id: json['id'],
       fileName: json['fileName'],
       fileType: json['fileType'],
-      data: json['data'],
+      // data: json['data'],
 
     );
   }
@@ -25,7 +25,7 @@ class ImageModel {
     'id': id,
     'fileName': fileName,
     'fileType': fileType,
-    'data': data,
+    // 'data': data,
 
   };
 }

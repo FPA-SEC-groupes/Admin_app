@@ -3,6 +3,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //const baseUrl="https://full-bell-production.up.railway.app";
 
 const baseUrl = "http://192.168.1.193:8082";
+const productUrl="/photos/product/";
+const spaceUrl ="/photos/space/";
+const eventUrl ="/photos/event/";
+const userUrl ="/photos/user/";
 const categoryId = "CategoryId";
 const authentifiedUserId = "AuthentifiedUserId";
 const roleKey = "Role";

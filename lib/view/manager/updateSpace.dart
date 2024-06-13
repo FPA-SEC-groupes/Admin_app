@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/view_model/products_view_model.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:provider/provider.dart';
@@ -106,9 +107,10 @@ class _UpdateSpaceState extends State<UpdateSpace> {
           child: ClipRRect(
             child: FittedBox(
               fit: BoxFit.fill,
-              child: Image.memory(
-                base64.decode(widget.space.images![index].data),
-              ),
+              child: Image.network(baseUrl+spaceUrl+widget.space.images![index].fileName)
+              // Image.memory(
+              //   base64.decode(widget.space.images![index].data),
+              // ),
             ),
           ),
         ),
