@@ -55,24 +55,24 @@ class _CardMenuState extends State<CardMenu> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                   Text("${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}"),
-                // GestureDetector(
-                //   onTap: widget.onTap,
-                //   child: widget.product.hasActivePromotion!
-                //       ? Container(
-                //       padding: EdgeInsets.all(5),
-                //       decoration: BoxDecoration(
-                //         color: Colors.orange,
-                //         borderRadius: BorderRadius.circular(8),
-                //       ),
-                //       child: Text(
-                //         "- ${widget.product.promotions.percentage}%",
-                //         style: const TextStyle(color: Colors.white),
-                //       ))
-                //       : const Icon(
-                //     Icons.local_offer_rounded,
-                //     color: Colors.orange,
-                //   ),
-                // ),
+                GestureDetector(
+                  onTap: widget.onTap,
+                  child: widget.product.hasActivePromotion!
+                      ? Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "- ${widget.product.percentage}%",
+                        style: const TextStyle(color: Colors.white),
+                      ))
+                      : const Icon(
+                    Icons.local_offer_rounded,
+                    color: Colors.orange,
+                  ),
+                ),
               ],
             )
           ],

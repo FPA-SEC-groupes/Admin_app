@@ -165,11 +165,6 @@ class _ProfileState extends State<Profile> {
                                                               size: 100,
                                                             )
                                                           :Image.network('$baseUrl$userUrl${user.image}')
-                                                  // Image.memory(
-                                                  //             base64.decode(
-                                                  //                 user.image!),
-                                                  //             fit: BoxFit.cover,
-                                                  //           ),
                                                 ),
                                               ),
                                             ),

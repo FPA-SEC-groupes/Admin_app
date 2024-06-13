@@ -233,107 +233,96 @@ class _AddSpaceState extends State<AddSpace> {
   /// Returns the next button.
   Widget nextButton(String text) {
     return GestureDetector(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 20),
-          child: Row(
-            children: [
-              Text(
-                text,
-                style: const TextStyle(
-                    color: orange, fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              const Icon(
-                Icons.navigate_next_rounded,
-                color: orange,
-              )
-            ],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 20),
+        child: Row(
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                  color: orange, fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            const Icon(
+              Icons.navigate_next_rounded,
+              color: orange,
+            )
+          ],
         ),
-        onTap: () async
-        {
-          var category;
+      ),
+      onTap: () async {
+        var category;
+        final userId = await secureStorage.readData(authentifiedUserId);
 
-          final userId = await secureStorage.readData(authentifiedUserId);
-
-          if (activeStep == 0) {
-            if (_addSpaceFormKey.currentState!.validate()) {
-              _addSpaceFormKey.currentState!.save();
-              if (_selectedCategorie == "Restaurant") {
-                category = 1;
-              }
-              else if (_selectedCategorie == "Bar") {
-                category = 3;
-              }
-              else if (_selectedCategorie == "Café") {
-                category = 2;
-              }
-
-              print(category);
-              setState(() {
-                activeStep++;
-              });
-            }
-          }
-          else if (activeStep == 1) {
-            setState(() {
-              activeStep++;
-            });
-          } else if (activeStep == 2) {
-            setState(() {
-              activeStep++;
-            });
-            _selectedRadioValue == "gps" ?
-            await getLocation() : print("test");
-
-          }
-          else if (activeStep == 3) {
+        if (activeStep == 0) {
+          if (_addSpaceFormKey.currentState!.validate()) {
+            _addSpaceFormKey.currentState!.save();
             if (_selectedCategorie == "Restaurant") {
               category = 1;
-            }
-            else if (_selectedCategorie == "Bar") {
+            } else if (_selectedCategorie == "Bar") {
+              category = 3;
+            } else if (_selectedCategorie == "Café") {
               category = 2;
             }
-            else if (_selectedCategorie == "Café") {
-              category = 3;
-            }
-            for (var wifiController in wifiControllers) {
-              wifis.add(WifiInfo(
+            print(category);
+            setState(() {
+              activeStep++;
+            });
+          }
+        } else if (activeStep == 1) {
+          setState(() {
+            activeStep++;
+          });
+        } else if (activeStep == 2) {
+          setState(() {
+            activeStep++;
+          });
+          _selectedRadioValue == "gps" ? await getLocation() : print("test");
+        } else if (activeStep == 3) {
+          if (_selectedCategorie == "Restaurant") {
+            category = 1;
+          } else if (_selectedCategorie == "Bar") {
+            category = 2;
+          } else if (_selectedCategorie == "Café") {
+            category = 3;
+          }
+          for (var wifiController in wifiControllers) {
+            wifis.add(WifiInfo(
               ssid: wifiController['name']!.text.trim(),
               password: wifiController['password']!.text.trim(),
-              ));
-              }
-              print(category);
-              Space space = Space(
-                  title: _spaceNameController.text.trim(),
-                  latitude: _selectedRadioValue == "gps" ? _currentPosition!
-                      .latitude : 0.0,
-                  longitude: _selectedRadioValue == "gps" ? _currentPosition!
-                      .longitude : 0.0,
-                  description: _descriptionController.text.trim().toString(),
-                  phoneNumber: int.parse(_phoneNumberController.text.trim()),
-                  surfaceEnM2: double.parse(_surfaceController.text),
-                  numberOfRatings: 0,
-                  validation: _selectedRadioValue,
-                  wifis: wifis);
-              print(space.toJson());
-              await _spaceViewModel.addSpaceByIdManager(
-                  space, int.parse(userId!), category).then((space) async {
-                await _spaceViewModel.uploadImages(_images, space.id!).then((
-                    _) async {
-                  Navigator.pushNamed(context, managerBottomNavigationRoute);
-                }).catchError((error) {
-
-                });
-              });
-              //     .catchError((error) {
-              //   print(error);
-              // });
-            }
-        });
+            ));
+          }
+          print(category);
+          Space space = Space(
+            title: _spaceNameController.text.trim(),
+            latitude: _selectedRadioValue == "gps" ? _currentPosition!.latitude : 0.0,
+            longitude: _selectedRadioValue == "gps" ? _currentPosition!.longitude : 0.0,
+            description: _descriptionController.text.trim().toString(),
+            phoneNumber: int.parse(_phoneNumberController.text.trim()),
+            surfaceEnM2: double.parse(_surfaceController.text),
+            numberOfRatings: 0,
+            validation: _selectedRadioValue,
+            wifis: wifis,
+          );
+          print(space.toJson());
+          try {
+            final addedSpace = await _spaceViewModel.addSpaceByIdManager(
+                space, int.parse(userId!), category);
+            await _spaceViewModel.uploadImages(_images, addedSpace.id!).then((_) async {
+              Navigator.pushNamed(context, managerBottomNavigationRoute);
+            }).catchError((error) {
+              print("Image upload error: $error");
+            });
+          } catch (e) {
+            print("Error adding space: $e");
+          }
+        }
+      },
+    );
   }
+
 
   /// Returns the previous button.
   Widget previousButton() {
@@ -425,8 +414,6 @@ class _AddSpaceState extends State<AddSpace> {
                       ),
                       items:
                           listCategories.map((item) => DropdownMenuItem<String>(
-
-
                                 value: item.values.first,
                                 child: Text(
                                   item.keys.first,

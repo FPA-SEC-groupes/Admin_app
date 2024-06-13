@@ -88,6 +88,11 @@ class _LoginState extends State<Login> {
                             prefixIcon: const Icon(Icons.person),
                             contentPadding: const EdgeInsets.all(10),
                             validator: MultiValidator([
+                              LengthRangeValidator(
+                                  min: 4,
+                                  max: 20,
+                                  errorText:
+                                  AppLocalizations.of(context)!.inputRequiredError),
                               RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
                             ]),
                           ),
