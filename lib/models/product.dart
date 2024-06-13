@@ -52,7 +52,7 @@ class Product {
       categorie: json['categorie'],
       available: json['available'],
       hasActivePromotion: json['hasActivePromotion'],
-      percentage: percentage,
+      percentage: json['percentage'],
       promotionId: promotionId,
       images: images,
       promotions: promotions,
