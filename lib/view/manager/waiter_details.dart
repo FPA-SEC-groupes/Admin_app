@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hello_way/models/user.dart';
+import 'package:hello_way/utils/routes.dart';
 import 'package:hello_way/view/manager/list_shift.dart';
+import 'package:hello_way/view/manager/list_waiters.dart';
 import 'package:hello_way/view/manager/updateShift.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:intl/intl.dart';
@@ -74,7 +76,12 @@ class _WaiterDetailsState extends State<WaiterDetails> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
+      return true;
+    },
+    child: Scaffold(
       appBar: Toolbar(
         title: "${widget.waiter.name!} ${widget.waiter.lastname!}",
       ),
@@ -290,7 +297,7 @@ class _WaiterDetailsState extends State<WaiterDetails> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ListShiftsByWaiterId(waiterId: widget.waiter.id,),
+                    builder: (context) => ListShiftsByWaiterId(waiter: widget.waiter,),
                   ),
                 );
               },
@@ -348,6 +355,7 @@ class _WaiterDetailsState extends State<WaiterDetails> {
           ),
         ),
       ),
+    )
     );
   }
 }

@@ -68,6 +68,7 @@ dependencies:
   flutter_time_picker_spinner: ^2.0.0
   flutter_speed_dial: ^6.0.0
   multi_image_picker_plus: ^0.0.4
+  web_socket_channel: ^2.1.0
 
 
 dev_dependencies:

@@ -245,5 +245,8 @@
     "saturday": "Samedi",
     "sunday": "Dimanche",
     "duration": "Durée",
-    "dayOff": "Jour de congé"
+    "dayOff": "Jour de congé",
+    "updateDayOff": "mettre à jour le jour de congé",
+    "pleaseSelectShift": "Veuillez d'abord sélectionner une date de la semaine avec décalage",
+    "isDateTodayOrFuture": "La date sélectionnée est dans le passé"
 }

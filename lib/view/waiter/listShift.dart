@@ -32,6 +32,7 @@ class _WaiterShiftPageState extends State<WaiterShiftPage> {
       setState(() {
         _shifts = fetchedShifts;
       });
+      print(_shifts.toString());
     } catch (e) {
       print("Error fetching shifts: $e");
     }
@@ -83,7 +84,7 @@ class _WaiterShiftPageState extends State<WaiterShiftPage> {
               itemBuilder: (context, index) {
                 Shift shift = _selectedShifts[index];
                 return ListTile(
-                  title: Text('${shift.date} (${shift.dayOfWeek})'),
+                  title: Text('${shift.date} (${shift.type})'),
                   subtitle: Text('${shift.startTime} - ${shift.endTime}'),
                 );
               },

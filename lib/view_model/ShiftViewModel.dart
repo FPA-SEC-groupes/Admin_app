@@ -19,7 +19,7 @@ class ShiftViewModel {
     try {
       // Convert the list of Shift objects to JSON
       List<Map<String, dynamic>> shiftListJson = shifts.map((shift) => shift.toJson()).toList();
-
+      print(shiftListJson);
       Response response = await dioInterceptor.dio.post(url, data: {'shifts': shiftListJson});
 
       if (response.statusCode == 200) {
@@ -103,7 +103,6 @@ class ShiftViewModel {
   }
   Future<void> updateDayOff(int waiterId, String newDayOff, String startDate, int durationInWeeks) async {
     final url = '$baseUrl/api/shiftsystems/updateDayOff';
-    print('Waiter ID: $waiterId, New Day Off: $newDayOff, Start Date: $startDate, Duration: $durationInWeeks');
     final data={
       'waiterId': waiterId,
       'newDayOff': newDayOff,

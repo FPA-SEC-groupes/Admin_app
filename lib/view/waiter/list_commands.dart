@@ -6,6 +6,7 @@ import 'package:hello_way/shimmer/item_command_shimmer.dart';
 import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/widgets/command_status_tab_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../services/network_service.dart';
 import '../../view_model/commands_view_model.dart';
@@ -24,6 +25,29 @@ class _ListCommandsState extends State<ListCommands> {
   late CommandsViewModel _listCommandsViewModel;
   int selectedStatusIndex = 0;
   String status = "ALL";
+  late WebSocketChannel channel;
+
+  @override
+  void initState() {
+    super.initState();
+    _listCommandsViewModel = CommandsViewModel(context);
+    _initializeWebSocket();
+    getCommandsByWaiterId(status);
+  }
+
+  void _initializeWebSocket() {
+    channel = WebSocketChannel.connect(
+      Uri.parse('ws:$Url/ws/commands'),
+    );
+
+    channel.stream.listen((message) {
+      // Handle the incoming WebSocket messages
+      // and refresh the command list
+      setState(() {
+        getCommandsByWaiterId(status);
+      });
+    });
+  }
 
   Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
     List<CommandWithNumTable> products =
@@ -37,11 +61,9 @@ class _ListCommandsState extends State<ListCommands> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    _listCommandsViewModel = CommandsViewModel(context);
-    getCommandsByWaiterId(status);
-    super.initState();
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   @override
@@ -77,6 +99,7 @@ class _ListCommandsState extends State<ListCommands> {
               }
               setState(() {
                 selectedStatusIndex = index;
+                getCommandsByWaiterId(status);
               });
             },
             selectedIndex: selectedStatusIndex,

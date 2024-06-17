@@ -249,7 +249,10 @@
     "saturday": "Saturday",
     "sunday": "Sunday",
     "duration": "Duration",
-    "dayOff": "Day Off"
+    "dayOff": "Day Off",
+    "updateDayOff":"update dayOff",
+    "pleaseSelectShift": "Please select a date of week have shift first",
+    "isDateTodayOrFuture": "selected Date is in the past"
 }
 
 

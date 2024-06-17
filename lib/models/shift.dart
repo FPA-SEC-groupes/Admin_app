@@ -1,7 +1,7 @@
 class Shift {
   final int? shiftId;
   final int waiterId;
-  final String dayOfWeek;
+  final String type;
   final String date;
   String startTime; // Removed `late final` to allow mutability
   String endTime;   // Removed `late final` to allow mutability
@@ -9,7 +9,7 @@ class Shift {
   Shift({
     this.shiftId,
     required this.waiterId,
-    required this.dayOfWeek,
+    required this.type,
     required this.date,
     required this.startTime,
     required this.endTime,
@@ -19,7 +19,7 @@ class Shift {
     return Shift(
       shiftId: json['id'] as int?,
       waiterId: json['waiter']['id'] as int,
-      dayOfWeek: json['dayOfWeek'] as String,
+      type: json['type'] as String,
       date: json['date'] as String,
       startTime: json['startTime'] as String,
       endTime: json['endTime'] as String,
@@ -30,7 +30,7 @@ class Shift {
     return {
       'shiftId': shiftId,
       'waiterId': waiterId,
-      'dayOfWeek': dayOfWeek,
+      'type': type,
       'date': date,
       'startTime': startTime,
       'endTime': endTime,
@@ -38,6 +38,6 @@ class Shift {
   }
   @override
   String toString() {
-    return 'Shift(waiterId: $waiterId, dayOfWeek: $dayOfWeek, date: $date, startTime: $startTime, endTime: $endTime)';
+    return 'Shift(waiterId: $waiterId, type: $type, date: $date, startTime: $startTime, endTime: $endTime)';
   }
 }

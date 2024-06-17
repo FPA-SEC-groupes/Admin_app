@@ -8,10 +8,10 @@ import 'package:intl/intl.dart';
 import '../../utils/const.dart';
 class UpadateDayOff extends StatefulWidget {
   final date;
-  final  waiterId;
+  final waiter;
   final Shift? shiftToUpdate;
 
-  const UpadateDayOff({Key? key, required this.date, required this.waiterId, this.shiftToUpdate}) : super(key: key);
+  const UpadateDayOff({Key? key, required this.date, required this.waiter, this.shiftToUpdate}) : super(key: key);
 
   @override
   State<UpadateDayOff> createState() => _UpadateDayOffState();
@@ -33,6 +33,7 @@ class _UpadateDayOffState extends State<UpadateDayOff> {
     shiftViewModel = ShiftViewModel(context);
     _startTimeController = TextEditingController(text: widget.shiftToUpdate?.startTime ?? '');
     _endTimeController = TextEditingController(text: widget.shiftToUpdate?.endTime ?? '');
+    print(widget.date);
   }
 
   @override
@@ -123,84 +124,99 @@ class _UpadateDayOffState extends State<UpadateDayOff> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: []
-      ),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildDropdown(
-              label: AppLocalizations.of(context)!.duration,
-              value: _selectedDuration,
-              items: initListDurations(context),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedDuration = newValue!;
-                  if (_selectedDuration == AppLocalizations.of(context)!.oneDay) {
-                    _selectedDayOff = AppLocalizations.of(context)!.none;
-                  }
-                });
-              },
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListShiftsByWaiterId(waiter: widget.waiter,),
             ),
-            SizedBox(height: 20),
-              _buildDropdown(
-                label: AppLocalizations.of(context)!.dayOff,
-                value: _selectedDayOff,
-                items: initListDaysOff(context),
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedDayOff = newValue!;
-                  });
-                },
+          );
+          return true;
+        },
+        child:
+      Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.updateDayOff) ,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildDropdown(
+                      label: AppLocalizations.of(context)!.duration,
+                      value: _selectedDuration,
+                      items: initListDurations(context),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedDuration = newValue!;
+                          if (_selectedDuration == AppLocalizations.of(context)!.oneDay) {
+                            _selectedDayOff = AppLocalizations.of(context)!.none;
+                          }
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20),
+                    _buildDropdown(
+                      label: AppLocalizations.of(context)!.dayOff,
+                      value: _selectedDayOff,
+                      items: initListDaysOff(context),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedDayOff = newValue!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
-          ],
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(AppLocalizations.of(context)!.cancel),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          DateTime startDate = DateTime.now(); // Adjust this as needed
+                          int durationInWeeks = _selectedDuration == AppLocalizations.of(context)!.oneWeek
+                              ? 1
+                              : _selectedDuration == AppLocalizations.of(context)!.twoWeeks
+                              ? 2
+                              : _selectedDuration == AppLocalizations.of(context)!.threeWeeks
+                              ? 3
+                              : 4; // Default to 4 weeks if not one of the above
+
+                          await shiftViewModel.updateDayOff(
+                            widget.waiter.id,
+                            _localizedDayToEnglish(context, _selectedDayOff),
+                            DateFormat('yyyy-MM-dd').format(widget.date),
+                            durationInWeeks,
+                          );
+                          Navigator.pop(context, true);
+                        } catch (e) {
+                          Navigator.pop(context, false);
+                          print("Error updating day off: $e");
+                        }
+                      }
+                    },
+                    child: Text(AppLocalizations.of(context)!.save),
+                  ),
+                ],
+              )
+            ]
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(AppLocalizations.of(context)!.cancel),
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (_formKey.currentState!.validate()) {
-              try {
-                DateTime startDate = DateTime.now(); // Adjust this as needed
-                int durationInWeeks = _selectedDuration == AppLocalizations.of(context)!.oneWeek
-                    ? 1
-                    : _selectedDuration == AppLocalizations.of(context)!.twoWeeks
-                    ? 2
-                    : _selectedDuration == AppLocalizations.of(context)!.threeWeeks
-                    ? 3
-                    : 4; // Default to 4 weeks if not one of the above
-
-                await shiftViewModel.updateDayOff(
-                  widget.waiterId,
-                  _localizedDayToEnglish(context, _selectedDayOff),
-                  DateFormat('yyyy-MM-dd').format(startDate),
-                  durationInWeeks,
-                );
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ListShiftsByWaiterId(waiterId: widget.waiterId),
-                  ),
-                );
-                // Navigator.of(context).pop(); // Close the dialog
-              } catch (e) {
-                print("Error updating day off: $e");
-              }
-            }
-          },
-          child: Text(AppLocalizations.of(context)!.save),
-        ),
-      ],
-    );
+    ));
   }
 }

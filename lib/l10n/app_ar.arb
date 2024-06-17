@@ -247,5 +247,8 @@
   "saturday": "السبت",
   "sunday": "الأحد",
   "duration": "المدة",
-  "dayOff": "يوم العطلة"
+  "dayOff": "يوم العطلة",
+  "updateDayOff": "تحديث يوم العطلة",
+  "pleaseSelectShift": "يرجى تحديد تاريخ الأسبوع الذي سيكون فيه مناوبة أولاً",
+  "isDateTodayOrFuture": "التاريخ المحدد في الماضي"
 }

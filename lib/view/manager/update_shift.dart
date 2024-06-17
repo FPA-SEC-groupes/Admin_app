@@ -9,11 +9,11 @@ import 'package:intl/intl.dart';
 import '../../utils/const.dart';
 class UpadateShift extends StatefulWidget {
   final date;
-  final  waiterId;
+  final  waiter;
   final dayOff;
-  final Shift? shiftToUpdate;
+  final  shiftToUpdate;
 
-  const UpadateShift({Key? key, required this.date, required this.waiterId,this.dayOff, this.shiftToUpdate}) : super(key: key);
+  const UpadateShift({Key? key, required this.date, required this.waiter,this.dayOff, required Shift this.shiftToUpdate}) : super(key: key);
 
   @override
   State<UpadateShift> createState() => _UpadateShiftState();
@@ -24,16 +24,15 @@ class _UpadateShiftState extends State<UpadateShift> {
   late TextEditingController _startTimeController=TextEditingController(text: widget.shiftToUpdate?.startTime ?? '');
   late TextEditingController _endTimeController=TextEditingController(text: widget.shiftToUpdate?.endTime ?? '');
   late String _selectedDuration;
-  List<Shift> _shifts = [];
-  List<Shift> _selectedShifts = [];
   late ShiftViewModel shiftViewModel;
 
   @override
   void initState() {
     super.initState();
     shiftViewModel = ShiftViewModel(context);
-    _startTimeController = TextEditingController(text: widget.shiftToUpdate?.startTime ?? '');
-    _endTimeController = TextEditingController(text: widget.shiftToUpdate?.endTime ?? '');
+    _startTimeController = TextEditingController(text: widget.shiftToUpdate.startTime);
+    _endTimeController = TextEditingController(text: widget.shiftToUpdate.endTime);
+    print('Day offfffffffffff: ${widget.dayOff}');
   }
 
   @override
@@ -114,23 +113,41 @@ class _UpadateShiftState extends State<UpadateShift> {
 
     return dayMap[localizedDay] ?? localizedDay;
   }
+  String formatTime(String time) {
+    final is12HourFormat = time.contains('AM') || time.contains('PM');
+    TimeOfDay? parsedTime;
+    if (is12HourFormat) {
+      parsedTime = TimeOfDay(
+        hour: DateFormat.jm().parse(time).hour,
+        minute: DateFormat.jm().parse(time).minute,
+      );
+    } else {
+      parsedTime = TimeOfDay(
+        hour: int.parse(time.split(":")[0]),
+        minute: int.parse(time.split(":")[1]),
+      );
+    }
+
+    final now = DateTime.now();
+    return DateFormat('HH:mm:ss').format(
+      DateTime(now.year, now.month, now.day, parsedTime.hour, parsedTime.minute),
+    );
+  }
   void _saveShift(String startTime, String endTime, DateTime date) async {
     List<Shift> shifts = [];
     DateTime current = date;
     int increment = 1;
-
     final localizations = AppLocalizations.of(context);
-
     switch (_selectedDuration) {
       case '1 day':
       case '1 jour':
       case 'يوم واحد':
         shifts.add(Shift(
-          waiterId: widget.waiterId,
-          dayOfWeek: DateFormat('EEEE').format(date),
+          waiterId: widget.waiter.id,
+          type: "shift",
           date: DateFormat('yyyy-MM-dd').format(date),
-          startTime: startTime,
-          endTime: endTime,
+          startTime: formatTime(startTime),
+          endTime: formatTime(endTime),
         ));
         break;
       case '1 week':
@@ -154,18 +171,26 @@ class _UpadateShiftState extends State<UpadateShift> {
         increment = 30;
         break;
     }
-    print('Day offfffffffffff: $widget.dayOff');
     if (increment > 1) {
       for (int i = 0; i < increment; i++) {
         String dayOfWeek = DateFormat('EEEE').format(current);
         if (widget.dayOff == localizations!.none ||
             widget.dayOff.toUpperCase() != dayOfWeek.toUpperCase()) {
           shifts.add(Shift(
-            waiterId: widget.waiterId,
-            dayOfWeek: dayOfWeek,
+            waiterId: widget.waiter.id,
+            type: "shift",
             date: DateFormat('yyyy-MM-dd').format(current),
-            startTime: startTime,
-            endTime: endTime,
+            startTime: formatTime(startTime),
+            endTime: formatTime(endTime),
+          ));
+        }
+        else {
+          shifts.add(Shift(
+            waiterId: widget.waiter.id,
+            type: "dayOff",
+            date: DateFormat('yyyy-MM-dd').format(current),
+            startTime: formatTime(startTime),
+            endTime: formatTime(endTime),
           ));
         }
         current = current.add(Duration(days: 1));
@@ -176,13 +201,15 @@ class _UpadateShiftState extends State<UpadateShift> {
     print(shifts.toString());
     try {
       await shiftViewModel.updateShifts(shifts);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ListShiftsByWaiterId(waiterId: widget.waiterId),
-        ),
-      );// Return true to indicate success
+      Navigator.pop(context, true);
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => ListShiftsByWaiterId(waiter: widget.waiter),
+      //   ),
+      // );// Return true to indicate success
     } catch (e) {
+      Navigator.pop(context, true);
       print("Error creating shifts: $e");
       Navigator.pop(context, false); // Return false to indicate failure
     }
@@ -197,115 +224,131 @@ class _UpadateShiftState extends State<UpadateShift> {
 
   @override
   Widget build(BuildContext context) {
-    return
-      AlertDialog(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(DateFormat('EEEE, MMM d, yyyy').format(widget.date)),
-            Text(widget.shiftToUpdate == null ? AppLocalizations.of(context)!.addShift : AppLocalizations.of(context)!.shift),
-          ],
-        ),
-        content: Form(
-            key: _formKey,
-            child:SingleChildScrollView(
-              child:Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: _startTimeController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.startTime,
-                    ),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
-                    ]),
-                    onTap: () async {
-                      TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        builder: (BuildContext context, Widget? child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        _startTimeController.text = picked.format(context);
-                      }
-                    },
-                  ),
-                  TextFormField(
-                    controller: _endTimeController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.endTime,
-                    ),
-                    validator: MultiValidator([
-                      RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
-                    ]),
-                    onTap: () async {
-                      TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                        builder: (BuildContext context, Widget? child) {
-                          return MediaQuery(
-                            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                            child: child!,
-                          );
-                        },
-                      );
-                      if (picked != null) {
-                        _endTimeController.text = picked.format(context);
-                      }
-                    },
-                  ),
-                  SizedBox(height: 20,),
-                  _buildDropdown(
-                    label: AppLocalizations.of(context)!.duration,
-                    value: _selectedDuration,
-                    items: initListDurations(context),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedDuration = newValue!;
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListShiftsByWaiterId(waiter: widget.waiter,),
+            ),
+          );
+      return true;
+    },
+    child:
+      Scaffold(
+      appBar: AppBar(
+        title: Text(widget.shiftToUpdate == null ? AppLocalizations.of(context)!.addShift : AppLocalizations.of(context)!.shift),
+      ),
+      body: Column(
+        children:[
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                  key: _formKey,
+                  child:SingleChildScrollView(
+                    child:Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: _startTimeController,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.startTime,
+                          ),
+                          validator: MultiValidator([
+                            RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
+                          ]),
+                          onTap: () async {
+                            TimeOfDay? picked = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (BuildContext context, Widget? child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (picked != null) {
+                              _startTimeController.text = picked.format(context);
+                            }
+                          },
+                        ),
+                        TextFormField(
+                          controller: _endTimeController,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.endTime,
+                          ),
+                          validator: MultiValidator([
+                            RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
+                          ]),
+                          onTap: () async {
+                            TimeOfDay? picked = await showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                              builder: (BuildContext context, Widget? child) {
+                                return MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+                                  child: child!,
+                                );
+                              },
+                            );
+                            if (picked != null) {
+                              _endTimeController.text = picked.format(context);
+                            }
+                          },
+                        ),
+                        SizedBox(height: 20,),
+                        _buildDropdown(
+                          label: AppLocalizations.of(context)!.duration,
+                          value: _selectedDuration,
+                          items: initListDurations(context),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _selectedDuration = newValue!;
 
-                      });
-                    },
-                  ),
-                ],
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  )
               ),
+            ),
+          Row(
+              children:[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      if (widget.shiftToUpdate != null) {
+                        try {
+                          setState(() {
+                            widget.shiftToUpdate!.startTime = _startTimeController.text;
+                            widget.shiftToUpdate!.endTime = _endTimeController.text;
+                          });
+                          _saveShift(widget.shiftToUpdate!.startTime, widget.shiftToUpdate!.endTime, widget.date);
+                          // await shiftViewModel.updateShift(shiftToUpdate);
+                        } catch (e) {
+                          print("Error updating shift: $e");
+                        }
+                      } else {
+                        _saveShift(_startTimeController.text, _endTimeController.text, widget.date);
+                      }
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text(AppLocalizations.of(context)!.save),
+                ),
+              ]
+          )
+              ]
             )
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                if (widget.shiftToUpdate != null) {
-                  try {
-                    setState(() {
-                      widget.shiftToUpdate!.startTime = _startTimeController.text;
-                      widget.shiftToUpdate!.endTime = _endTimeController.text;
-                    });
-                    _saveShift(widget.shiftToUpdate!.startTime, widget.shiftToUpdate!.endTime, widget.date);
-                    // await shiftViewModel.updateShift(shiftToUpdate);
-                  } catch (e) {
-                    print("Error updating shift: $e");
-                  }
-                } else {
-                  _saveShift(_startTimeController.text, _endTimeController.text, widget.date);
-                }
-                Navigator.of(context).pop();
-              }
-            },
-            child: Text(AppLocalizations.of(context)!.save),
-          ),
-        ],
-      );
+          )
+        );
   }
 }

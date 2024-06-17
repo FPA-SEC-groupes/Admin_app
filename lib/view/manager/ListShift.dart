@@ -60,7 +60,7 @@ class _WaiterShiftPageState extends State<WaiterShiftPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      shift.dayOfWeek,
+                      shift.type,
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.orange),
                     ),
                     const SizedBox(height: 8),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hello_way/utils/routes.dart';
 import 'package:hello_way/view/manager/list_shift.dart';
 import 'package:intl/intl.dart';
 import 'package:hello_way/models/shift.dart';
 import 'package:hello_way/view_model/ShiftViewModel.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -12,10 +10,10 @@ import '../../utils/const.dart';
 
 class ShiftDialogPage extends StatefulWidget {
   final DateTime date;
-  final  waiterId;
+  final  waiter;
   final Shift? shiftToUpdate;
 
-  const ShiftDialogPage({Key? key, required this.date, required this.waiterId, this.shiftToUpdate}) : super(key: key);
+  const ShiftDialogPage({Key? key, required this.date, required this.waiter, this.shiftToUpdate}) : super(key: key);
 
   @override
   _ShiftDialogPageState createState() => _ShiftDialogPageState();
@@ -55,7 +53,18 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListShiftsByWaiterId(waiter: widget.waiter),
+            ),
+          );
+      return true;
+    },
+    child:
+      Scaffold(
       appBar: AppBar(
         title: Text(widget.shiftToUpdate == null ? AppLocalizations.of(context)!.addShift : AppLocalizations.of(context)!.shift),
       ),
@@ -104,6 +113,7 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
                   });
                 },
               ),
+              SizedBox(height: 20,),
               if (_selectedDuration != AppLocalizations.of(context)!.oneDay)
                 _buildDropdown(
                   label: AppLocalizations.of(context)!.dayOff,
@@ -115,7 +125,7 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
                     });
                   },
                 ),
-              Spacer(),
+              SizedBox(height: 20,),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -127,7 +137,8 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
             ],
           ),
         ),
-      ),
+       ),
+      )
     );
   }
 
@@ -189,24 +200,42 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
       ),
     );
   }
+  String formatTime(String time) {
+    // Parse time considering AM/PM format
+    final is12HourFormat = time.contains('AM') || time.contains('PM');
+    TimeOfDay? parsedTime;
+    if (is12HourFormat) {
+      parsedTime = TimeOfDay(
+        hour: DateFormat.jm().parse(time).hour,
+        minute: DateFormat.jm().parse(time).minute,
+      );
+    } else {
+      parsedTime = TimeOfDay(
+        hour: int.parse(time.split(":")[0]),
+        minute: int.parse(time.split(":")[1]),
+      );
+    }
 
+    final now = DateTime.now();
+    return DateFormat('HH:mm:ss').format(
+      DateTime(now.year, now.month, now.day, parsedTime.hour, parsedTime.minute),
+    );
+  }
   void _saveShift() async {
     List<Shift> shifts = [];
     DateTime current = widget.date;
     int increment = 1;
-
     final localizations = AppLocalizations.of(context);
-
     switch (_selectedDuration) {
       case '1 day':
       case '1 jour':
       case 'يوم واحد':
         shifts.add(Shift(
-          waiterId: widget.waiterId,
-          dayOfWeek: DateFormat('EEEE').format(widget.date),
+          waiterId: widget.waiter.id,
+          type: "shift",
           date: DateFormat('yyyy-MM-dd').format(widget.date),
-          startTime: _startTimeController.text,
-          endTime: _endTimeController.text,
+          startTime: formatTime(_startTimeController.text),
+          endTime: formatTime(_endTimeController.text),
         ));
         break;
       case '1 week':
@@ -237,25 +266,31 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
         if (_selectedDayOff == localizations!.none ||
             _selectedDayOff != _localizedWeekday(localizations, dayOfWeek)) {
           shifts.add(Shift(
-            waiterId: widget.waiterId,
-            dayOfWeek: dayOfWeek,
+            waiterId: widget.waiter.id,
+            type: "shift",
             date: DateFormat('yyyy-MM-dd').format(current),
-            startTime: _startTimeController.text,
-            endTime: _endTimeController.text,
+            startTime: formatTime(_startTimeController.text),
+            endTime: formatTime(_endTimeController.text),
+          ));
+        } else {
+          shifts.add(Shift(
+            waiterId: widget.waiter.id,
+            type: "dayOff",
+            date: DateFormat('yyyy-MM-dd').format(current),
+            startTime: formatTime(_startTimeController.text),
+            endTime: formatTime(_endTimeController.text),
           ));
         }
         current = current.add(Duration(days: 1));
       }
     }
 
-    print(shifts.toString());
     try {
       await shiftViewModel.createShift(shifts);
       setState(() {
         _shifts.addAll(shifts);
         _selectedShifts = _getShiftsForDay(widget.date);
       });
-      print(_shifts.toString());
       Navigator.pop(context, true); // Return true to indicate success
     } catch (e) {
       print("Error creating shifts: $e");
@@ -285,7 +320,6 @@ class _ShiftDialogPageState extends State<ShiftDialogPage> {
   }
 
   List<Shift> _getShiftsForDay(DateTime date) {
-    // Implement your logic to filter shifts for the given day
-    return [];
+    return _shifts.where((shift) => shift.date == DateFormat('yyyy-MM-dd').format(date)).toList();
   }
 }

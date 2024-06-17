@@ -54,7 +54,7 @@ class _UpdateShiftPageState extends State<UpdateShiftPage> {
                   child: ListTile(
                     tileColor: Colors.white,
                     title: Text(
-                      "${shift.dayOfWeek} - ${shift.date}",
+                      "${shift.type} - ${shift.date}",
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
