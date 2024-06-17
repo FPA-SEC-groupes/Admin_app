@@ -252,7 +252,10 @@
     "dayOff": "Day Off",
     "updateDayOff":"update dayOff",
     "pleaseSelectShift": "Please select a date of week have shift first",
-    "isDateTodayOrFuture": "selected Date is in the past"
+    "isDateTodayOrFuture": "selected Date is in the past",
+    "nigativeError": "Number can't be negative",
+    "futureError": "La date doit être dans le futur",
+    "dotsOrcommasError": "The number cannot contain dots or commas"
 }
 
 

@@ -248,5 +248,8 @@
     "dayOff": "Jour de congé",
     "updateDayOff": "mettre à jour le jour de congé",
     "pleaseSelectShift": "Veuillez d'abord sélectionner une date de la semaine avec décalage",
-    "isDateTodayOrFuture": "La date sélectionnée est dans le passé"
+    "isDateTodayOrFuture": "La date sélectionnée est dans le passé",
+    "nigativeError": "Le nombre ne peut pas être négatif",
+    "futureError": "The date must be in the future",
+    "dotsOrcommasError": "Le numéro ne peut pas contenir de points ou de virgules"
 }

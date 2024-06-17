@@ -45,7 +45,22 @@ class _ListTablesState extends State<ListTables> {
     List<Board> boards = await _tablesViewModel.getBoardByZoneId(zoneId);
     return boards;
   }
+  String? _customValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      // Check if the value contains a dot (.) or comma (,)
+      if (value.contains('.') || value.contains(',')) {
+        return AppLocalizations.of(context)!.dotsOrcommasError;
+      }
 
+      int? numberOfParticipants = int.tryParse(value);
+      if (numberOfParticipants == null) {
+        return AppLocalizations.of(context)!.inputRequiredError;
+      } else if (numberOfParticipants < 0) {
+        return AppLocalizations.of(context)!.nigativeError;
+      }
+    }
+    return null;
+  }
   tableDialog(Zone zone, {Board? table}) async {
     if (zone.server != null) {
       setState(() {
@@ -75,11 +90,12 @@ class _ListTablesState extends State<ListTables> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           InputForm(
-                            validator: MultiValidator([
-                              RequiredValidator(
-                                  errorText: AppLocalizations.of(context)!
-                                      .inputRequiredError),
-                            ]),
+                            validator: _customValidator,
+                            // MultiValidator([
+                            //   RequiredValidator(
+                            //       errorText: AppLocalizations.of(context)!
+                            //           .inputRequiredError),
+                            // ]),
                             controller: _tableNumberController,
                             hint: AppLocalizations.of(context)!.numTable,
                             keyboardType: TextInputType.number,
@@ -97,11 +113,12 @@ class _ListTablesState extends State<ListTables> {
                             height: 10,
                           ),
                           InputForm(
-                            validator: MultiValidator([
-                              RequiredValidator(
-                                  errorText: AppLocalizations.of(context)!
-                                      .inputRequiredError),
-                            ]),
+                            validator: _customValidator,
+                            // MultiValidator([
+                            //   RequiredValidator(
+                            //       errorText: AppLocalizations.of(context)!
+                            //           .inputRequiredError),
+                            // ]),
                             controller: _nbPlacesController,
                             hint: AppLocalizations.of(context)!.numPlaces,
                             keyboardType: TextInputType.number,

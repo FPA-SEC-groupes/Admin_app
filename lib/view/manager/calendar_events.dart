@@ -50,7 +50,7 @@ class _CalendarEventsState extends State<CalendarEvents> {
       final DateTime endTime = DateTime(event.endDate.year, event.endDate.month, event.endDate.day,event.endDate.hour,event.endDate.minute);
 
       setState(() {
-        _events.add(Meeting(event.eventTitle, startTime, endTime,event.percentage==null? const Color(0xFF0F8644):orange, false,event.description));
+        _events.add(Meeting(event.eventTitle, startTime, endTime,event.percentage==null? const Color(0xFF0F8644):orange, false,event.description!));
       });
 
     }

@@ -124,7 +124,31 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
     _supplierController.clear();
     _supplierNumberController.clear();
   }
+  String? _customValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      // Check if the value contains a dot (.) or comma (,)
+      if (value.contains('.') || value.contains(',')) {
+        return AppLocalizations.of(context)!.dotsOrcommasError;
+      }
 
+      int? numberOfParticipants = int.tryParse(value);
+      if (numberOfParticipants == null) {
+        return AppLocalizations.of(context)!.inputRequiredError;
+      } else if (numberOfParticipants < 0) {
+        return AppLocalizations.of(context)!.nigativeError;
+      }
+    }
+    return null;
+  }
+  String? _dateValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      DateTime? selectedDate = DateFormat('yyyy-MM-dd HH:mm').parse(value, true);
+      if (selectedDate.isBefore(DateTime.now())) {
+        return AppLocalizations.of(context)!.futureError;
+      }
+    }
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
@@ -178,12 +202,13 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
                                           AppLocalizations.of(context)!.quantity,
                                       keyboardType: TextInputType.number,
                                       controller: _quantityController,
-                                      validator: MultiValidator([
-                                        RequiredValidator(
-                                            errorText:
-                                                AppLocalizations.of(context)!
-                                                    .inputRequiredError),
-                                      ]),
+                                      validator:_customValidator
+                                      // MultiValidator([
+                                      //   RequiredValidator(
+                                      //       errorText:
+                                      //           AppLocalizations.of(context)!
+                                      //               .inputRequiredError),
+                                      // ]),
                                     ),
                                   ),
                                   const SizedBox(
@@ -222,8 +247,12 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
                                 controller: _priceController,
                                 validator: MultiValidator([
                                   RequiredValidator(
-                                      errorText: AppLocalizations.of(context)!
-                                          .inputRequiredError),
+                                    errorText: AppLocalizations.of(context)!.inputRequiredError,
+                                  ),
+                                  PatternValidator(
+                                    r'^\d+',
+                                    errorText: AppLocalizations.of(context)!.nigativeError,
+                                  ), //Valid integer pattern
                                 ]),
                               ),
                               const SizedBox(
@@ -251,10 +280,11 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
                                   });
                                 },
                                 child: TextFormField(
-                                    validator: MultiValidator([
-                                    RequiredValidator(
-                                    errorText: AppLocalizations.of(context)!
-                                        .inputRequiredError),]),
+                                    validator: _dateValidator,
+                                    // MultiValidator([
+                                    // RequiredValidator(
+                                    // errorText: AppLocalizations.of(context)!
+                                    //     .inputRequiredError),]),
                                     controller: _expirationDateController,
                                     decoration: InputDecoration(
                                       contentPadding: const EdgeInsets.symmetric(
@@ -353,7 +383,7 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
                                   description: _descriptionController.text.trim(),
                                   unitOfMeasure: _selectedUnitOfMeasure!,
                                   stockQuantity: double.parse(_quantityController.text.trim()),
-                                  price: double.parse(_priceController.text.trim()),
+                                  price: double.parse(_priceController.text.contains(',')? _priceController.text.replaceAll(',', '.'): _priceController.text),
                                   expirationDate: DateTime.parse(_expirationDateController.text.trim()),
                                   supplier: _supplierController.text.trim(),
                                   supplierNumber: _supplierNumberController.text.trim());

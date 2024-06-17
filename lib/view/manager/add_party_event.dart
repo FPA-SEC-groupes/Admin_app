@@ -58,7 +58,7 @@ class _AddPartyEventState extends State<AddPartyEvent> {
       _endDateController.text = widget.party!.endDate.toString();
       _priceController.text = widget.party!.price.toString();
       _nbPaticipantController.text = widget.party!.nbParticipant.toString();
-      _descriptionController.text = widget.party!.description;
+      _descriptionController.text = widget.party!.description!;
     }
   }
 
@@ -126,7 +126,22 @@ class _AddPartyEventState extends State<AddPartyEvent> {
 
     return selectedDateTime;
   }
+  String? _customValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      // Check if the value contains a dot (.) or comma (,)
+      if (value.contains('.') || value.contains(',')) {
+        return AppLocalizations.of(context)!.dotsOrcommasError;
+      }
 
+      int? numberOfParticipants = int.tryParse(value);
+      if (numberOfParticipants == null) {
+        return AppLocalizations.of(context)!.inputRequiredError;
+      } else if (numberOfParticipants < 0) {
+        return AppLocalizations.of(context)!.nigativeError;
+      }
+    }
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
@@ -173,10 +188,11 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                               hint: AppLocalizations.of(context)!.numberOfParticipants,
                               keyboardType: TextInputType.number,
                               controller: _nbPaticipantController,
-                              validator: MultiValidator([
-                                RequiredValidator(
-                                    errorText: AppLocalizations.of(context)!.inputRequiredError),
-                              ]),
+                              validator:_customValidator,
+                              // MultiValidator([
+                              //   RequiredValidator(
+                              //       errorText: AppLocalizations.of(context)!.inputRequiredError),
+                              // ]),
                             ),
                             const SizedBox(
                               height: 10,
@@ -187,7 +203,12 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                               controller: _priceController,
                               validator: MultiValidator([
                                 RequiredValidator(
-                                    errorText: AppLocalizations.of(context)!.inputRequiredError),
+                                  errorText: AppLocalizations.of(context)!.inputRequiredError,
+                                ),
+                                PatternValidator(
+                                  r'^\d+',
+                                  errorText: AppLocalizations.of(context)!.nigativeError,
+                                ), //Valid integer pattern
                               ]),
                             ),
                             const SizedBox(
@@ -383,7 +404,7 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                                 endDate: DateTime.parse(_endDateController.text.trim().toString()),
                                 description: _descriptionController.text.trim().toString(),
                                 nbParticipant: int.parse(_nbPaticipantController.text.trim()),
-                                price: double.parse(_priceController.text.trim()),
+                                price: double.parse(_priceController.text.contains(',')? _priceController.text.replaceAll(',', '.'): _priceController.text),
                               );
 
                               _eventsViewModel.createPartyForSpace(event).then((event) async {

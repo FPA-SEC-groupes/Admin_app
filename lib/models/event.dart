@@ -7,7 +7,7 @@ class Event {
   String eventTitle;
   DateTime startDate;
   DateTime endDate;
-  String description;
+  String? description;
   int? percentage;
   Product? product;
   int? nbParticipant ;
@@ -20,7 +20,7 @@ class Event {
     required this.eventTitle,
     required this.startDate,
     required this.endDate,
-    required this.description,
+    this.description,
     this.percentage,
      this.product,
     this.price,

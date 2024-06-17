@@ -48,7 +48,7 @@ class EventsViewModel {
   Future<Event> createPartyForSpace(Event event) async {
     final spaceId = await secureStorage.readData(spaceIdKey);
     String url = '$baseUrl/api/events/party/space/$spaceId';
-
+    print(event.toJson());
     try {
       Response response = await dioInterceptor.dio.post(
         url,

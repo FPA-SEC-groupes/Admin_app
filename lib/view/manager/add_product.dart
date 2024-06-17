@@ -189,8 +189,13 @@ class _AddProductState extends State<AddProduct> {
                         controller: _priceProductController,
                         validator: MultiValidator([
                           RequiredValidator(
-                              errorText: AppLocalizations.of(context)!
-                                  .inputRequiredError),
+                            errorText: AppLocalizations.of(context)!.inputRequiredError,
+                          ),
+                          // PatternValidator(r'^[^.,]*$', errorText: AppLocalizations.of(context)!.dotsOrcommasError), // No dots or commas
+                          PatternValidator(
+                            r'^\d+',
+                            errorText: AppLocalizations.of(context)!.nigativeError,
+                          ), //Valid integer pattern
                         ]),
                       ),
                       const SizedBox(
@@ -200,11 +205,6 @@ class _AddProductState extends State<AddProduct> {
                         maxLines: 5,
                         hint: AppLocalizations.of(context)!.description,
                         controller: _descriptionController,
-                        // validator: MultiValidator([
-                        //   RequiredValidator(
-                        //       errorText: AppLocalizations.of(context)!
-                        //           .inputRequiredError),
-                        // ]),
                       ),
                       const SizedBox(
                         height: 20,
@@ -225,7 +225,7 @@ class _AddProductState extends State<AddProduct> {
                                   productTitle:
                                   _titleProductController.text.trim(),
                                   price: double.parse(
-                                      _priceProductController.text),
+                                      _priceProductController.text.contains(',')? _priceProductController.text.replaceAll(',', '.'): _priceProductController.text),
                                   description:
                                   _descriptionController.text.trim(),
                                   available: true);

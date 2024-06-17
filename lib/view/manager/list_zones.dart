@@ -73,7 +73,22 @@ class _ListZonesState extends State<ListZones> {
     List<Zone> zones = await _zonesViewModel.getZonesByIdSpace();
     return zones;
   }
+  String? _customValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      // Check if the value contains a dot (.) or comma (,)
+      if (value.contains('.') || value.contains(',')) {
+        return AppLocalizations.of(context)!.dotsOrcommasError;
+      }
 
+      int? numberOfParticipants = int.tryParse(value);
+      if (numberOfParticipants == null) {
+        return AppLocalizations.of(context)!.inputRequiredError;
+      } else if (numberOfParticipants < 0) {
+        return AppLocalizations.of(context)!.nigativeError;
+      }
+    }
+    return null;
+  }
 
   String? _validateZoneTitle(String? value) {
     if (value == null || value.isEmpty) {
@@ -106,11 +121,12 @@ class _ListZonesState extends State<ListZones> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           InputForm(
-                            validator: MultiValidator([
-                              RequiredValidator(
-                                  errorText: AppLocalizations.of(context)!
-                                      .inputRequiredError),
-                            ]),
+                            validator:_customValidator,
+                            // MultiValidator([
+                            //   RequiredValidator(
+                            //       errorText: AppLocalizations.of(context)!
+                            //           .inputRequiredError),
+                            // ]),
                             controller: _tableNumberController,
                             hint: AppLocalizations.of(context)!.numTable,
                             keyboardType: TextInputType.number,
@@ -119,7 +135,7 @@ class _ListZonesState extends State<ListZones> {
                             height: 10,
                           ),
                           InputForm(
-                            validator: _validation,
+                            validator: _customValidator,
                             controller: _nbPlacesController,
                             hint: AppLocalizations.of(context)!.numPlaces,
                             keyboardType: TextInputType.number,
@@ -234,9 +250,9 @@ class _ListZonesState extends State<ListZones> {
                   await showDialog(
                     context: context,
                     builder: (BuildContext context) {
-    return StatefulBuilder(
-    builder: (context, update) {
-                      return MyDialogue(
+              return StatefulBuilder(
+              builder: (context, update) {
+                                return MyDialogue(
                         title: AppLocalizations.of(context)!.addZone,
                         validator: _validateZoneTitle,
                         controller: _titleZoneController,

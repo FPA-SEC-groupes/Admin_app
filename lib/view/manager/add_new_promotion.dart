@@ -79,7 +79,7 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
       _startDateController.text=formatter.format(promotion.startDate);
       _endDateController.text=formatter.format(promotion.endDate);
       _percentageController.text=promotion.percentage.toString();
-      _descriptionController.text=promotion.description;
+      _descriptionController.text=promotion.description!;
     }).catchError((error) {});
 
   }
@@ -138,6 +138,19 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
 
     return selectedDateTime;
   }
+  String? _percentageValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      double? percentage = double.tryParse(value);
+      if (percentage != null) {
+        if (percentage < 0 || percentage > 99) {
+          return AppLocalizations.of(context)!.invalidPercentageError;
+        }
+      } else {
+        return AppLocalizations.of(context)!.invalidPercentageError;
+      }
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,11 +197,6 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                     InputForm(
                       hint: AppLocalizations.of(context)!.title,
                       controller: _eventTitleController,
-                      // validator: MultiValidator([
-                      //   RequiredValidator(
-                      //       errorText: AppLocalizations.of(context)!
-                      //           .inputRequiredError),
-                      // ]),
                     ),
                     const SizedBox(
                       height: 10,
@@ -197,15 +205,7 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                       hint: AppLocalizations.of(context)!.percentage,
                       keyboardType: TextInputType.number,
                       controller: _percentageController,
-                      validator: MultiValidator([
-                        RequiredValidator(
-                            errorText: AppLocalizations.of(context)!.inputRequiredError),
-                        RangeValidator(
-                            min: 0,
-                            max: 99,
-                            errorText: AppLocalizations.of(context)!.invalidPercentageError
-                        ),
-                      ]),
+                      validator:_percentageValidator,
                     ),
                     const SizedBox(
                       height: 10,
@@ -313,11 +313,6 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
                       maxLines: 3,
                       hint: AppLocalizations.of(context)!.description,
                       controller: _descriptionController,
-                      // validator: MultiValidator([
-                      //   RequiredValidator(
-                      //       errorText: AppLocalizations.of(context)!
-                      //           .inputRequiredError),
-                      // ]),
                     ),
                     const SizedBox(
                       height: 20,
