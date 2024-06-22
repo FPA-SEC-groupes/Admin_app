@@ -70,32 +70,32 @@ class _CardMenuState extends State<CardMenu> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(width: 5),
-                          const Text(
-                            "(",
-                            style: TextStyle(color: gray),
-                          ),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Text(
-                                "${widget.product.price} DT",
-                                style: const TextStyle(color: gray),
-                                textAlign: TextAlign.center,
-                              ),
-                              Positioned(
-                                left: 0,
-                                right: 0,
-                                child: Container(
-                                  height: 1,
-                                  color: gray,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Text(
-                            ")",
-                            style: TextStyle(color: gray),
-                          ),
+                          // const Text(
+                          //   "(",
+                          //   style: TextStyle(color: gray),
+                          // ),
+                          // Stack(
+                          //   alignment: Alignment.center,
+                          //   children: [
+                          //     Text(
+                          //       "${widget.product.price} DT",
+                          //       style: const TextStyle(color: gray),
+                          //       textAlign: TextAlign.center,
+                          //     ),
+                          //     Positioned(
+                          //       left: 0,
+                          //       right: 0,
+                          //       child: Container(
+                          //         height: 1,
+                          //         color: gray,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          // const Text(
+                          //   ")",
+                          //   style: TextStyle(color: gray),
+                          // ),
                         ],
                       ),
                       // if(widget.product.hasActivePromotion!)
@@ -111,6 +111,16 @@ class _CardMenuState extends State<CardMenu> {
                       //   ),
                       // )else
                       //   Text(""),
+                      Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "- ${widget.product.percentage}%",
+                            style: const TextStyle(color: Colors.white),
+                          ))
                     ],
                   )
                 else

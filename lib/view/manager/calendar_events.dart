@@ -41,6 +41,7 @@ class _CalendarEventsState extends State<CalendarEvents> {
   }
 
   Future<List<Event>> _fetchEvents() async {
+    _events.clear();
     // fetch the list of categories using
     List<Event> events = await _eventsViewModel.getEventsBySpaceId();
 

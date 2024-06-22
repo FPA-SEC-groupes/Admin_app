@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:hello_way/utils/const.dart';
+import '../../utils/const.dart';
 
 import '../res/app_colors.dart';
-import '../response/product_with_quantities.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../response/product_with_quantity.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ItemProductCommand extends StatelessWidget {
-  final ProductWithQuantities productWithQuantities;
+  final ProductWithQuantities1 productWithQuantities;
   const ItemProductCommand({Key? key, required this.productWithQuantities}) : super(key: key);
 
   @override
@@ -29,13 +29,12 @@ class ItemProductCommand extends StatelessWidget {
               borderRadius: BorderRadius.circular(5),
               child: FittedBox(
                 fit: BoxFit.fill,
-                child: productWithQuantities.product.images!.isEmpty
+                child: productWithQuantities.product.images?.length == 0
                     ? Icon(
                   Icons.image_outlined,
                   color: gray.withOpacity(0.5),
                 )
-                    : Image.network(baseUrl+productUrl+productWithQuantities.product.images![productWithQuantities.product.images!.length-1].fileName)
-                // Image.memory(base64.decode(productWithQuantities.product.images![productWithQuantities.product.images!.length-1].data)),
+                    :Image.network(baseUrl+productUrl+productWithQuantities.product.images![productWithQuantities.product.images!.length-1].fileName)
               ),
             ),
           ),
@@ -64,16 +63,15 @@ class ItemProductCommand extends StatelessWidget {
                         ],
                       ),
 
-                      const SizedBox(height: 10,),
+                      SizedBox(height: 10,),
                       Text(
-                          "${productWithQuantities.product.price} ${AppLocalizations.of(context)!.tunisianDinar}",
-
+                          "${productWithQuantities.product.price} DT",
 
                       ),
-                      const SizedBox(height: 10,),
+                      SizedBox(height: 10,),
                   RichText(
                     text: TextSpan(
-                      text:"${AppLocalizations.of(context)!.quantity}:",
+                      text:"Quantité:",
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,

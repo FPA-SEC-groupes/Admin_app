@@ -12,6 +12,8 @@ const categoryId = "CategoryId";
 const authentifiedUserId = "AuthentifiedUserId";
 const roleKey = "Role";
 const spaceIdKey = "spaceId";
+const tableIdKey="TableId";
+const sessionIdKey="SessionId";
 const roleManager = "ROLE_PROVIDER";
 const roleWaiter = "ROLE_WAITER";
 const roleAdmin = "ROLE_ADMIN";
@@ -46,6 +48,7 @@ List<String> initListOrdersStatus(BuildContext context) {
     AppLocalizations.of(context)!.all,
     AppLocalizations.of(context)!.pendingStatus,
     AppLocalizations.of(context)!.confirmedStatus,
+    AppLocalizations.of(context)!.updatedStatus,
     AppLocalizations.of(context)!.payedStatus
   ];
 }

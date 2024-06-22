@@ -427,6 +427,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.0"
+  flutter_staggered_animations:
+    dependency: "direct main"
+    description:
+      name: flutter_staggered_animations
+      sha256: "81d3c816c9bb0dca9e8a5d5454610e21ffb068aedb2bde49d2f8d04f75538351"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -1005,6 +1013,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.3"
+  reorderables:
+    dependency: "direct main"
+    description:
+      name: reorderables
+      sha256: "92dd02c27b58f9fe9d467c24b49fafea458e4355fcea474abb17ba79a058275d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
   sanitize_html:
     dependency: transitive
     description:

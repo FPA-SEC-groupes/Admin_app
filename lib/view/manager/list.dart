@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/view/manager/reservation_details.dart';
+import 'package:hello_way/view_model/RestrictionsViewModel.dart';
 import 'package:provider/provider.dart';
 import '../../models/reservation.dart';
 import '../../services/network_service.dart';
@@ -17,7 +18,7 @@ class ListReservations extends StatefulWidget {
 
 class _ListReservationsState extends State<ListReservations> {
   late ReservationsViewModel _listReservationsViewModel ;
-
+  late RestrictionsViewModel _restrictionsViewModel;
   Future<List<Reservation>> getReservationsBySpaceId() async {
     List<Reservation> reservations = await _listReservationsViewModel.getReservationsBySpaceId();
     return reservations;
@@ -28,6 +29,7 @@ class _ListReservationsState extends State<ListReservations> {
   void initState() {
     // TODO: implement initState
     _listReservationsViewModel = ReservationsViewModel(context);
+    _restrictionsViewModel = RestrictionsViewModel(context);
     getReservationsBySpaceId( );
 
     super.initState();
@@ -95,15 +97,20 @@ class _ListReservationsState extends State<ListReservations> {
 
 
                         ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ReservationDetails(reservation: reservation,
+                        onTap: () async{
+                         _restrictionsViewModel.getRestrictionByReservationId(reservation.idReservation!).then((Restriction) {
+                           Navigator.push(
+                             context,
+                             MaterialPageRoute(
+                               builder: (context) => ReservationDetails(reservation: reservation,restriction:Restriction
 
-                              ),
-                            ),
-                          );
+                               ),
+                             ),
+                           );
+                         }).catchError((error) {
+                           // Handle signup error
+                         });;
+
                         },
                       );
 

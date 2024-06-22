@@ -27,8 +27,8 @@ class Restriction {
     final Map<String, dynamic> data = {
       'id': id,
       'description': description,
-      'user': user?.toJson(),
-      'reservation': reservation?.toJson(),
+      'userId': user?.id,
+      'reservationId': reservation?.idReservation,
     };
     return data;
   }

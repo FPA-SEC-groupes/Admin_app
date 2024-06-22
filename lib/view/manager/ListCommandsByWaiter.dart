@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:hello_way/models/command.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/response/command_with_num_table.dart';
 import 'package:hello_way/shimmer/item_command_shimmer.dart';
 import 'package:hello_way/utils/const.dart';
+import 'package:hello_way/view/manager/command_details.dart';
 import 'package:hello_way/widgets/command_status_tab_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -11,17 +13,16 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../../services/network_service.dart';
 import '../../view_model/commands_view_model.dart';
 import '../../widgets/item_command.dart';
-import 'command_details.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-class ListCommands extends StatefulWidget {
-  const ListCommands({super.key});
+class Listcommandsbywaiter extends StatefulWidget {
+  final waiterId;
+  const Listcommandsbywaiter({Key? key,required this.waiterId}) : super(key: key);
 
   @override
-  State<ListCommands> createState() => _ListCommandsState();
+  State<Listcommandsbywaiter> createState() => _ListcommandsbywaiterState();
 }
 
-class _ListCommandsState extends State<ListCommands> {
+class _ListcommandsbywaiterState extends State<Listcommandsbywaiter> {
   late CommandsViewModel _listCommandsViewModel;
   int selectedStatusIndex = 0;
   String status = "ALL";
@@ -51,7 +52,8 @@ class _ListCommandsState extends State<ListCommands> {
 
   Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
     List<CommandWithNumTable> products =
-    await _listCommandsViewModel.getCommandsByWaiterId(status);
+    await _listCommandsViewModel.getCommandsByWaiterId1(status,widget.waiterId);
+    print(products.toString());
     return products;
   }
 

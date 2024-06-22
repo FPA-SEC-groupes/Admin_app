@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:hello_way/response/product_with_quantities.dart';
+import 'package:hello_way/response/product_with_quantity.dart';
+import 'package:hello_way/view_model/basket_view_model.dart';
+import 'package:hello_way/widgets/basket_item.dart';
+import 'package:hello_way/widgets/item_product_command.dart';
 import 'package:provider/provider.dart';
 
 import '../../res/app_colors.dart';
 import '../../response/command_with_num_table.dart';
-import '../../response/product_with_quantities.dart';
 import '../../services/network_service.dart';
 import '../../shimmer/item_product_command_shimmer.dart';
 import '../../view_model/commands_view_model.dart';
-import '../../widgets/item_product_command.dart';
+// import '../../widgets/item_product_command.dart';
 import '../../widgets/snack_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommandDetails extends StatefulWidget {
   final CommandWithNumTable commandWithNumTable;
 
-  const CommandDetails(
-      {super.key, required this.commandWithNumTable,});
+  const CommandDetails({
+    super.key,
+    required this.commandWithNumTable,
+  });
 
   @override
   State<CommandDetails> createState() => _CommandDetailsState();
@@ -23,29 +29,54 @@ class CommandDetails extends StatefulWidget {
 
 class _CommandDetailsState extends State<CommandDetails> {
   late final CommandsViewModel _commandsViewModel;
+  double _totalSum = 0.0;
 
   final GlobalKey<ScaffoldMessengerState> _detailsCommandScaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
   double? _sum;
+  late final BasketViewModel _basketViewModel;
 
+  Future<List<ProductWithQuantities>> _getProductsByBasketId() async {
+    List<ProductWithQuantities> products = (await _basketViewModel.getProductsByBasketId(widget.commandWithNumTable.command.basket.id_basket)).cast<ProductWithQuantities>();
+    return products;
+  }
 
+  Future<double> _getTotalSumByBasketId() async {
+    List<ProductWithQuantities> products = (await _basketViewModel.getProductsByBasketId(widget.commandWithNumTable.command.basket.id_basket)).cast<ProductWithQuantities>();
+    double totalSum = 0;
+    for (var product in products) {
+      var productDetails = product.product;
+      if (productDetails != null) {
+        bool hasActivePromotion = productDetails.hasActivePromotion ?? false;
+        double productPrice = hasActivePromotion
+            ? productDetails.price * (100 - (productDetails.percentage ?? 0)) / 100
+            : productDetails.price;
+        int productQuantity = product.quantity - product.oldQuantity;
+        double productSum = productPrice * productQuantity;
+        totalSum += productSum;
+      }
+    }
 
+    setState(() {
+      _totalSum = totalSum;
+    });
+    return totalSum;
+  }
 
-
-  Future<List<ProductWithQuantities>> _getProductsByCommandId() async {
-    List<ProductWithQuantities> products = await _commandsViewModel
-        .getProductsByCommandId(widget.commandWithNumTable.command.idCommand);
+  Future<List<ProductWithQuantities1>> _getProductsByCommandId() async {
+    List<ProductWithQuantities1> products = await _commandsViewModel.getProductsByCommandId1(widget.commandWithNumTable.command.idCommand);
     return products;
   }
 
   Future<double> getSumOfCommand(int commandId) async {
     double sum = await _commandsViewModel.getSumOfCommand(commandId);
-
     return sum;
   }
+
   @override
   void initState() {
     _commandsViewModel = CommandsViewModel(context);
+    _basketViewModel = BasketViewModel(context);
     _getProductsByCommandId();
     super.initState();
   }
@@ -56,14 +87,14 @@ class _CommandDetailsState extends State<CommandDetails> {
     return ScaffoldMessenger(
         key: _detailsCommandScaffoldKey,
         child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: orange,
-        title: Text(
-          "${AppLocalizations.of(context)!.order} N°${widget.commandWithNumTable.command.idCommand}",
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-      body:networkStatus == NetworkStatus.Online
+          appBar: AppBar(
+            backgroundColor: orange,
+            title: Text(
+              "${AppLocalizations.of(context)!.order} N°${widget.commandWithNumTable.command.idCommand}",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          body: networkStatus == NetworkStatus.Online
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -160,14 +191,46 @@ class _CommandDetailsState extends State<CommandDetails> {
                     return Center();
                   } else {
                     final products = snapshot.data!;
+                    print(products);
                     return ListView.separated(
                       itemCount: products.length,
                       itemBuilder: (context, index) {
-                        ProductWithQuantities productWithQuantities =
-                            products[index];
+                        ProductWithQuantities1 product = products[index];
 
-                        return ItemProductCommand(
-                          productWithQuantities: products[index],
+                        return BasketItem(
+                          status: widget.commandWithNumTable.command.status,
+                          productWithQuantity: product,
+                          onDelete: () {
+                            _basketViewModel.deleteProductFromBasket(product.product.idProduct!,widget.commandWithNumTable.command.basket.id_basket).then((_) {
+                              setState(() {
+                                _getTotalSumByBasketId();
+                                _getProductsByBasketId();
+                              });
+                            }).catchError((error) {
+                              print(error);
+                            });
+                          },
+                          onIncrement: () {
+                            // print("oooooooooooooooooooooooooooooooooooooooooooooooooooo");
+                            _basketViewModel.addProductToBasket(product.product.idProduct!, 1,widget.commandWithNumTable.command.basket.id_basket).then((_) {
+                              setState(() {
+                                _getTotalSumByBasketId();
+                              });
+                            }).catchError((error) {
+                              print(error);
+                            });
+                          },
+                          onDecrement: () {
+                            if (product.quantity > 1) {
+                              _basketViewModel.addProductToBasket(product.product.idProduct!, -1,widget.commandWithNumTable.command.basket.id_basket).then((_) {
+                                setState(() {
+                                  _getTotalSumByBasketId();
+                                });
+                              }).catchError((error) {
+                                print(error);
+                              });
+                            }
+                          },
                         );
                       },
                       separatorBuilder: (context, index) {

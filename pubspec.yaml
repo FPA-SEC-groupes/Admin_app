@@ -69,6 +69,9 @@ dependencies:
   flutter_speed_dial: ^6.0.0
   multi_image_picker_plus: ^0.0.4
   web_socket_channel: ^2.1.0
+    # Remove flutter_slidable and draggable_flutter_list
+  flutter_staggered_animations: ^1.0.0
+  reorderables: ^0.4.3
 
 
 dev_dependencies:

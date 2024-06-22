@@ -48,6 +48,7 @@ class RestrictionsViewModel {
 
   Future<Restriction> createRestriction(Restriction restriction) async {
     try {
+      print(restriction.toJson());
       var response = await dioInterceptor.dio.post(
         '$baseUrl/api/restrictions',
         data: restriction.toJson(),
@@ -68,7 +69,12 @@ class RestrictionsViewModel {
       var response = await dioInterceptor.dio.get('$baseUrl/api/restrictions/restrictions/$reservationId');
 
       if (response.statusCode == 200) {
-        return Restriction.fromJson(response.data);
+        try{
+          return Restriction.fromJson(response.data);
+        }
+        catch(e){
+          return Restriction(description: "");
+        }
       } else {
         throw Exception('Failed to load restriction by reservation ID: ${response.statusCode}');
       }

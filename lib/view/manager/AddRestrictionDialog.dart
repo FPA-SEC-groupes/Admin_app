@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/models/user.dart';
 import 'package:hello_way/view_model/RestrictionsViewModel.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -33,6 +34,10 @@ class _AddRestrictionDialogState extends State<AddRestrictionDialog> {
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.restrictionDescription,
               ),
+              validator:  MultiValidator([
+                RequiredValidator(
+                errorText: AppLocalizations.of(context)!.inputRequiredError,
+                  ),]),
               onChanged: (value) {
                 setState(() {
                   _restrictionDescription = value;

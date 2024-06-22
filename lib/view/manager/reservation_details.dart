@@ -19,10 +19,11 @@ import 'AddRestrictionDialog.dart';
 
 class ReservationDetails extends StatefulWidget {
   final Reservation reservation;
-
+  final restriction;
   const ReservationDetails({
     super.key,
     required this.reservation,
+    this.restriction
   });
 
   @override
@@ -411,7 +412,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                         ],
                       )),
                 )
-              else if (res)
+              else if (widget.restriction.description=="")
                 Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -434,7 +435,13 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                                   builder: (BuildContext context) {
                                     return AddRestrictionDialog(viewModel: RestrictionsViewModel(context), user: widget.reservation.user!, reservion: widget.reservation);
                                   },
-                                );
+                                ).then((_) {
+                                  setState(() {
+                                    _fetchres();
+                                  });
+                                }).catchError((error) {
+                                  // Handle signup error
+                                });;
                               },
                               child: Text(
                                 AppLocalizations.of(context)!.addRestriction,
