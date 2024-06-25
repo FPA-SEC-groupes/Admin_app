@@ -262,9 +262,11 @@ class _ProductDetailsState extends State<ProductDetails>
                   left: 20,
                   right: 20,
                 ),
-                child: Text(
-                    widget.product.description.substring(0, 1).toUpperCase() +
-                        widget.product.description.substring(1)))
+                child:
+                 Text(
+                     widget.product.description.substring(0, 1).toUpperCase() +
+                         widget.product.description.substring(1))
+            )
           ],
         ),
       ):Center(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 //const baseUrl="https://full-bell-production.up.railway.app";
 
-const baseUrl = "http://192.168.1.193:8082";
+const baseUrl = "http://192.168.1.124:8082";
 const Url = "//192.168.1.193:8082";
 const productUrl="/photos/product/";
 const spaceUrl ="/photos/space/";

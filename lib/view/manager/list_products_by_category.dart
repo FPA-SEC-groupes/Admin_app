@@ -4,12 +4,11 @@ import 'package:hello_way/view_model/list_products_by_category_view_model.dart';
 import 'package:hello_way/view_model/menu_view_model.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:reorderables/reorderables.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
 import '../../widgets/card_menu.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListProductsByCategory extends StatefulWidget {
   final int idCategory;
@@ -36,16 +35,6 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
     });
   }
 
-  void _onReorder(int oldIndex, int newIndex) {
-    setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
-      }
-      final Product item = _products.removeAt(oldIndex);
-      _products.insert(newIndex, item);
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -61,18 +50,16 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
       appBar: Toolbar(title: title),
       body: networkStatus == NetworkStatus.Online
           ? _products.isNotEmpty
-          ? ReorderableWrap(
-        onReorder: _onReorder,
-        spacing: 8.0,
-        runSpacing: 4.0,
-        padding: const EdgeInsets.all(8),
-        children: _products.map((Product product) {
-          return Padding(
-            key: ValueKey(product.idProduct),
-            padding: const EdgeInsets.all(5),
-            child: CardMenu(product: product),
-          );
-        }).toList(),
+          ? GridView.builder(
+        padding: const EdgeInsets.all(10),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 2 / 3,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: _products.length,
+        itemBuilder: (ctx, i) => CardMenu(product: _products[i]),
       )
           : const Center(
         child: CircularProgressIndicator(),

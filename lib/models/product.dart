@@ -13,6 +13,7 @@ class Product {
   int? percentage;
   int? promotionId;
   List<Event>? promotions;
+  int? orderIndex;
 
   Product({
     this.idProduct,
@@ -26,6 +27,7 @@ class Product {
     this.percentage,
     this.promotionId,
     this.promotions,
+    this.orderIndex,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,7 @@ class Product {
       promotionId: promotionId,
       images: images,
       promotions: promotions,
+      orderIndex: json['orderIndex'],
     );
   }
 
@@ -71,5 +74,6 @@ class Product {
     'promotionId': promotionId,
     'images': images?.map((image) => image.toJson()).toList(),
     'promotions': promotions?.map((promotion) => promotion.toJson()).toList(),
+    'orderIndex': orderIndex,
   };
 }
