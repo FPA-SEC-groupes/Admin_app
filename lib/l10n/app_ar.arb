@@ -223,6 +223,7 @@
   "pleaseSelectDate": "يرجى تحديد التاريخ أولاً.",
   "addShift": "إضافة نوبة",
   "selectDate": "حدد تاريخًا لرؤية النوبات",
+  "verificarionTitle": "اختر طريقتك للتحقق",
   "gps": "GPS",
   "wifi": "WiFi",
   "wifiName": "Nom du WiFi",
@@ -255,5 +256,9 @@
   "isDateTodayOrFuture": "التاريخ المحدد في الماضي",
   "nigativeError": "لا يمكن أن يكون الرقم سالبًا",
   "futureError": "يجب أن يكون التاريخ في المستقبل",
-  "dotsOrcommasError": "لا يمكن أن يحتوي الرقم على نقاط أو فواصل"
+  "dotsOrcommasError": "لا يمكن أن يحتوي الرقم على نقاط أو فواصل",
+  "percentage": "نسبة من الأرباح",
+  "managerDetails": "تفاصيل المدير",
+  "forYou": "لك",
+  "forAdmin": "للمشرف"
 }

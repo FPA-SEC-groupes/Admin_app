@@ -225,6 +225,7 @@
     "noShifts": "No shifts",
     "addShift": "Add Shift",
     "selectDate": "Select a date to see the shifts",
+    "verificarionTitle": "choose your method to verification",
     "gps": "GPS",
     "wifi": "WiFi",
     "wifiName": "WiFi Name",
@@ -257,7 +258,11 @@
     "isDateTodayOrFuture": "selected Date is in the past",
     "nigativeError": "Number can't be negative",
     "futureError": "La date doit être dans le futur",
-    "dotsOrcommasError": "The number cannot contain dots or commas"
+    "dotsOrcommasError": "The number cannot contain dots or commas",
+    "percentage": "percentage of profits",
+    "managerDetails": "Manager Details",
+    "forYou": "For you",
+    "forAdmin": "for admin"
 }
 
 

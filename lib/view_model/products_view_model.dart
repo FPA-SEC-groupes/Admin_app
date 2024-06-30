@@ -6,8 +6,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:hello_way/models/product.dart';
+import 'package:hello_way/utils/secure_storage.dart';
 import 'package:http_parser/http_parser.dart';
-
+import '../utils/const.dart';
 import '../interceptors/dio_interceptor.dart';
 import '../response/ProductResponse.dart';
 import '../utils/const.dart';
@@ -16,10 +17,11 @@ class ProductsViewModel {
   final DioInterceptor dioInterceptor;
   ProductsViewModel(BuildContext context)
       : dioInterceptor = DioInterceptor(context);
-
+  final SecureStorage secureStorage = SecureStorage();
   Future<ProductResponse> addProductByIdCategory(
       String categoryId, Product product) async {
-    final url = '$baseUrl/api/products/add/id_categorie/$categoryId';
+    final percentage = await secureStorage.readData(UserPercentage);
+    final url = '$baseUrl/api/products/add/id_categorie/$categoryId/$percentage';
     final response = await dioInterceptor.dio.post(
       url,
       data: product.toJson(),
@@ -68,7 +70,8 @@ class ProductsViewModel {
   }
 
   Future<Product> updateProduct(Product product, int productId) async {
-    String url = '$baseUrl/api/products/update/$productId';
+    final percentage = await secureStorage.readData(UserPercentage);
+    String url = '$baseUrl/api/products/update/$productId/$percentage';
     // Assuming your Product model has a toJson() method to convert it to a Map
     Response response =
     await dioInterceptor.dio.put(url, data: product.toJson());

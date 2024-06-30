@@ -178,7 +178,6 @@ class WaitersViewModel {
   }
 
 
-
   Future<int> getServerCommandsCountPerDay(
       int serverId,
       String localDate,

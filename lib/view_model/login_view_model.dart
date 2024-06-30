@@ -23,12 +23,12 @@ class LoginViewModel {
 
       if (response.statusCode == 200) {
         final user = User.fromJson(response.data);
-        print(response.data);
+        print(user.toString());
 
         await secureStorage.writeData(authentifiedUserId, user.id.toString());
         await secureStorage.writeData(email, user.email.toString());
         await secureStorage.writeData(roleKey, user.role![0].toString());
-
+        await secureStorage.writeData(UserPercentage, user.percentage.toString());
         List<Cookie> cookies = response.headers.map['set-cookie']!
             .map((s) => Cookie.fromSetCookieValue(s))
             .toList();

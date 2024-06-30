@@ -3,8 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hello_way/utils/const.dart';
+import 'package:hello_way/utils/secure_storage.dart';
 import 'package:hello_way/view/manager/updateSpace.dart';
+import 'package:hello_way/view_model/modertors_view_model.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../models/space.dart';
@@ -23,15 +27,23 @@ class DetailsSpace extends StatefulWidget {
 class _DetailsSpaceState extends State<DetailsSpace> {
   late final SpaceViewModel _spaceViewModel;
   final PageController _pageController = PageController();
+  final SecureStorage secureStorage = SecureStorage();
+  late final ModertorsViewModel _modertorsViewModel;
   int _currentPage = 0;
   Space? space;
   List<Widget> _pages = [];
   Timer? _timer;
+  DateTime currentDate = DateTime.now();
+  int? id;
+  int? percentage;
 
   @override
   void initState() {
     super.initState();
     _spaceViewModel = SpaceViewModel(context);
+    _modertorsViewModel = ModertorsViewModel(context);
+
+    getManagerSumCommandsPerMonth();
     fetchSpaceById();
   }
 
@@ -43,6 +55,12 @@ class _DetailsSpaceState extends State<DetailsSpace> {
   }
 
   Future<Space> fetchSpaceById() async {
+    String? idUser = await secureStorage.readData(authentifiedUserId);
+    String? percentageUser = await secureStorage.readData(UserPercentage);
+    setState(() {
+      id = int.parse(idUser!);
+      percentage=int.parse(percentageUser!);
+    });
     Space _space = await _spaceViewModel.getSpaceById();
     setState(() {
       _pages = _space.images!.isEmpty
@@ -72,7 +90,12 @@ class _DetailsSpaceState extends State<DetailsSpace> {
     startTimer();
     return _space;
   }
-
+  Future<double> getManagerSumCommandsPerMonth() async {
+    String formattedDate = DateFormat('yyyy-MM').format(currentDate);
+    double sum = await  _modertorsViewModel.getManagerSumCommandsPerMonth(
+        id as int, formattedDate);
+    return sum;
+  }
   void startTimer() {
     if (_pages.length <= 1) {
       return; // Exit the method if there's only one page
@@ -340,6 +363,110 @@ class _DetailsSpaceState extends State<DetailsSpace> {
                   ],
                 ),
               ),
+            Padding(padding: EdgeInsetsDirectional.all(10),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: orange, // Or any color you want
+                borderRadius: BorderRadius.circular(10.0), // Adjust the radius as needed
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Text("${AppLocalizations.of(context)!.on} ${DateFormat('dd-MM-yyyy').format(currentDate)}",style: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),),
+                  const SizedBox(height: 10,),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FutureBuilder<double>(
+                          future: getManagerSumCommandsPerMonth(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Center(
+                                child: Text('Error: ${snapshot.error}'),
+                              );
+                            } else {
+                              double sum = snapshot.data!;
+                              double sum1 = double.parse((sum - (sum / (1 + percentage! / 100))).toStringAsFixed(2));
+                              double sum2 = double.parse((sum-sum1).toStringAsFixed(2));
+                              return
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(
+                                      children: [
+                                        Text(
+                                          AppLocalizations.of(context)!.forYou,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SvgPicture.asset('assets/images/coin.svg',
+                                            height: 60, width: 60, color: Colors.white),
+                                        Text('$sum2 ${AppLocalizations.of(context)!.tunisianDinar}',style: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),),
+                                      ],
+                                    ),
+                                      SizedBox(width: 50,),
+                                      Column(
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)!.forAdmin,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          SvgPicture.asset('assets/images/coin.svg',
+                                              height: 60, width: 60, color: Colors.white),
+                                          Text('$sum1 ${AppLocalizations.of(context)!.tunisianDinar}',style: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),),
+                                        ],
+                                      )
+                                  ]
+                                );
+                            }
+                          },
+                        ),
+                      ),
+                      // Expanded(
+                      //   child:FutureBuilder<int>(
+                      //     future: getServerCommandsCountPerDay(widget.modertors.id),
+                      //     builder: (context, snapshot) {
+                      //       if (snapshot.connectionState ==
+                      //           ConnectionState.waiting) {
+                      //         return const Center(
+                      //           child: CircularProgressIndicator(),
+                      //         );
+                      //       } else if (snapshot.hasError) {
+                      //         return Center(
+                      //           child: Text('Error: ${snapshot.error}'),
+                      //         );
+                      //       } else {
+                      //         int nbOrders = snapshot.data!;
+                      //         return Column(
+                      //           children: [
+                      //             const Icon(
+                      //               Icons.file_copy,
+                      //               size: 50,
+                      //               color: Colors.white,
+                      //             ),
+                      //             Text('$nbOrders ${AppLocalizations.of(context)!.orders}',style: const TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.bold),),
+                      //           ],
+                      //         );
+                      //       }
+                      //     },
+                      //   ),)
+                    ],
+                  ),
+                ],
+              ),
+            ),)
           ],
         ),
       )

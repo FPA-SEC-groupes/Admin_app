@@ -5,6 +5,7 @@ import 'package:hello_way/view_model/menu_view_model.dart';
 import 'package:hello_way/widgets/app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
@@ -35,6 +36,23 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
     });
   }
 
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final Product item = _products.removeAt(oldIndex);
+      _products.insert(newIndex, item);
+
+      // Update the orderIndex for all products
+      for (int i = 0; i < _products.length; i++) {
+        _products[i].orderIndex = i;
+      }
+    });
+
+    _menuViewModel.updateProductOrder(_products); // Update order on server
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,16 +68,18 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
       appBar: Toolbar(title: title),
       body: networkStatus == NetworkStatus.Online
           ? _products.isNotEmpty
-          ? GridView.builder(
+          ? ReorderableGridView.builder(
         padding: const EdgeInsets.all(10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 2 / 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+          mainAxisExtent: 220,
         ),
         itemCount: _products.length,
-        itemBuilder: (ctx, i) => CardMenu(product: _products[i]),
+        itemBuilder: (ctx, i) => CardMenu(
+          key: ValueKey(_products[i].idProduct), // Ensure each item has a unique key
+          product: _products[i],
+        ),
+        onReorder: _onReorder,
       )
           : const Center(
         child: CircularProgressIndicator(),

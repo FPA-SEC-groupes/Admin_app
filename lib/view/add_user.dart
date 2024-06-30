@@ -37,6 +37,7 @@ class _AddUserState extends State<AddUser> {
   final _lastnameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneNumberController = TextEditingController();
+  final _percentageController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -55,6 +56,7 @@ class _AddUserState extends State<AddUser> {
     _emailController.dispose();
     _passwordController.dispose();
     _phoneNumberController.dispose();
+    _percentageController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
@@ -67,7 +69,19 @@ class _AddUserState extends State<AddUser> {
     }
     return null;
   }
-
+  String? _percentageValidator(String? value) {
+    if (value != null && value.isNotEmpty) {
+      double? percentage = double.tryParse(value);
+      if (percentage != null) {
+        if (percentage < 0 || percentage > 99) {
+          return AppLocalizations.of(context)!.invalidPercentageError;
+        }
+      } else {
+        return AppLocalizations.of(context)!.invalidPercentageError;
+      }
+    }
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
@@ -188,9 +202,21 @@ class _AddUserState extends State<AddUser> {
                                       .phonePatternError),
                             ]),
                           ),
+
                           const SizedBox(
                             height: 15,
                           ),
+                          widget.isModerator! ?InputForm(
+                            keyboardType: TextInputType.number,
+                            hint: AppLocalizations.of(context)!.percentage,
+                            controller: _percentageController,
+                            prefixIcon: const Icon(Icons.percent),
+                            contentPadding: const EdgeInsets.all(10),
+                            validator:_percentageValidator,
+                          ):Text(""),
+                          widget.isModerator! ?const SizedBox(
+                            height: 15,
+                          ):Text(""),
                           InputFormPassword(
                             controller: _passwordController,
                             prefixIcon: const Icon(Icons.lock_outline_rounded),
@@ -298,6 +324,7 @@ class _AddUserState extends State<AddUser> {
                                       lastname: _lastnameController.text
                                           .toString()
                                           .trim(),
+                                        percentage:int.parse(_percentageController.text.trim()),
                                       phone: _phoneNumberController.text
                                           .toString()
                                           .trim(),

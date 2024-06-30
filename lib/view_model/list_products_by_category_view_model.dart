@@ -34,7 +34,26 @@ class ListProductsViewModel{
     }
   }
 
+  Future<void> updateProductOrder(List<Product> products) async {
+    final url = '$baseUrl/api/products/updateOrder';
 
+    try {
+      // Create a list of product IDs in the new order
+      List<int?> productIds = products.map((product) => product.idProduct).toList();
+
+      final response = await dioInterceptor.dio.put(
+        url,
+        data: json.encode({'productIds': productIds}),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update product order: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error updating product order: $e');
+    }
+  }
 
 
 }

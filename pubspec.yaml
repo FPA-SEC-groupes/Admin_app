@@ -71,7 +71,9 @@ dependencies:
   web_socket_channel: ^2.1.0
     # Remove flutter_slidable and draggable_flutter_list
   flutter_staggered_animations: ^1.0.0
-  reorderables: ^0.4.3
+#  reorderables: ^0.4.3
+  reorderable_grid_view: ^2.2.6
+
 
 
 dev_dependencies:

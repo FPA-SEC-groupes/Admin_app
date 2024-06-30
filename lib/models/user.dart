@@ -10,9 +10,11 @@ class User {
   String? phone;
   String? image;
   bool? activated;
+  int? percentage;
+  String? token;
   List<dynamic>? role;
 
-  User({ required this.username,this.name,this.lastname,required this.email, this.password, this.role, this.phone,this.id,this.image, this.activated});
+  User({ required this.username,this.name,this.lastname,required this.email, this.password,this.percentage,this.token, this.role, this.phone,this.id,this.image, this.activated});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
@@ -22,6 +24,7 @@ class User {
       'phone': phone,
       'lastname': lastname,
       'password': password,
+      'percentage':percentage,
     };
     if (id != null) {
       data['id'] = id;
@@ -46,6 +49,7 @@ class User {
       phone: json['phone'],
       email: json['email'],
       role: json['roles'],
+      percentage:json['percentage']!=null? json['percentage'] :null,
       activated: json['activated'],
       image: json['image']!=null? json['image']['fileName']:null,
 

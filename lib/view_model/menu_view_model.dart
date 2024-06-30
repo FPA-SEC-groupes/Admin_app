@@ -39,7 +39,33 @@ class MenuViewModel {
       }
 
   }
+  Future<void> updateProductOrder(List<Product> products) async {
+    final url = '$baseUrl/api/products/updateOrder';
 
+    try {
+      // Create a list of products with their updated order indices
+      List<Map<String, dynamic>> productOrderData = products
+          .asMap()
+          .map((index, product) => MapEntry(index, {
+          'idProduct': product.idProduct,
+          'orderIndex': product.orderIndex,
+        }))
+            .values
+            .toList();
+
+      final response = await dioInterceptor.dio.put(
+        url,
+        data: json.encode(productOrderData),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update product order: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error updating product order: $e');
+    }
+  }
 /*
   final StreamController<List<Category>> _categoriesStreamController =
   StreamController<List<Category>>.broadcast();

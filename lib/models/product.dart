@@ -76,4 +76,8 @@ class Product {
     'promotions': promotions?.map((promotion) => promotion.toJson()).toList(),
     'orderIndex': orderIndex,
   };
+  @override
+  String toString() {
+    return 'Product{idProduct: $idProduct, productTitle: $productTitle, price: $price, description: $description, available: $available, categorie: $categorie, images: $images, hasActivePromotion: $hasActivePromotion, percentage: $percentage, promotionId: $promotionId, promotions: $promotions, orderIndex: $orderIndex}';
+  }
 }

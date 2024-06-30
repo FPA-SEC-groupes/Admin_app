@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hello_way/response/product_with_quantities.dart';
+import 'package:hello_way/response/product_with_quantity.dart';
 import 'package:provider/provider.dart';
 
 import '../../res/app_colors.dart';
 import '../../response/command_with_num_table.dart';
-import '../../response/product_with_quantities.dart';
 import '../../services/network_service.dart';
 import '../../shimmer/item_product_command_shimmer.dart';
 import '../../view_model/commands_view_model.dart';
@@ -32,12 +33,15 @@ class _CommandDetailsState extends State<CommandDetails> {
 
 
 
-  Future<List<ProductWithQuantities>> _getProductsByCommandId() async {
-    List<ProductWithQuantities> products = await _commandsViewModel
-        .getProductsByCommandId(widget.commandWithNumTable.command.idCommand);
+  // Future<List<ProductWithQuantities>> _getProductsByCommandId() async {
+  //   List<ProductWithQuantities> products = (await _commandsViewModel
+  //       .getProductsByCommandId(widget.commandWithNumTable.command.idCommand)).cast<ProductWithQuantities>();
+  //   return products;
+  // }
+  Future<List<ProductWithQuantities1>> _getProductsByCommandId() async {
+    List<ProductWithQuantities1> products = await _commandsViewModel.getProductsByCommandId1(widget.commandWithNumTable.command.idCommand);
     return products;
   }
-
   Future<double> getSumOfCommand(int commandId) async {
     double sum = await _commandsViewModel.getSumOfCommand(commandId);
 
@@ -163,7 +167,7 @@ class _CommandDetailsState extends State<CommandDetails> {
                     return ListView.separated(
                       itemCount: products.length,
                       itemBuilder: (context, index) {
-                        ProductWithQuantities productWithQuantities =
+                        ProductWithQuantities1 productWithQuantities =
                             products[index];
 
                         return ItemProductCommand(

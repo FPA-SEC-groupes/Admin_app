@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/shimmer/item_waiter_shimmer.dart';
 import 'package:hello_way/view/add_user.dart';
+import 'package:hello_way/view/admin/profile.dart';
 import 'package:hello_way/view_model/modertors_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart';
@@ -106,6 +107,7 @@ class _ListModeratorsState extends State<ListModerators> {
                 itemBuilder: (context, index) {
                   return const ItemWaiterShimmer();
                 },
+
               );
             } else if (snapshot.hasError) {
               return  Center(
@@ -162,7 +164,16 @@ class _ListModeratorsState extends State<ListModerators> {
                     return Column(
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ModertorsDetails(
+                                  modertors: moderator,
+                                ),
+                              ),
+                            );
+                          },
                           child: ItemModerator(
                             user: moderator,
                             onDelete: () async {

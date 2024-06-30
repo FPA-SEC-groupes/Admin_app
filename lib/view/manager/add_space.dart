@@ -93,10 +93,10 @@ class _AddSpaceState extends State<AddSpace> {
   getLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    double lat = position.latitude;
-    double long = position.longitude;
+          double lat = position.latitude;
+          double long = position.longitude;
 
-    LatLng location = LatLng(lat, long);
+          LatLng location = LatLng(lat, long);
 
     setState(() {
       _currentPosition = location;
@@ -148,10 +148,8 @@ class _AddSpaceState extends State<AddSpace> {
                     color: Colors.white,
                   ),
                   Icon(Icons.image_outlined,color: Colors.white),
-                  Icon(Icons.verified,color: Colors.white),
-                  _selectedRadioValue=="gps"?
-                  Icon(Icons.location_on_outlined, color: Colors.white):
-                  Icon(Icons.wifi, color: Colors.white),
+                  Icon(Icons.location_on_outlined,color: Colors.white),
+                  Icon(Icons.verified, color: Colors.white),
                 ],
 
                 // activeStep property set to activeStep variable defined above.
@@ -169,7 +167,7 @@ class _AddSpaceState extends State<AddSpace> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   activeStep == 0 ? const SizedBox() : previousButton(),
-                  activeStep == 3
+                  activeStep == 4
                       ? nextButton( AppLocalizations.of(context)!.validate)
                       : nextButton( AppLocalizations.of(context)!.next),
                 ],
@@ -275,12 +273,13 @@ class _AddSpaceState extends State<AddSpace> {
           setState(() {
             activeStep++;
           });
+          getLocation();
         } else if (activeStep == 2) {
           setState(() {
             activeStep++;
           });
-          _selectedRadioValue == "gps" ? await getLocation() : print("test");
-        } else if (activeStep == 3) {
+        }
+          else if(activeStep == 3){
           if (_selectedCategorie == "Restaurant") {
             category = 1;
           } else if (_selectedCategorie == "Bar") {
@@ -297,8 +296,8 @@ class _AddSpaceState extends State<AddSpace> {
           print(category);
           Space space = Space(
             title: _spaceNameController.text.trim(),
-            latitude: _selectedRadioValue == "gps" ? _currentPosition!.latitude : 0.0,
-            longitude: _selectedRadioValue == "gps" ? _currentPosition!.longitude : 0.0,
+            latitude:  _currentPosition!.latitude ,
+            longitude:  _currentPosition!.longitude ,
             description: _descriptionController.text.trim().toString(),
             phoneNumber: int.parse(_phoneNumberController.text.trim()),
             surfaceEnM2: double.parse(_surfaceController.text),
@@ -322,8 +321,6 @@ class _AddSpaceState extends State<AddSpace> {
       },
     );
   }
-
-
   /// Returns the previous button.
   Widget previousButton() {
     return GestureDetector(
@@ -542,91 +539,7 @@ class _AddSpaceState extends State<AddSpace> {
           ),
         );
       case 2:
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              RadioListTile(
-                title: const Text("GPS"),
-                value: 'gps',
-                groupValue: _selectedRadioValue,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRadioValue = value.toString();
-                  });
-                },
-              ),
-              const SizedBox(height: 10),
-              RadioListTile(
-                title: const Text("WIFI"),
-                value: 'wifi',
-                groupValue: _selectedRadioValue,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRadioValue = value.toString();
-                  });
-                },
-              ),
-            ],
-          ),
-        );
-      case 3:
-        return _selectedRadioValue == 'wifi' ?Form(
-          key: _addSpaceFormKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                ...wifiControllers.map((wifiController) {
-                  return Column(
-                    children: [
-                      InputForm(
-                        hint: 'Nom du WiFi',
-                        controller: wifiController['name']!,
-                        contentPadding: const EdgeInsets.all(10),
-                        validator: MultiValidator([
-                          RequiredValidator(
-                              errorText: AppLocalizations.of(context)!.inputRequiredError),
-                        ]),
-                      ),
-                      const SizedBox(height: 10),
-                      InputForm(
-                        hint: 'Mot de passe WiFi',
-                        controller: wifiController['password']!,
-                        contentPadding: const EdgeInsets.all(10),
-                        validator: MultiValidator([
-                          RequiredValidator(
-                              errorText: AppLocalizations.of(context)!.inputRequiredError),
-                        ]),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  );
-                }).toList(),
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: addWifiController,
-                      child: const Text('Ajouter un autre WiFi'),
-                    ),
-                    const Spacer(),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_addSpaceFormKey.currentState!.validate()) {
-                          // Validation logic
-                        }
-                      },
-                      child: const Text('Valider'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ):
-        _isLoading
+       return  _isLoading
             ? const Center(child: CircularProgressIndicator())
             : GoogleMap(
           onMapCreated: _onMapCreated,
@@ -655,7 +568,101 @@ class _AddSpaceState extends State<AddSpace> {
               _currentPosition = newPosition;
             });
           },
-        ) ; // This checks if the value is not 'wifi'// Optionally handle the case when none of the conditions are met.
+        ) ;
+      case 3:
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          children: [
+            Text(AppLocalizations.of(context)!.verificarionTitle),
+            const SizedBox(height: 20),
+            RadioListTile(
+              title:  Text(AppLocalizations.of(context)!.gps),
+              value: 'gps',
+              groupValue: _selectedRadioValue,
+              onChanged: (value) {
+                setState(() {
+                  _selectedRadioValue = value.toString();
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+            RadioListTile(
+              title: Text(AppLocalizations.of(context)!.wifi),
+              value: 'wifi',
+              groupValue: _selectedRadioValue,
+              onChanged: (value) {
+                setState(() {
+                  _selectedRadioValue = value.toString();
+                });
+              },
+            ),
+          _selectedRadioValue == 'wifi'?
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Form(
+                      key: _addSpaceFormKey,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 20),
+                            ...wifiControllers.map((wifiController) {
+                              return Column(
+                                children: [
+                                  InputForm(
+                                    hint: AppLocalizations.of(context)!.wifiName,
+                                    controller: wifiController['name']!,
+                                    contentPadding: const EdgeInsets.all(10),
+                                    validator: MultiValidator([
+                                      RequiredValidator(
+                                          errorText: AppLocalizations.of(context)!.inputRequiredError),
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  InputForm(
+                                    hint: AppLocalizations.of(context)!.wifiPassword,
+                                    controller: wifiController['password']!,
+                                    contentPadding: const EdgeInsets.all(10),
+                                    validator: MultiValidator([
+                                      RequiredValidator(
+                                          errorText: AppLocalizations.of(context)!.inputRequiredError),
+                                    ]),
+                                  ),
+                                  const SizedBox(height: 20),
+                                ],
+                              );
+                            }).toList(),
+                            Row(
+                              children: [
+                                ElevatedButton(
+                                  onPressed: addWifiController,
+                                  child:  Text(AppLocalizations.of(context)!.addAnotherWifi),
+                                ),
+                                const Spacer(),
+                                // ElevatedButton(
+                                //   onPressed: () {
+                                //     if (_addSpaceFormKey.currentState!.validate()) {
+                                //       // Validation logic
+                                //     }
+                                //   },
+                                //   child: const Text('Valider'),
+                                // ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ]
+                ),
+              )
+         :Text(""),
+          ],
+        ),
+      );
+    // This checks if the value is not 'wifi'// Optionally handle the case when none of the conditions are met.
       default:
         return Container();
     }

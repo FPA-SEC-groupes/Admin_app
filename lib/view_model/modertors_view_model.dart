@@ -103,4 +103,26 @@ class ModertorsViewModel {
       throw Exception(error);
     }
   }
+  Future<double> getManagerSumCommandsPerMonth(int managerId, String yearMonth) async {
+    const String url = "$baseUrl/api/commands/ManagersumPerMonth"; // Replace with your server URL
+    print(managerId.toString() +" "+yearMonth);
+    try {
+      Response response = await dioInterceptor.dio.get(
+        url,
+        queryParameters: {
+          'managerId': managerId,
+          'yearMonth': yearMonth,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data as double;
+      } else {
+        throw Exception('Failed to load data'); // Handle error response as needed
+      }
+    } catch (e) {
+      throw Exception('Network error: $e'); // Handle Dio errors
+    }
+  }
+
 }

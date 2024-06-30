@@ -263,9 +263,11 @@ class _ProductDetailsState extends State<ProductDetails>
                   right: 20,
                 ),
                 child:
+                widget.product.description!=null?
                  Text(
                      widget.product.description.substring(0, 1).toUpperCase() +
                          widget.product.description.substring(1))
+                    :Text("")
             )
           ],
         ),
