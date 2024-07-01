@@ -99,7 +99,7 @@ class _SettingsState extends State<Settings> {
                   visualDensity: const VisualDensity(vertical: 0.0),
                   dense: true,
                   title:  Text(
-                    'Shift',
+                    AppLocalizations.of(context)!.shift,
                     style: const TextStyle(fontSize: 16),
                   ),
                   onTap: () async {

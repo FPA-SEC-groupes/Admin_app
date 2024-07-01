@@ -84,8 +84,8 @@ class _WaiterShiftPageState extends State<WaiterShiftPage> {
               itemBuilder: (context, index) {
                 Shift shift = _selectedShifts[index];
                 return ListTile(
-                  title: Text('${shift.date} (${shift.type})'),
-                  subtitle: Text('${shift.startTime} - ${shift.endTime}'),
+                  title: shift.type=="shift" ?Text('${shift.date} ${AppLocalizations.of(context)!.shift}'):Text(AppLocalizations.of(context)!.dayOff),
+                  subtitle:shift.type=="shift" ? Text('${shift.startTime} - ${shift.endTime}'):Text(''),
                 );
               },
             )
