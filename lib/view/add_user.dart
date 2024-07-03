@@ -85,6 +85,7 @@ class _AddUserState extends State<AddUser> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
+    bool isModerator = widget.isModerator ?? false;
     return ScaffoldMessenger(
         key: _addUserScaffoldKey,
         child: Scaffold(
@@ -202,11 +203,13 @@ class _AddUserState extends State<AddUser> {
                                       .phonePatternError),
                             ]),
                           ),
-
+                          isModerator ?
                           const SizedBox(
                             height: 15,
+                          ): SizedBox(
+                            height: 0,
                           ),
-                          widget.isModerator! ?InputForm(
+                          isModerator ?InputForm(
                             keyboardType: TextInputType.number,
                             hint: AppLocalizations.of(context)!.percentage,
                             controller: _percentageController,
@@ -214,9 +217,11 @@ class _AddUserState extends State<AddUser> {
                             contentPadding: const EdgeInsets.all(10),
                             validator:_percentageValidator,
                           ):Text(""),
-                          widget.isModerator! ?const SizedBox(
+                          isModerator! ?const SizedBox(
                             height: 15,
-                          ):Text(""),
+                          ): SizedBox(
+                            height: 0,
+                          ),
                           InputFormPassword(
                             controller: _passwordController,
                             prefixIcon: const Icon(Icons.lock_outline_rounded),

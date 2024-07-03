@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:hello_way/navigation/manager_bottom_navigation.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/services/network_service.dart';
@@ -33,8 +35,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await _initializeNotifications();
   runApp(MyApp());
 }
@@ -67,6 +76,7 @@ class MyApp extends StatelessWidget {
     );
 
     pushNotificationService.init();
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: pushNotificationService),

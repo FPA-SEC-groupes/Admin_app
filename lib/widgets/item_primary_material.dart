@@ -97,7 +97,7 @@ class _ItemPrimaryMaterialState extends State<ItemPrimaryMaterial> {
 
 
           const SizedBox(height: 10,),
-          Text("${AppLocalizations.of(context)!.expirationDate}: ${formatter.format(widget.primaryMaterial.expirationDate)}",style: const TextStyle(  color: gray))
+          // Text("${AppLocalizations.of(context)!.expirationDate}: ${formatter.format(widget.primaryMaterial.expirationDate)}",style: const TextStyle(  color: gray))
         ]));
   }
 }

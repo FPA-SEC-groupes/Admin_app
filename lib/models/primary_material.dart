@@ -5,7 +5,7 @@ class PrimaryMaterial {
    String unitOfMeasure;
    double stockQuantity;
    double price;
-   DateTime expirationDate;
+   // DateTime expirationDate;
    String supplier;
    String supplierNumber;
 
@@ -16,7 +16,7 @@ class PrimaryMaterial {
     required this.unitOfMeasure,
     required this.stockQuantity,
     required this.price,
-    required this.expirationDate,
+    // required this.expirationDate,
     required this.supplier,
     required this.supplierNumber,
   });
@@ -29,7 +29,7 @@ class PrimaryMaterial {
       unitOfMeasure: json['unitOfMeasure'],
       stockQuantity: json['stockQuantity'],
       price: json['price'],
-      expirationDate: DateTime.parse(json['expirationDate']),
+      // expirationDate: DateTime.parse(json['expirationDate']),
       supplier: json['supplier'],
       supplierNumber: json['supplierNumber'],
     );
@@ -42,7 +42,7 @@ class PrimaryMaterial {
       'unitOfMeasure': unitOfMeasure,
       'stockQuantity': stockQuantity,
       'price': price,
-      'expirationDate': expirationDate.toIso8601String(),
+      // 'expirationDate': expirationDate.toIso8601String(),
       'supplier': supplier,
       'supplierNumber': supplierNumber,
     };

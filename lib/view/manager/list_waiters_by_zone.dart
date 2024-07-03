@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/models/user.dart';
 import 'package:hello_way/models/zone.dart';
+import 'package:hello_way/view/manager/list_zones.dart';
 import 'package:hello_way/widgets/item_waiter.dart';
 import 'package:provider/provider.dart';
 
@@ -64,7 +65,14 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+              builder: (context) => ListZones()));
+      return true;
+    },child :Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.waitersList),
       ),
@@ -299,7 +307,8 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
             ],
           ),
         ),
-      ),
+      )
+    ),
     );
   }
 }

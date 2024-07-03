@@ -53,7 +53,7 @@ class _AddNewPromotionState extends State<AddNewPromotion> {
       _percentageController = TextEditingController();
       _descriptionController = TextEditingController();
 
-
+  // print("Prommmmmmmmmmmmmmmmmmmmmmmmm"+widget.hasActivePromotion.toString());
 
   }
 

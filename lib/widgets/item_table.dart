@@ -112,8 +112,6 @@ class _ItemTableState extends State<ItemTable> {
                       onSelected: (String value) =>
                           actionPopUpItemSelected(value, widget.zone),
                       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-
-
                          PopupMenuItem<String>(
                           value: edit,
                           child: ListTile(
@@ -124,15 +122,15 @@ class _ItemTableState extends State<ItemTable> {
                           ),
                         ),
 
-                         PopupMenuItem<String>(
-                          value: delete,
-                          child: ListTile(
-                            minLeadingWidth: 10,
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.delete_outline),
-                            title: Text(AppLocalizations.of(context)!.delete),
-                          ),
-                        ),
+                        //  PopupMenuItem<String>(
+                        //   value: delete,
+                        //   child: ListTile(
+                        //     minLeadingWidth: 10,
+                        //     contentPadding: EdgeInsets.zero,
+                        //     leading: const Icon(Icons.delete_outline),
+                        //     title: Text(AppLocalizations.of(context)!.delete),
+                        //   ),
+                        // ),
                          PopupMenuItem<String>(
                           value: downloadQrCode,
                           child: ListTile(

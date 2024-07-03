@@ -148,15 +148,15 @@ class _ItemWaiterState extends State<ItemWaiter> {
                         title: Text(AppLocalizations.of(context)!.showMore),
                       ),
                     ),
-                     PopupMenuItem<String>(
-                      value: delete,
-                      child: ListTile(
-                        minLeadingWidth: 10,
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.delete_outline),
-                        title: Text(AppLocalizations.of(context)!.delete),
-                      ),
-                    ),
+                    //  PopupMenuItem<String>(
+                    //   value: delete,
+                    //   child: ListTile(
+                    //     minLeadingWidth: 10,
+                    //     contentPadding: EdgeInsets.zero,
+                    //     leading: const Icon(Icons.delete_outline),
+                    //     title: Text(AppLocalizations.of(context)!.delete),
+                    //   ),
+                    // ),
                   ],
                   icon: const Icon(
                     Icons.more_vert_rounded,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/product.dart';
+import 'package:hello_way/view/manager/add_new_promotion.dart';
 import 'package:hello_way/view_model/list_products_by_category_view_model.dart';
 import 'package:hello_way/view_model/menu_view_model.dart';
 import 'package:hello_way/widgets/app_bar.dart';
@@ -64,6 +65,13 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
+
+    // Ensure orderIndex is not null before sorting
+    _products.forEach((product) {
+      product.orderIndex ??= 0; // Provide a default value if orderIndex is null
+    });
+    _products.sort((a, b) => a.orderIndex!.compareTo(b.orderIndex!));
+
     return Scaffold(
       appBar: Toolbar(title: title),
       body: networkStatus == NetworkStatus.Online
@@ -75,10 +83,50 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
           mainAxisExtent: 220,
         ),
         itemCount: _products.length,
-        itemBuilder: (ctx, i) => CardMenu(
-          key: ValueKey(_products[i].idProduct), // Ensure each item has a unique key
-          product: _products[i],
-        ),
+        itemBuilder: (ctx, i) {
+          return CardMenu(
+            key: ValueKey(_products[i].idProduct), // Ensure each item has a unique key
+            product: _products[i],
+            onTap: () {
+              print("prompppppppppppppppppp"+_products[i].hasActivePromotion.toString());
+              _products[i].promotionId == 0
+                  ? Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) =>
+                      AddNewPromotion(
+                        product:
+                        _products[i],
+                        hasActivePromotion: _products[i].hasActivePromotion,
+                      ),
+                ),
+              ).then((value) {
+                setState(() {
+                  _fetchProducts();
+                });
+              })
+                  : Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder:
+                          (context) =>
+                          AddNewPromotion(
+                            product:
+                            _products[i],
+                            promotionId:
+                            _products[i]
+                                .promotionId,
+                            hasActivePromotion: _products[i].hasActivePromotion,
+                          )
+                  )).then((value) {
+                setState(() {
+                  _fetchProducts();
+                });
+              });
+            },
+          );
+        },
         onReorder: _onReorder,
       )
           : const Center(
