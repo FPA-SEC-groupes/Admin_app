@@ -10,6 +10,7 @@ import '../../models/board.dart';
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
 import '../../shimmer/item_zone_shimmer.dart';
+import '../../utils/routes.dart';
 import '../../view_model/tables_view_model.dart';
 import '../../view_model/zones_view_model.dart';
 import '../../widgets/custom_alert_dialog.dart';
@@ -234,7 +235,12 @@ class _ListZonesState extends State<ListZones> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
-    return ScaffoldMessenger(
+    return WillPopScope(
+        onWillPop: () async {
+      Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
+      return true;
+    },
+    child: ScaffoldMessenger(
       key: _zonesScaffoldKey,
       child: Scaffold(
         backgroundColor: lightGray,
@@ -494,6 +500,7 @@ class _ListZonesState extends State<ListZones> {
           ),
         ),
       ),
+    )
     );
   }
 

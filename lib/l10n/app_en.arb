@@ -262,7 +262,9 @@
     "percentage": "percentage of profits",
     "managerDetails": "Manager Details",
     "forYou": "For you",
-    "forAdmin": "for admin"
+    "forAdmin": "for admin",
+    "deleteConfirmation": "Delete Confirmation",
+    "deleteTitle": "Are you sure you want to delete this product?"
 }
 
 

@@ -38,7 +38,7 @@ class _ItemReservationState extends State<ItemReservation> {
             children: [
 
               Text(
-                "${AppLocalizations.of(context)!.reservation}  N°${widget.reservation.idReservation} \n ${widget.reservation.user!.name} ${widget.reservation.user!.lastname} ",
+                "${AppLocalizations.of(context)!.reservation}  N°${widget.reservation.idReservation} \n ${widget.reservation.user!.username} ",
 
                 style: const TextStyle(
                     fontSize: 18,fontWeight: FontWeight.bold),

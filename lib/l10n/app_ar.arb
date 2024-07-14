@@ -260,5 +260,7 @@
   "percentage": "نسبة من الأرباح",
   "managerDetails": "تفاصيل المدير",
   "forYou": "لك",
-  "forAdmin": "للمشرف"
+  "forAdmin": "للمشرف",
+  "deleteConfirmation": " التأكيد حذف",
+  "deleteTitle": "هل أنت متأكد أنك تريد حذف هذا المنتج؟"
 }

@@ -74,8 +74,16 @@ class _ListcommandsbywaiterState extends State<Listcommandsbywaiter> {
     final listOrdersStatus = initListOrdersStatus(context);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // Define the action, e.g., pop the navigator or perform other logic
+            Navigator.of(context).pop();
+          },
+        ),
         automaticallyImplyLeading: false,
         title: Text(AppLocalizations.of(context)!.orderList),
+
       ),
       body: networkStatus == NetworkStatus.Online
           ? Column(

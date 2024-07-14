@@ -102,7 +102,7 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
     if (_addPrimaryMaterialFormKey.currentState!.validate()) {
       _addPrimaryMaterialFormKey.currentState!.save();
       String sanitizedInputTitle = sanitizeTitle(_titleController.text.trim());
-      bool titleExists = await _stockViewModel.checkTitleExists(sanitizedInputTitle);
+      // bool titleExists = await _stockViewModel.checkTitleExists(sanitizedInputTitle);
       var primaryMaterial = PrimaryMaterial(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
@@ -115,7 +115,7 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
         supplierNumber: _supplierNumberController.text.trim(),
       );
     if(widget.primaryMaterial! ==null){
-      if (!titleExists) {
+      if (true) {
         _stockViewModel.addPrimaryMaterialToSpace(primaryMaterial).then((primaryMaterial) async {
           Navigator.pop(context, primaryMaterial);
         }).catchError((error) {

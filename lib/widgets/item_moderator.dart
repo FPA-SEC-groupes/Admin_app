@@ -187,6 +187,9 @@ class _ItemModeratorState extends State<ItemModerator> {
               Text(
                 widget.user.email,
               ),
+              Text(
+                widget.user.username,
+              ),
               Row(
                 children: [
                   Text(AppLocalizations.of(context)!.activateTheAccount),

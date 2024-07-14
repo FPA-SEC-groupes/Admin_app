@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/user.dart';
@@ -12,6 +13,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginViewModel {
   final Dio dio = Dio();
+  String token ="";
+  final _firebaseMessaging= FirebaseMessaging.instance;
   final url = '$baseUrl/api/auth/signin';
   final SecureStorage secureStorage = SecureStorage();
   Future<User?> login(BuildContext context, LoginRequest loginRequest) async {

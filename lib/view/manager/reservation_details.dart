@@ -108,6 +108,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
+    bool isPhone = widget.reservation.user!.phone!=null ?? false;
     return ScaffoldMessenger(
         key: _reservationDetailsScaffoldKey,
         child: Scaffold(
@@ -213,24 +214,28 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                               .toUpperCase() +
                               widget.reservation.description!.substring(1),
                           style: const TextStyle(fontSize: 16)),
-                      Text("${AppLocalizations.of(context)!.firstname}:",
+                      Text("${AppLocalizations.of(context)!.username}:",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
                       Text(
-                          widget.reservation.user!.name!,
+                          widget.reservation.user!.username!,
                           style: const TextStyle(fontSize: 16)),
-                      Text("${AppLocalizations.of(context)!.lastname}:",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      Text(
-                          widget.reservation.user!.lastname!,
-                          style: const TextStyle(fontSize: 16)),
-                      Text("${AppLocalizations.of(context)!.phoneNumber}:",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                      Text(
-                          widget.reservation.user!.phone!,
-                          style: const TextStyle(fontSize: 16)),
+                      // Text("${AppLocalizations.of(context)!.lastname}:",
+                      //     style: const TextStyle(
+                      //         fontSize: 16, fontWeight: FontWeight.bold)),
+                      // Text(
+                      //     widget.reservation.user!.lastname!,
+                      //     style: const TextStyle(fontSize: 16)),
+                      isPhone ?
+                      Column(
+                        children: [
+                        Text("${AppLocalizations.of(context)!.phoneNumber}:",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(
+                            widget.reservation.user!.phone!,
+                            style: const TextStyle(fontSize: 16)),
+                      ],):SizedBox(),
                       Text("${AppLocalizations.of(context)!.email}:",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),

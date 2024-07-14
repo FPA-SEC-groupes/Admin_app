@@ -177,6 +177,12 @@ class _ItemWaiterState extends State<ItemWaiter> {
                   widget.user.email,
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, bottom: 5),
+                child: Text(
+                  widget.user.username,
+                ),
+              ),
               const SizedBox(height: 10,)
             ],
           ))

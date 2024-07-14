@@ -31,7 +31,7 @@ class _ItemCommandState extends State<ItemCommand> {
 
   @override
   Widget build(BuildContext context) {
-
+    double sum = double.parse(widget.sum.toStringAsFixed(2));
     return Container(
         padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
         color: Colors.white,
@@ -62,7 +62,7 @@ class _ItemCommandState extends State<ItemCommand> {
           ),
           const SizedBox(height: 10,),
           if(widget.commandWithNumTable.command.status=="CONFIRMED")
-          Text("${AppLocalizations.of(context)!.total}: ${widget.sum} ${AppLocalizations.of(context)!.tunisianDinar}"   ,style: const TextStyle(
+          Text("${AppLocalizations.of(context)!.total}: ${sum} ${AppLocalizations.of(context)!.tunisianDinar}"   ,style: const TextStyle(
               fontSize: 16))
 
         ]));

@@ -119,20 +119,42 @@ class _CommandDetailsState extends State<CommandDetails> {
                                 : Colors.green,
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Text(
-                        widget.commandWithNumTable.command.status == "NOT_YET"
-                            ?AppLocalizations.of(context)!.pendingStatus
-                            : widget.commandWithNumTable.command.status ==
-                                    "REFUSED"
-                                ? AppLocalizations.of(context)!.refusedStatus
-                                : widget.commandWithNumTable.command.status ==
-                                        "CONFIRMED"
-                                    ?AppLocalizations.of(context)!.confirmedStatus
-                                    :widget.commandWithNumTable.command.status=="UPDATED"
-                                    ?AppLocalizations.of(context)!.updatedStatus
-                                    : AppLocalizations.of(context)!.payedStatus,
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child:Row(
+                          children: [
+                              FutureBuilder(
+                              future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
+                              builder: (BuildContext context,
+                              AsyncSnapshot<double> sumSnapshot) {
+                              if (sumSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                              return const SizedBox
+                                  .shrink(); // or a loading widget
+                              } else if (sumSnapshot.hasError) {
+                              return  Text(AppLocalizations.of(context)!.errorRetrievingData);
+                              } else {
+                              final sum = sumSnapshot.data!;
+
+
+
+                              return Text(
+                              "${AppLocalizations.of(context)!.total}: $sum ${AppLocalizations.of(context)!.tunisianDinar}",
+                              style: const TextStyle(fontSize: 16),
+                              );}}),
+                            Text(
+                              widget.commandWithNumTable.command.status == "NOT_YET"
+                                  ?AppLocalizations.of(context)!.pendingStatus
+                                  : widget.commandWithNumTable.command.status ==
+                                  "REFUSED"
+                                  ? AppLocalizations.of(context)!.refusedStatus
+                                  : widget.commandWithNumTable.command.status ==
+                                  "CONFIRMED"
+                                  ?AppLocalizations.of(context)!.confirmedStatus
+                                  :widget.commandWithNumTable.command.status=="UPDATED"
+                                  ?AppLocalizations.of(context)!.updatedStatus
+                                  : AppLocalizations.of(context)!.payedStatus,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                             ],)
                     )
                   ],
                 ),

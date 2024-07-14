@@ -72,7 +72,47 @@ class _CommandDetailsState extends State<CommandDetails> {
     double sum = await _commandsViewModel.getSumOfCommand(commandId);
     return sum;
   }
-
+  Future<void> _showDeleteConfirmationDialog(ProductWithQuantities1 product,int id_basket) async {
+    // final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.deleteConfirmation),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(AppLocalizations.of(context)!.deleteTitle),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.cancel),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.delete),
+              onPressed: () {
+                _basketViewModel.deleteProductFromBasket(product.product.idProduct!,id_basket).then((_) {
+                  setState(() {
+                    _getTotalSumByBasketId();
+                    _getProductsByBasketId();
+                  });
+                  Navigator.of(context).pop();
+                }).catchError((error) {
+                  print(error);
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
   @override
   void initState() {
     _commandsViewModel = CommandsViewModel(context);
@@ -128,10 +168,10 @@ class _CommandDetailsState extends State<CommandDetails> {
                     } else {
                     final sum = sumSnapshot.data!;
 
-
+                    double sum1 = double.parse(sum.toStringAsFixed(2));
 
                     return Text(
-                      "${AppLocalizations.of(context)!.total}: $sum",
+                      "${AppLocalizations.of(context)!.total}: $sum1",
                       style: const TextStyle(fontSize: 16),
                     );}}),
                     Container(
@@ -146,20 +186,45 @@ class _CommandDetailsState extends State<CommandDetails> {
                                 : Colors.green,
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: Text(
-                        widget.commandWithNumTable.command.status == "NOT_YET"
-                            ?AppLocalizations.of(context)!.pendingStatus
-                            : widget.commandWithNumTable.command.status ==
-                                    "REFUSED"
-                                ? AppLocalizations.of(context)!.refusedStatus
-                                : widget.commandWithNumTable.command.status ==
-                                        "CONFIRMED"
-                                    ?AppLocalizations.of(context)!.confirmedStatus
-                                    :widget.commandWithNumTable.command.status=="UPDATED"
-                                    ?AppLocalizations.of(context)!.updatedStatus
-                                    : AppLocalizations.of(context)!.payedStatus,
-                        style: TextStyle(color: Colors.white),
-                      ),
+                      child:Row(
+                      children: [
+
+                      FutureBuilder(
+                          future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<double> sumSnapshot) {
+                            if (sumSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const SizedBox
+                                  .shrink(); // or a loading widget
+                            } else if (sumSnapshot.hasError) {
+                              return  Text(AppLocalizations.of(context)!.errorRetrievingData);
+                            } else {
+                              final sum = sumSnapshot.data!;
+
+                              double sum1 = double.parse(sum.toStringAsFixed(2));
+
+                              return Text(
+                                "${AppLocalizations.of(context)!.total}: $sum1 ${AppLocalizations.of(context)!.tunisianDinar}",
+                                style: const TextStyle(fontSize: 16),
+                              );}}),
+                        SizedBox(width: 10,),
+                        Text(
+                          widget.commandWithNumTable.command.status == "NOT_YET"
+                              ?AppLocalizations.of(context)!.pendingStatus
+                              : widget.commandWithNumTable.command.status ==
+                              "REFUSED"
+                              ? AppLocalizations.of(context)!.refusedStatus
+                              : widget.commandWithNumTable.command.status ==
+                              "CONFIRMED"
+                              ?AppLocalizations.of(context)!.confirmedStatus
+                              :widget.commandWithNumTable.command.status=="UPDATED"
+                              ?AppLocalizations.of(context)!.updatedStatus
+                              : AppLocalizations.of(context)!.payedStatus,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        ]
+                      )
                     )
                   ],
                 ),
@@ -201,14 +266,15 @@ class _CommandDetailsState extends State<CommandDetails> {
                           status: widget.commandWithNumTable.command.status,
                           productWithQuantity: product,
                           onDelete: () {
-                            _basketViewModel.deleteProductFromBasket(product.product.idProduct!,widget.commandWithNumTable.command.basket.id_basket).then((_) {
-                              setState(() {
-                                _getTotalSumByBasketId();
-                                _getProductsByBasketId();
-                              });
-                            }).catchError((error) {
-                              print(error);
-                            });
+                            _showDeleteConfirmationDialog(product,widget.commandWithNumTable.command.basket.id_basket!);
+                            // _basketViewModel.deleteProductFromBasket(product.product.idProduct!,widget.commandWithNumTable.command.basket.id_basket).then((_) {
+                            //   setState(() {
+                            //     _getTotalSumByBasketId();
+                            //     _getProductsByBasketId();
+                            //   });
+                            // }).catchError((error) {
+                            //   print(error);
+                            // });
                           },
                           onIncrement: () {
                             // print("oooooooooooooooooooooooooooooooooooooooooooooooooooo");

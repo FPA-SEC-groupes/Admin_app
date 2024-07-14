@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/request/login_request.dart';
@@ -28,7 +29,8 @@ class _LoginState extends State<Login> {
   late final ShiftViewModel _shiftViewModel;
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   late final TextEditingController _usernameController, _passwordController;
-
+  String token ="";
+  final _firebaseMessaging= FirebaseMessaging.instance;
   @override
   void initState() {
     super.initState();
@@ -36,6 +38,7 @@ class _LoginState extends State<Login> {
     _shiftViewModel = ShiftViewModel(context);
     _usernameController = TextEditingController();
     _passwordController = TextEditingController();
+
   }
 
   @override
@@ -117,12 +120,19 @@ class _LoginState extends State<Login> {
                           Button(
                             text: AppLocalizations.of(context)!.login,
                             onPressed: () async {
+                              String fetchedToken = await _firebaseMessaging.getToken() ?? '';
+
+                              // Now update the state synchronously within setState
+                              setState(() {
+                                token = fetchedToken;
+                              });
                               if (_loginFormKey.currentState!.validate()) {
                                 _loginFormKey.currentState!.save();
 
                                 var loginRequest = LoginRequest(
                                   username: _usernameController.text.trim(),
                                   password: _passwordController.text.trim(),
+                                  token: token
                                 );
 
                                 _loginViewModel.login(context, loginRequest).then((user) async {
