@@ -18,6 +18,18 @@ class CardMenu extends StatefulWidget {
 class _CardMenuState extends State<CardMenu> {
   @override
   Widget build(BuildContext context) {
+    double? sum;
+    String? formattedPrice;
+    if(widget.product.hasActivePromotion ?? false)
+      {
+          sum = (widget.product.price * (100 - (widget.product.percentage ?? 0))) / 100;
+          sum = double.parse(sum.toStringAsFixed(2));
+           formattedPrice = "$sum ${AppLocalizations.of(context)!.tunisianDinar}";
+      }
+      else{
+        sum = widget.product.price;
+        sum= sum = double.parse(sum.toStringAsFixed(2));
+    }
     return Card(
       elevation: 3,
       child: Container(
@@ -63,7 +75,8 @@ class _CardMenuState extends State<CardMenu> {
                       Row(
                         children: [
                           Text(
-                            "${(widget.product.price * (100 - (widget.product.percentage ?? 0))) / 100} DT",
+                              formattedPrice!,
+                            // "${(widget.product.price * (100 - (widget.product.percentage ?? 0))) / 100} DT",
                             style: const TextStyle(
                               color: Colors.black,
                             ),
@@ -125,7 +138,7 @@ class _CardMenuState extends State<CardMenu> {
                   )
                 else
                   Text(
-                    "${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}",
+                    "${sum} ${AppLocalizations.of(context)!.tunisianDinar}",
                   ),
                 GestureDetector(
                   onTap: widget.onTap,

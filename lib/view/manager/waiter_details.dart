@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hello_way/models/user.dart';
+import 'package:hello_way/navigation/manager_bottom_navigation.dart';
 import 'package:hello_way/utils/routes.dart';
 import 'package:hello_way/view/manager/ListCommandsByWaiter.dart';
 import 'package:hello_way/view/manager/list_shift.dart';
@@ -29,6 +30,7 @@ class WaiterDetails extends StatefulWidget {
 
 class _WaiterDetailsState extends State<WaiterDetails> {
   late final WaitersViewModel _waitersViewModel ;
+  int selectedStatusIndex =2;
   DateTime currentDate = DateTime.now();
   @override
   void initState() {
@@ -79,7 +81,15 @@ class _WaiterDetailsState extends State<WaiterDetails> {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
     return WillPopScope(
         onWillPop: () async {
-          Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ManagerBottomNavigation(
+                index: selectedStatusIndex,
+              ),
+            ),
+          );
+          // Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
       return true;
     },
     child: Scaffold(
@@ -208,6 +218,7 @@ class _WaiterDetailsState extends State<WaiterDetails> {
                               );
                             } else {
                               double sum = snapshot.data!;
+                              sum = double.parse(sum.toStringAsFixed(2));
                               return Column(
 
                                 children: [

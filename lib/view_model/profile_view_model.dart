@@ -124,4 +124,21 @@ class ProfileViewModel {
       }
 
   }
+  Future<User> updateLang(String lang) async {
+    String? userId = await secureStorage.readData(authentifiedUserId);
+    final response = await dioInterceptor.dio.put(
+      '$baseUrl/api/users/chnagelang/$userId/$lang',
+    );
+
+    // Check if the request was successful
+    if (response.statusCode == 200) {
+      print(response.data);
+      final User category = User.fromJson(response.data);
+      return category;
+    } else {
+      // Handle other status codes (if needed)
+      throw Exception('Failed to update user: ${response.statusCode}');
+    }
+
+  }
 }

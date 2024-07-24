@@ -100,11 +100,9 @@ class _CommandDetailsState extends State<CommandDetails> {
                     return  Text(AppLocalizations.of(context)!.errorRetrievingData);
                     } else {
                     final sum = sumSnapshot.data!;
-
-
-
+                    double sum1 = double.parse(sum.toStringAsFixed(2));
                     return Text(
-                      "${AppLocalizations.of(context)!.total}: $sum",
+                      "${AppLocalizations.of(context)!.total}: $sum1",
                       style: const TextStyle(fontSize: 16),
                     );}}),
                     Container(
@@ -132,12 +130,11 @@ class _CommandDetailsState extends State<CommandDetails> {
                               } else if (sumSnapshot.hasError) {
                               return  Text(AppLocalizations.of(context)!.errorRetrievingData);
                               } else {
+                              // final sum = sumSnapshot.data!;
                               final sum = sumSnapshot.data!;
-
-
-
+                              double sum1 = double.parse(sum.toStringAsFixed(2));
                               return Text(
-                              "${AppLocalizations.of(context)!.total}: $sum ${AppLocalizations.of(context)!.tunisianDinar}",
+                              "${AppLocalizations.of(context)!.total}: $sum1 ${AppLocalizations.of(context)!.tunisianDinar}",
                               style: const TextStyle(fontSize: 16),
                               );}}),
                             Text(

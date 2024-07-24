@@ -54,6 +54,7 @@
     "adress": "Adresse",
     "phoneNumber": "Numéro de téléphone",
     "addWaiter": "Ajouter un serveur",
+    "waiterDetails": "Détails du serveur",
     "addWaiterToYourSpace": "Ajouter un serveur à votre espace",
     "lastname": "Nom",
     "firstname": "Prénom",
@@ -156,6 +157,7 @@
     "about":"À propos",
     "location":"Localisation",
     "stockEmpty": "Votre stock est vide",
+    "existedmaterial": "cette matériel deja existé votre stock",
     "on":"Le",
     "orders":"Orders",
     "addSpaceManager":"Ajouter un gérant d'espace",
@@ -260,5 +262,11 @@
     "forYou": "pour toi",
     "forAdmin": "pour l'administrateur",
     "deleteConfirmation": "Confirmation de suppression",
-    "deleteTitle": "Êtes-vous sûr de vouloir supprimer ce produit?"
+    "deleteTitle": "Êtes-vous sûr de vouloir supprimer ce produit?",
+    "ntCommandeTitle": "Notification de commande",
+    "ntComandeUpdate": "Commande mise à jour :",
+    "ntCommandeNew": "Nouvelle commande placée par le numéro de table :",
+    "ntCommandeConfermed": "Vous avez confirmé la commande passée par le numéro de table :",
+    "ntCommandePassed": "Vous avez confirmé la commande passée par le numéro de table :"
+
 }

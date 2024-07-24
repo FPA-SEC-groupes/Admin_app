@@ -190,9 +190,10 @@ class EventsViewModel {
     }
   }
 
-  Future<Event?> updateParty(Event updatedEvent) async {
+  Future<Event?> updateParty(int idEvent ,Event updatedEvent) async {
     const String url = '$baseUrl/api/events/update'; // Replace with the correct API endpoint
-
+    updatedEvent.idEvent= idEvent;
+    print(updatedEvent.toJson());
     try {
       final response = await dioInterceptor.dio.put(url, data: updatedEvent.toJson(),
       );
@@ -207,5 +208,21 @@ class EventsViewModel {
       throw Exception('Error updating event: $error');
     }
   }
+  Future<String> DeleteEvent(int? idEvent) async {
+    final String url = '$baseUrl/api/events/$idEvent'; // Replace with the correct API endpoint
 
+    try {
+      final response = await dioInterceptor.dio.delete(url
+      );
+
+      if (response.statusCode == 200) {
+        // Successful response, parse the data and return the updated Event object
+        return response.data;
+      } else {
+        throw Exception('Error updating event: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Error updating event: $error');
+    }
+  }
 }

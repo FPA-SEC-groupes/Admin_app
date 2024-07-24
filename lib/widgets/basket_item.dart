@@ -5,6 +5,7 @@ import '../../utils/const.dart';
 import '../res/app_colors.dart';
 import '../response/product_with_quantity.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BasketItem extends StatefulWidget {
   final status;
@@ -35,7 +36,19 @@ class _BasketItemState extends State<BasketItem> {
   @override
   Widget build(BuildContext context) {
     // final themeProvider = Provider.of<ThemeProvider>(context);
-
+    double? sum;
+    String? formattedPrice;
+    if(widget.productWithQuantity.product.hasActivePromotion ?? false)
+    {
+      sum = (widget.productWithQuantity.product.price * (100 - (widget.productWithQuantity.product.percentage ?? 0))) / 100;
+      sum = double.parse(sum.toStringAsFixed(2));
+      formattedPrice = "$sum ${AppLocalizations.of(context)!.tunisianDinar}";
+    }
+    else{
+      sum = widget.productWithQuantity.product.price;
+      sum= sum = double.parse(sum.toStringAsFixed(2));
+      formattedPrice = "$sum ${AppLocalizations.of(context)!.tunisianDinar}";
+    }
     return Container(
       color:
       // themeProvider.isDarkMode ? Colors.grey[900] :
@@ -83,7 +96,8 @@ class _BasketItemState extends State<BasketItem> {
                         ),
                       ),
                       Text(
-                        "${(widget.productWithQuantity.product.price * (100 - (widget.productWithQuantity.product.percentage ?? 0))) / 100} DT",
+                          formattedPrice!,
+                        // "${(widget.productWithQuantity.product.price * (100 - (widget.productWithQuantity.product.percentage ?? 0))) / 100} DT",
                         style: TextStyle(color:
                         // themeProvider.isDarkMode ? Colors.white :
                         Colors.black),

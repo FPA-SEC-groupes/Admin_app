@@ -95,6 +95,18 @@ class _ProductDetailsState extends State<ProductDetails>
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
+    double? sum;
+    String? formattedPrice;
+    if(widget.product.hasActivePromotion ?? false)
+    {
+      sum = (widget.product.price * (100 - (widget.product.percentage ?? 0))) / 100;
+      sum = double.parse(sum.toStringAsFixed(2));
+      String formattedPrice = "$sum ${AppLocalizations.of(context)!.tunisianDinar}";
+    }
+    else{
+      sum = widget.product.price;
+      sum= sum = double.parse(sum.toStringAsFixed(2));
+    }
     return Scaffold(
       appBar: Toolbar(
         title: "Details",
@@ -186,7 +198,8 @@ class _ProductDetailsState extends State<ProductDetails>
                     child: Row(
                       children: [
                         Text(
-                    "${(widget.product.price *(100- widget.product.percentage!)) / 100} ${AppLocalizations.of(context)!.tunisianDinar}",
+                    formattedPrice!,
+                    // "${(widget.product.price *(100- widget.product.percentage!)) / 100} ${AppLocalizations.of(context)!.tunisianDinar}",
                           style: const TextStyle(
                             fontSize: 18,
                           ),
@@ -203,7 +216,7 @@ class _ProductDetailsState extends State<ProductDetails>
                           alignment: Alignment.center,
                           children: [
                             Text(
-                              "${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}",
+                              "${sum} ${AppLocalizations.of(context)!.tunisianDinar}",
                               style: TextStyle(fontSize: 16, color: gray),
                               textAlign: TextAlign.center,
                             ),
@@ -242,7 +255,7 @@ class _ProductDetailsState extends State<ProductDetails>
                     padding:
                         const EdgeInsets.only(left: 20, right: 20, top: 10),
                     child: Text(
-                      "${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}",
+                      "${sum} ${AppLocalizations.of(context)!.tunisianDinar}",
                       style: const TextStyle(
                         fontSize: 18,
                       ),

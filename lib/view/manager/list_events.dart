@@ -40,6 +40,13 @@ class _ListEventsState extends State<ListEvents> {
 
   Future<void> actionPopUpItemSelected1(String value,Event event) async {
     if (value == delete) {
+       _eventsViewModel.DeleteEvent(event.idEvent).then((_) {
+         setState(() {
+           _fetchEvents();
+         });
+       }).catchError((error) {
+         // Handle signup error
+       });
 
     } else if (value == edit) {
       Navigator.push(

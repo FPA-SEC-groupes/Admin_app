@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:hello_way/models/role.dart';
 import 'package:hello_way/models/user.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/services/network_service.dart';
@@ -33,7 +34,7 @@ class ModertorsDetails extends StatefulWidget {
 class _ModertorsDetailsState extends State<ModertorsDetails> {
   final GalleryViewModel _galleryViewModel = GalleryViewModel();
   late final ModertorsViewModel _modertorsViewModel;
-
+  Role? role;
   late final ProfileViewModel _profileViewModel;
   final TextEditingController _textEditingController = TextEditingController();
   DateTime currentDate = DateTime.now();
@@ -42,6 +43,10 @@ class _ModertorsDetailsState extends State<ModertorsDetails> {
   String? errorText;
   @override
   void initState() {
+    setState(() {
+      role = Role.fromJson(widget.modertors.role![0] as Map<String, dynamic>);
+    });
+
     getUserById();
     _profileViewModel = ProfileViewModel(context);
     _modertorsViewModel = ModertorsViewModel(context);
@@ -132,7 +137,7 @@ class _ModertorsDetailsState extends State<ModertorsDetails> {
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
     return Scaffold(
-        appBar:  Toolbar(title: AppLocalizations.of(context)!.managerDetails),
+        appBar:  Toolbar(title: role!.name==roleManager?AppLocalizations.of(context)!.managerDetails:AppLocalizations.of(context)!.waiterDetails),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           // child:networkStatus == NetworkStatus.Online
@@ -302,7 +307,7 @@ class _ModertorsDetailsState extends State<ModertorsDetails> {
                           ),
                         ),
                         const Divider(),
-                        ListTile(
+                        role!.name==roleManager?ListTile(
                           leading: const Icon(Icons.percent),
                           visualDensity: const VisualDensity(vertical: 0.0),
                           dense: true,
@@ -316,9 +321,9 @@ class _ModertorsDetailsState extends State<ModertorsDetails> {
                           trailing: const Icon(
                             Icons.navigate_next_rounded,
                           ),
-                        ),
+                        ):SizedBox(),
                         SizedBox(height: 20,),
-                          Padding(padding: EdgeInsetsDirectional.all(10),
+                        role!.name==roleManager? Padding(padding: EdgeInsetsDirectional.all(10),
                             child:Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
@@ -394,7 +399,7 @@ class _ModertorsDetailsState extends State<ModertorsDetails> {
                             ],
                           ),
                         ),
-                          )
+                          ):SizedBox()
                       ],
                     ),
           ),

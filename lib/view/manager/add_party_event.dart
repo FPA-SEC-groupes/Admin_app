@@ -407,7 +407,7 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                                 price: double.parse(_priceController.text.contains(',')? _priceController.text.replaceAll(',', '.'): _priceController.text),
                               );
 
-                              _eventsViewModel.createPartyForSpace(event).then((event) async {
+                              widget.party==null? _eventsViewModel.createPartyForSpace(event).then((event) async {
                                 if (_galleryViewModel.image != null) {
                                   await _eventsViewModel.uploadImage(_galleryViewModel.image!, event.idEvent!).then((_) {
                                     Navigator.pop(context);
@@ -419,7 +419,20 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                                 }
                               }).catchError((error) {
                                 print(error);
-                              });
+                              }):
+                              _eventsViewModel.updateParty(widget.party!.idEvent!, event).then((event) async {
+                                if (_galleryViewModel.image != null) {
+                                  await _eventsViewModel.uploadImage(_galleryViewModel.image!, widget.party!.idEvent!).then((_) {
+                                    Navigator.pop(context);
+                                  }).catchError((error) {
+                                    print(error);
+                                  });
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              }).catchError((error) {
+                                print(error);
+                              });;
                             }
                           },
                         ),

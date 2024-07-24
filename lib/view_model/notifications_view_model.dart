@@ -6,6 +6,7 @@ import 'package:hello_way/utils/secure_storage.dart';
 import '../interceptors/dio_interceptor.dart';
 import '../utils/const.dart';
 
+
 class NotificationViewModel{
 
   final DioInterceptor dioInterceptor;

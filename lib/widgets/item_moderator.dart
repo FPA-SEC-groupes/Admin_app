@@ -74,16 +74,16 @@ class _ItemModeratorState extends State<ItemModerator> {
               children: [
                 CircleAvatar(
                   radius: 60,
-                  backgroundColor: gray.withOpacity(0.5),
+                  backgroundColor: Colors.grey.withOpacity(0.5),
                   backgroundImage: widget.user.image == null
                       ? null
-                      : MemoryImage(base64.decode(widget.user.image!)),
+                      : NetworkImage(baseUrl + userUrl + widget.user.image!),
                   child: widget.user.image == null
                       ? const Icon(
-                          Icons.person_rounded,
-                          size: 100,
-                          color: Colors.white,
-                        )
+                    Icons.person_rounded,
+                    size: 100,
+                    color: Colors.white,
+                  )
                       : null,
                 ),
                 Positioned(

@@ -239,7 +239,10 @@ class _SettingsState extends State<Settings> {
                                         isSelected ? L10n.all[index] : null,
                                     onChanged: (value) {
                                       languageProvider.changeLocale(value!);
-                                      Navigator.pop(context);
+                                      _profileViewModel.updateLang(value!.toString()).then((_) {
+                                        Navigator.pop(context);
+                                      }).catchError((error) {
+                                      });
                                     },
                                   );
                                 }).toList(),

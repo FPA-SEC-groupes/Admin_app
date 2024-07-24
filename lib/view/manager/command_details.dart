@@ -154,26 +154,24 @@ class _CommandDetailsState extends State<CommandDetails> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if(widget.commandWithNumTable.command.status=="CONFIRMED")
-                    FutureBuilder(
-                    future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
-                    builder: (BuildContext context,
-                    AsyncSnapshot<double> sumSnapshot) {
-                    if (sumSnapshot.connectionState ==
-                    ConnectionState.waiting) {
-                    return const SizedBox
-                        .shrink(); // or a loading widget
-                    } else if (sumSnapshot.hasError) {
-                    return  Text(AppLocalizations.of(context)!.errorRetrievingData);
-                    } else {
-                    final sum = sumSnapshot.data!;
-
-                    double sum1 = double.parse(sum.toStringAsFixed(2));
-
-                    return Text(
-                      "${AppLocalizations.of(context)!.total}: $sum1",
-                      style: const TextStyle(fontSize: 16),
-                    );}}),
+                    // if(widget.commandWithNumTable.command.status=="CONFIRMED")
+                    // FutureBuilder(
+                    // future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
+                    // builder: (BuildContext context,
+                    // AsyncSnapshot<double> sumSnapshot) {
+                    // if (sumSnapshot.connectionState ==
+                    // ConnectionState.waiting) {
+                    // return const SizedBox
+                    //     .shrink(); // or a loading widget
+                    // } else if (sumSnapshot.hasError) {
+                    // return  Text(AppLocalizations.of(context)!.errorRetrievingData);
+                    // } else {
+                    // final sum = sumSnapshot.data!;
+                    // double sum1 = double.parse(sum.toStringAsFixed(2));
+                    // return Text(
+                    //   "${AppLocalizations.of(context)!.total}: $sum1",
+                    //   style: const TextStyle(fontSize: 16),
+                    // );}}),
                     Container(
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
@@ -188,7 +186,6 @@ class _CommandDetailsState extends State<CommandDetails> {
                       ),
                       child:Row(
                       children: [
-
                       FutureBuilder(
                           future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
                           builder: (BuildContext context,
@@ -201,9 +198,7 @@ class _CommandDetailsState extends State<CommandDetails> {
                               return  Text(AppLocalizations.of(context)!.errorRetrievingData);
                             } else {
                               final sum = sumSnapshot.data!;
-
                               double sum1 = double.parse(sum.toStringAsFixed(2));
-
                               return Text(
                                 "${AppLocalizations.of(context)!.total}: $sum1 ${AppLocalizations.of(context)!.tunisianDinar}",
                                 style: const TextStyle(fontSize: 16),

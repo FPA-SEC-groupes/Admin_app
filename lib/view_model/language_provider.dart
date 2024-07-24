@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../l10n/l10n.dart';
 import '../utils/secure_storage.dart';
 class LanguageProvider with ChangeNotifier {
+
   Locale _locale = window.locale;
   final SecureStorage secureStorage = SecureStorage(); // Create an instance of FlutterSecureStorage
 

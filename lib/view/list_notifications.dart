@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hello_way/utils/routes.dart';
+import 'dart:convert';
 
+import 'package:html_unescape/html_unescape.dart';
+import 'package:http/http.dart' as http;
+import 'package:translator/translator.dart';
 import 'package:hello_way/view_model/notifications_view_model.dart';
 import 'package:hello_way/models/notifcation.dart' as notif;
 import 'package:provider/provider.dart';
 import '../res/app_colors.dart';
 import '../services/network_service.dart';
+import '../utils/const.dart';
 import '../utils/secure_storage.dart';
 import '../widgets/item notfication.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,17 +26,22 @@ class _ListNotificationsState extends State<ListNotifications> {
   late NotificationViewModel _notificationViewModel;
   final SecureStorage secureStorage = SecureStorage();
   bool authentifiedUser = false;
+  String? savedLanguageCode;
+
 
   @override
   void initState() {
     super.initState();
     _notificationViewModel = NotificationViewModel(context);
+
+
     _getNotifications();
   }
 
   Future<List<notif.Notification>> _getNotifications() async {
 
     return _notificationViewModel.fetchNotificationsForUser();
+
   }
 
   @override

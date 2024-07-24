@@ -55,6 +55,7 @@
 "adress": "العنوان",
 "phoneNumber": "رقم الهاتف",
 "addWaiter": "إضافة نادل",
+  "waiterDetails": "تفاصيل النادل",
 "addWaiterToYourSpace": "إضافة نادل إلى مساحتك",
 "lastname": "الاسم الأخير",
 "firstname": "الاسم الأول",
@@ -157,6 +158,7 @@
 "about":"معلومات عنا",
 "location":"الموقع",
 "stockEmpty": "مخزونك فارغ",
+  "existedmaterial": "هذه المادة موجودة بالفعل في مخزونك",
 "on":"في",
 "orders":"طلبات",
 "addSpaceManager":"إضافة مدير فضاء",
@@ -262,5 +264,10 @@
   "forYou": "لك",
   "forAdmin": "للمشرف",
   "deleteConfirmation": " التأكيد حذف",
-  "deleteTitle": "هل أنت متأكد أنك تريد حذف هذا المنتج؟"
+  "deleteTitle": "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
+  "ntCommandeTitle": "إشعار الطلب",
+  "ntComandeUpdate": "تم تحديث طلب:",
+  "ntCommandeNew": "طلب جديد تم وضعه بواسطة رقم الجدول:",
+  "ntCommandeConfermed": "لقد قمت بتأكيد الطلب الذي تم تمريره بواسطة رقم الجدول:",
+  "ntCommandePassed": "لقد قمت بتأكيد الطلب الذي تم تمريره بواسطة رقم الجدول:"
 }

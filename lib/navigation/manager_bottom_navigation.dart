@@ -12,7 +12,8 @@ import '../view/manager/list_waiters.dart';
 import '../view/manager/settings.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ManagerBottomNavigation extends StatefulWidget {
-  const ManagerBottomNavigation({Key? key}) : super(key: key);
+  final int? index;
+  const ManagerBottomNavigation({this.index});
 
   @override
   State<ManagerBottomNavigation> createState() =>
@@ -46,6 +47,7 @@ class _ManagerBottomNavigationState extends State<ManagerBottomNavigation> {
 
   @override
   void initState() {
+    _currentIndex = widget.index ?? 0;
     getNbNewNotiofications();
     super.initState();
   }

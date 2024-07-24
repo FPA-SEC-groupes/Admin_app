@@ -36,6 +36,7 @@ class InputForm extends StatelessWidget {
       maxLines: maxLines,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
+        errorMaxLines: 2,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(

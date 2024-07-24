@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/shimmer/item_waiter_shimmer.dart';
 import 'package:hello_way/view/manager/waiter_details.dart';
+import 'package:hello_way/view_model/modertors_view_model.dart';
 import 'package:hello_way/widgets/item_waiter.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart';
@@ -29,6 +30,7 @@ class ListWaiters extends StatefulWidget {
 
 class _ListWaitersState extends State<ListWaiters> {
   late WaitersViewModel _waitersViewModel;
+  late ModertorsViewModel _modertorsViewModel ;
   final SecureStorage secureStorage = SecureStorage();
   Uint8List? pdf;
   bool _isSearching = false;
@@ -82,6 +84,7 @@ class _ListWaitersState extends State<ListWaiters> {
   @override
   void initState() {
     _waitersViewModel = WaitersViewModel(context);
+    _modertorsViewModel =ModertorsViewModel(context);
     _fetchPdf();
     super.initState();
   }

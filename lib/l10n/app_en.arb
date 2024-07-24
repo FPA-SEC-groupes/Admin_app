@@ -12,6 +12,7 @@
     "mySpace":"My space",
     "myZones":"My zones",
     "myStock":"My stock",
+    "existedmaterial": "this material already existed in your stock",
     "myEvents":"My events",
     "general":"General",
     "language":"Language",
@@ -57,6 +58,7 @@
     "adress": "Address",
     "phoneNumber": "Phone Number",
     "addWaiter": "Add Waiter",
+    "waiterDetails": "Waiter Details",
     "addWaiterToYourSpace": "Add a waiter to your space",
     "lastname": "Lastname",
     "firstname": "Firstname",
@@ -264,7 +266,12 @@
     "forYou": "For you",
     "forAdmin": "for admin",
     "deleteConfirmation": "Delete Confirmation",
-    "deleteTitle": "Are you sure you want to delete this product?"
+    "deleteTitle": "Are you sure you want to delete this product?",
+    "ntCommandeTitle": "Command Notification",
+    "ntComandeUpdate": "Commande updated: ",
+    "ntCommandeNew": "New command placed by the table number: ",
+    "ntCommandeConfermed": "You have confirmed the command passed by the table number : ",
+    "ntCommandePassed": "You have confirmed the command passed by the table number : "
 }
 
 

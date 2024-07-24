@@ -4,6 +4,7 @@ import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/models/zone.dart';
+import 'package:hello_way/navigation/manager_bottom_navigation.dart';
 import 'package:hello_way/view/manager/list_waiters_by_zone.dart';
 import 'package:provider/provider.dart';
 import '../../models/board.dart';
@@ -35,6 +36,7 @@ class _ListZonesState extends State<ListZones> {
   final GlobalKey<FormState> _dialogFormKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _zonesScaffoldKey =
   GlobalKey<ScaffoldMessengerState>();
+  int selectedStatusIndex = 4;
   bool _isSearching = false;
   String _searchQuery = '';
   String? errorText;
@@ -237,7 +239,15 @@ class _ListZonesState extends State<ListZones> {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
     return WillPopScope(
         onWillPop: () async {
-      Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ManagerBottomNavigation(
+                index: selectedStatusIndex,
+              ),
+            ),
+          );
+      // Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
       return true;
     },
     child: ScaffoldMessenger(

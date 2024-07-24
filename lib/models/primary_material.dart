@@ -47,4 +47,8 @@ class PrimaryMaterial {
       'supplierNumber': supplierNumber,
     };
   }
+   @override
+   String toString() {
+     return 'PrimaryMaterial(id: $id, title: $title, description: $description, unitOfMeasure: $unitOfMeasure, stockQuantity: $stockQuantity, price: $price, supplier: $supplier, supplierNumber: $supplierNumber)';
+   }
 }

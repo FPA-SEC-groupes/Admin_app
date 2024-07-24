@@ -77,7 +77,26 @@ class ModertorsViewModel {
       print("Error occurred while deleting user with ID $id: $e");
     }
   }
+  Future<void> deactivateAccount(int id) async {
+    try {
+      final response = await dioInterceptor.dio.put(
+        "$baseUrl/api/users/disable/$id",
+        options: Options(responseType: ResponseType.plain),
+      );
 
+      // Check the response status code and handle accordingly
+      if (response.statusCode == 200) {
+        // Successful deletion
+        print("User with ID $id deactivate Account successfully.");
+      } else {
+        // Error occurred
+        print("Failed to deactivate Account user with ID $id. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Error occurred
+      print("Error occurred while deleting user with ID $id: $e");
+    }
+  }
   Future<User> activateAccount(User user) async {
     try {
       // Send the PUT request with the updated zone object as the request body

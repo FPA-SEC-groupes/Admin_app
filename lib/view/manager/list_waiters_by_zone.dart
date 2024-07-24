@@ -95,7 +95,7 @@ class _ListWaitersByZoneState extends State<ListWaitersByZone> {
                     .where((user) => user?.id != widget.zone.server?.id)
                     .map((User waiter) {
                   final int id = waiter.id!;
-                  final String name = "${waiter.name!} ${waiter.lastname!}";
+                  final String name = "${waiter.username!} ";
                   // final String zoneTitle=" (${waiter.zone?.title})";
                   return DropdownMenuItem<String>(
                     value: id.toString(),

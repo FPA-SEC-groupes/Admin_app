@@ -98,10 +98,10 @@ class _ListcommandsbywaiterState extends State<Listcommandsbywaiter> {
                   status = "NOT_YET";
                   break;
                 case 2:
-                  status = "CONFIRMED";
+                  status = "UPDATED";
                   break;
                 case 3:
-                  status = "UPDATED";
+                  status = "CONFIRMED";
                   break;
                 case 4:
                   status = "PAYED";
@@ -160,7 +160,9 @@ class _ListcommandsbywaiterState extends State<Listcommandsbywaiter> {
                             return Text(AppLocalizations.of(context)!
                                 .errorRetrievingData);
                           } else {
-                            final sum = sumSnapshot.data!;
+                            // final sum = sumSnapshot.data!;
+                            double sum = sumSnapshot.data!;
+                            sum = double.parse(sum.toStringAsFixed(2));
                             return GestureDetector(
                               child: ItemCommand(
                                 commandWithNumTable:

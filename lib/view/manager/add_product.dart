@@ -37,7 +37,7 @@ class _AddProductState extends State<AddProduct> {
       _priceProductController,
       _descriptionController;
   String? errorText;
-
+  bool _submitted = false ;
   @override
   void initState() {
     super.initState();
@@ -50,6 +50,29 @@ class _AddProductState extends State<AddProduct> {
       _priceProductController.text = widget.product!.price.toString();
       _descriptionController.text = widget.product!.description;
     }
+
+    _titleProductController.addListener(() {
+      setState(() {
+        errorText = null; // Clear error text when title changes
+        if (_submitted) {
+          _addProductFormKey.currentState?.validate();
+        }
+      });
+    });
+    _priceProductController.addListener(() {
+      if (_submitted) {
+        setState(() {
+          _addProductFormKey.currentState?.validate();
+        });
+      }
+    });
+    _descriptionController.addListener(() {
+      if (_submitted) {
+        setState(() {
+          _addProductFormKey.currentState?.validate();
+        });
+      }
+    });
   }
 
   @override
@@ -60,15 +83,31 @@ class _AddProductState extends State<AddProduct> {
     super.dispose();
   }
 
+  void _validateForm() {
+    setState(() {
+      _addProductFormKey.currentState?.validate();
+    });
+  }
+
+  // String? _validationTitle(String? value) {
+  //   if (value == null || value.isEmpty) {
+  //     return AppLocalizations.of(context)!.inputRequiredError;
+  //   } else if (errorText != null) {
+  //     return errorText;
+  //   }
+  //   return null;
+  // }
   String? _validationTitle(String? value) {
     if (value == null || value.isEmpty) {
       return AppLocalizations.of(context)!.inputRequiredError;
-    } else if (errorText != null) {
-      return errorText;
+    }
+    // Pattern to allow all letters, specific characters, spaces, and underscores
+    final pattern = RegExp(r'^[\w\sàâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ_ :\-]+$', caseSensitive: false);
+    if (!pattern.hasMatch(value)) {
+      return 'Only letters, specific characters, spaces, and underscores are allowed.';
     }
     return null;
   }
-
   Future<void> _uploadImage(File image, int productId) async {
     try {
       await _addProductViewModel.uploadImage(image, productId);
@@ -87,7 +126,7 @@ class _AddProductState extends State<AddProduct> {
       appBar: Toolbar(
         title: widget.product == null
             ? AppLocalizations.of(context)!.newProduct
-            : widget.product!.productTitle,
+            : _titleProductController.text,
       ),
       body: networkStatus == NetworkStatus.Online
           ? Form(
@@ -179,7 +218,8 @@ class _AddProductState extends State<AddProduct> {
                       InputForm(
                           hint: AppLocalizations.of(context)!.title,
                           controller: _titleProductController,
-                          validator: _validationTitle),
+                          validator: _validationTitle,
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -214,6 +254,9 @@ class _AddProductState extends State<AddProduct> {
                             ? AppLocalizations.of(context)!.add
                             : AppLocalizations.of(context)!.modify,
                         onPressed: () async {
+                          setState(() {
+                            _submitted=true;
+                          });
                           if (_addProductFormKey.currentState!
                               .validate()) {
                             _addProductFormKey.currentState!.save();
@@ -245,11 +288,12 @@ class _AddProductState extends State<AddProduct> {
                                 if (error is DioError) {
                                   if (error.response?.statusCode ==
                                       400) {
-                                    // Handle 400 status code error (Bad Request)
                                     setState(() {
                                       errorText =
                                           AppLocalizations.of(context)!
                                               .productAlreadyExists;
+                                      // _titleProductController.text =
+                                      // ""; // Clear the title field
                                     });
                                   }
                                 }
@@ -278,11 +322,12 @@ class _AddProductState extends State<AddProduct> {
                                 if (error is DioError) {
                                   if (error.response?.statusCode ==
                                       400) {
-                                    // Handle 400 status code error (Bad Request)
                                     setState(() {
                                       errorText =
                                           AppLocalizations.of(context)!
                                               .productAlreadyExists;
+                                      _titleProductController.text =
+                                      ""; // Clear the title field
                                     });
                                   }
                                 }

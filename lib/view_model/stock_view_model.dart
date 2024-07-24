@@ -14,6 +14,7 @@ class StockViewModel {
   Future<PrimaryMaterial> addPrimaryMaterialToSpace(
       PrimaryMaterial primaryMaterial) async {
     final spaceId = await secureStorage.readData(spaceIdKey);
+    print(primaryMaterial.toString());
     try {
       final response = await dioInterceptor.dio.post(
         '$baseUrl/api/primary-materials/space/$spaceId',

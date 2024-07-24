@@ -14,7 +14,19 @@ class ItemProductCommand extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
    // final BasketViewModel _basketViewModel=BasketViewModel();
-
+    double? sum;
+    String? formattedPrice;
+    if(productWithQuantities.product.hasActivePromotion ?? false)
+    {
+      sum = (productWithQuantities.product.price * (100 - (productWithQuantities.product.percentage ?? 0))) / 100;
+      sum = double.parse(sum.toStringAsFixed(2));
+      formattedPrice = "$sum ${AppLocalizations.of(context)!.tunisianDinar}";
+    }
+    else{
+      sum = productWithQuantities.product.price;
+      sum= sum = double.parse(sum.toStringAsFixed(2));
+      formattedPrice = "$sum ${AppLocalizations.of(context)!.tunisianDinar}";
+    }
     return Container(
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
@@ -65,8 +77,8 @@ class ItemProductCommand extends StatelessWidget {
 
                       SizedBox(height: 10,),
                       Text(
-                          "${productWithQuantities.product.price} DT",
-
+                        formattedPrice!,
+                          // "${productWithQuantities.product.price} DT",
                       ),
                       SizedBox(height: 10,),
                   RichText(

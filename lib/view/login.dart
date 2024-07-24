@@ -51,7 +51,11 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+        return false;
+    },
+    child:Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Form(
@@ -175,7 +179,8 @@ class _LoginState extends State<Login> {
             )
           ),
         ),
-      ),
+      )
+    ),
     );
   }
 }

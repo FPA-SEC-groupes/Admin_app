@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/user.dart';
+import 'package:hello_way/view/admin/profile.dart';
+import 'package:hello_way/view_model/modertors_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,6 +22,8 @@ class ItemWaiter extends StatefulWidget {
 }
 
 class _ItemWaiterState extends State<ItemWaiter> {
+  late final ModertorsViewModel _modertorsViewModel;
+  late bool isActivated;
   Future<void> actionPopUpItemSelected(String value) async {
     String message;
     if (value == delete) {
@@ -34,12 +38,27 @@ class _ItemWaiterState extends State<ItemWaiter> {
           ),
         ),
       );
+    }else if (value == edit) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ModertorsDetails(
+            modertors: widget.user,
+          ),
+        ),
+      );
     } else {
       message = 'Not implemented';
       print(message);
     }
   }
 
+  @override
+  void initState() {
+    _modertorsViewModel = ModertorsViewModel(context);
+    isActivated=widget.user.activated!;
+    super.initState();
+  }
   launchCaller(String phoneNumber) async {
     final PermissionStatus status = await Permission.phone.request();
     if (status == PermissionStatus.granted) {
@@ -59,17 +78,17 @@ class _ItemWaiterState extends State<ItemWaiter> {
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(10),
-      height: 170,
+      height: 220,
       child: Row(
         children: [
           Stack(
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundColor: gray.withOpacity(0.5),
+                backgroundColor: Colors.grey.withOpacity(0.5),
                 backgroundImage: widget.user.image == null
                     ? null
-                    : MemoryImage(base64.decode(widget.user.image!)),
+                    : NetworkImage(baseUrl + userUrl + widget.user.image!),
                 child: widget.user.image == null
                     ? const Icon(
                   Icons.person_rounded,
@@ -148,6 +167,15 @@ class _ItemWaiterState extends State<ItemWaiter> {
                         title: Text(AppLocalizations.of(context)!.showMore),
                       ),
                     ),
+                        PopupMenuItem<String>(
+                          value:edit ,
+                          child: ListTile(
+                            minLeadingWidth: 10,
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(Icons.edit),
+                            title: Text(AppLocalizations.of(context)!.updatedStatus),
+                          ),
+                        ),
                     //  PopupMenuItem<String>(
                     //   value: delete,
                     //   child: ListTile(
@@ -182,6 +210,26 @@ class _ItemWaiterState extends State<ItemWaiter> {
                 child: Text(
                   widget.user.username,
                 ),
+              ),
+              Row(
+                children: [
+                  // Text(AppLocalizations.of(context)!.activateTheAccount),
+                  Switch(
+                    activeColor: orange,
+                    value: isActivated,
+                    onChanged: (bool value) async {
+                      widget.user.activated=value;
+                      print(widget.user.toString());
+
+                      _modertorsViewModel.activateAccount(widget.user).then((user) async {
+                        setState(() {
+                          isActivated=user.activated!;
+
+                        });
+                      });
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 10,)
             ],
