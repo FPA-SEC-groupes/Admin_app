@@ -150,26 +150,23 @@ class _UpadateDayOffState extends State<UpadateDayOff> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildDropdown(
-                      label: AppLocalizations.of(context)!.duration,
-                      value: _selectedDuration,
-                      items: initListDurations(context),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedDuration = newValue!;
-                          if (_selectedDuration == AppLocalizations.of(context)!.oneDay) {
-                            _selectedDayOff = AppLocalizations.of(context)!.none;
-                          }
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    _buildDropdown(
                       label: AppLocalizations.of(context)!.dayOff,
                       value: _selectedDayOff,
                       items: initListDaysOff(context),
                       onChanged: (String? newValue) {
                         setState(() {
                           _selectedDayOff = newValue!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 20,),
+                    _buildDropdown(
+                      label: AppLocalizations.of(context)!.duration,
+                      value: _selectedDuration,
+                      items: initListDayOffDurations(context),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedDuration = newValue!;
                         });
                       },
                     ),

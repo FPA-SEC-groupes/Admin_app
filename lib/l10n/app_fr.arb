@@ -103,7 +103,7 @@
     "pendingStatus": "En attente",
     "refusedStatus": "Refusée",
     "confirmedStatus": "Confirmée",
-    "updatedStatus": "mis à jour",
+    "updatedStatus": "mise a jour",
     "canceledStatus": "Annulée",
      "payedStatus": "Payée",
     "numberOfGuests": "Nombre d'invités",

@@ -272,7 +272,6 @@ class _CommandDetailsState extends State<CommandDetails> {
                             // });
                           },
                           onIncrement: () {
-                            // print("oooooooooooooooooooooooooooooooooooooooooooooooooooo");
                             _basketViewModel.addProductToBasket(product.product.idProduct!, 1,widget.commandWithNumTable.command.basket.id_basket).then((_) {
                               setState(() {
                                 _getTotalSumByBasketId();

@@ -188,7 +188,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                         text: TextSpan(
                           children: <TextSpan>[
                             TextSpan(
-                              text: "${AppLocalizations.of(context)!.numberOfGuests}:",
+                              text: "${AppLocalizations.of(context)!.numberOfGuests} : ",
                               style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
@@ -417,7 +417,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                         ],
                       )),
                 )
-              else if (widget.restriction.description=="")
+              else if (res==false)
                 Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -442,11 +442,12 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                                   },
                                 ).then((_) {
                                   setState(() {
-                                    _fetchres();
+                                    // _fetchres()
+                                      res = true;
                                   });
                                 }).catchError((error) {
                                   // Handle signup error
-                                });;
+                                });
                               },
                               child: Text(
                                 AppLocalizations.of(context)!.addRestriction,
@@ -462,7 +463,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                     )),
               )
                     else
-                      Text(""),
+                      SizedBox(),
             ],
           )
               : Center(

@@ -314,8 +314,27 @@ class _ListZonesState extends State<ListZones> {
               );
             } else if (snapshot.hasError) {
               return Center(
-                child: Text(
-                    AppLocalizations.of(context)!.errorRetrievingData),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.group_work_outlined,
+                        size: 150,
+                        color: gray,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        AppLocalizations.of(context)!.noZonesInSpace,
+                        style:
+                        const TextStyle(fontSize: 22, color: gray),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(

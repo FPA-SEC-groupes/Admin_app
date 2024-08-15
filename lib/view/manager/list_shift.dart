@@ -114,9 +114,10 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
             )
         )
     ).then((_) {
-      setState(() {
-        _fetchShifts();
-      });
+      _refreshShifts();
+      // setState(() {
+      //   _fetchShifts();
+      // });
     }).catchError((error) {
       // Handle signup error
     });
@@ -136,12 +137,13 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
               )
           )
           ).then((_) {
-          setState(() {
-            _fetchShifts();
-          });
+          _refreshShifts();
+          // setState(() {
+          //   _fetchShifts();
+          // });
         }).catchError((error) {
           // Handle signup error
-        });;
+        });
         if (result == true) {
           // Refresh the data if shifts were created successfully
           _refreshShifts();
@@ -157,8 +159,9 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
 
   }
   void _refreshShifts() {
-    _fetchShifts();
+
     setState(() {
+      _fetchShifts();
       _selectedShifts = _getShiftsForDay(_selectedDate!);
     });
   }
@@ -195,6 +198,7 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
   }
   void _fetchShifts() async {
     try {
+      _shifts.clear();
       List<Shift> fetchedShifts = await shiftViewModel.getShiftsByWaiterId1(widget.waiter.id);
       setState(() {
         _shifts = fetchedShifts;
@@ -206,11 +210,6 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
         String dayOfWeek = DateFormat('EEEE').format(date).toUpperCase();
         return dayOfWeek;
       }).toSet();
-
-      // Define all days of the week
-
-
-      // Identify the current day off, if any
       String? currentDayOff;
       for (Shift shift in _shifts) {
         if (shift.type == 'dayOff') {

@@ -92,7 +92,7 @@ class _ItemPrimaryMaterialState extends State<ItemPrimaryMaterial> {
           ),
           Text("${AppLocalizations.of(context)!.stockQuantity}: ${widget.primaryMaterial.stockQuantity} ${widget.primaryMaterial.unitOfMeasure}"),
           const SizedBox(height: 10,),
-          Text("${AppLocalizations.of(context)!.price}: ${widget.primaryMaterial.price} ${AppLocalizations.of(context)!.tunisianDinar}/${widget.primaryMaterial.unitOfMeasure}"),
+          Text("${AppLocalizations.of(context)!.price}: ${widget.primaryMaterial.price%widget.primaryMaterial.stockQuantity} ${AppLocalizations.of(context)!.tunisianDinar}/${widget.primaryMaterial.unitOfMeasure}"),
 
 
 

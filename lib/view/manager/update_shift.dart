@@ -32,7 +32,6 @@ class _UpadateShiftState extends State<UpadateShift> {
     shiftViewModel = ShiftViewModel(context);
     _startTimeController = TextEditingController(text: widget.shiftToUpdate.startTime);
     _endTimeController = TextEditingController(text: widget.shiftToUpdate.endTime);
-    print('Day offfffffffffff: ${widget.dayOff}');
   }
 
   @override
