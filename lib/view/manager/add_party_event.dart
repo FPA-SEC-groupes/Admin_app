@@ -36,6 +36,7 @@ class _AddPartyEventState extends State<AddPartyEvent> {
       _priceController,
       _nbPaticipantController,
       _descriptionController;
+  String? eventTitleError;
 
   @override
   void initState() {
@@ -142,6 +143,15 @@ class _AddPartyEventState extends State<AddPartyEvent> {
     }
     return null;
   }
+  String? _validateEventTitle(String? value) {
+    if (value == null || value.isEmpty) {
+      return AppLocalizations.of(context)!.inputRequiredError;
+    }
+    if (eventTitleError != null) {
+      return eventTitleError;
+    }
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
@@ -176,10 +186,11 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                             InputForm(
                               hint: AppLocalizations.of(context)!.title,
                               controller: _eventTitleController,
-                              validator: MultiValidator([
-                                RequiredValidator(
-                                    errorText: AppLocalizations.of(context)!.inputRequiredError),
-                              ]),
+                              validator:  _validateEventTitle,
+                              // MultiValidator([
+                              //   RequiredValidator(
+                              //       errorText: AppLocalizations.of(context)!.inputRequiredError),
+                              // ]),
                             ),
                             const SizedBox(
                               height: 10,
@@ -394,22 +405,83 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                           color: orange,
                         ),
                         child: Button(
-                          text: widget.party == null ? AppLocalizations.of(context)!.add : AppLocalizations.of(context)!.modify,
+                          text: widget.party == null
+                              ? AppLocalizations.of(context)!.add
+                              : AppLocalizations.of(context)!.modify,
                           onPressed: () {
-                            if (_addNewPartyFormKey.currentState!.validate()) {
+                            if (_addNewPartyFormKey.currentState!
+                                .validate()) {
                               _addNewPartyFormKey.currentState!.save();
                               Event event = Event(
-                                eventTitle: _eventTitleController.text.trim().toString(),
-                                startDate: DateTime.parse(_startDateController.text.trim().toString()),
-                                endDate: DateTime.parse(_endDateController.text.trim().toString()),
-                                description: _descriptionController.text.trim().toString(),
-                                nbParticipant: int.parse(_nbPaticipantController.text.trim()),
-                                price: double.parse(_priceController.text.contains(',')? _priceController.text.replaceAll(',', '.'): _priceController.text),
+                                eventTitle: _eventTitleController.text
+                                    .trim()
+                                    .toString(),
+                                startDate: DateTime.parse(
+                                    _startDateController.text
+                                        .trim()
+                                        .toString()),
+                                endDate: DateTime.parse(
+                                    _endDateController.text
+                                        .trim()
+                                        .toString()),
+                                description: _descriptionController.text
+                                    .trim()
+                                    .toString(),
+                                nbParticipant: int.parse(
+                                    _nbPaticipantController.text.trim()),
+                                price: double.parse(_priceController.text
+                                    .contains(',')
+                                    ? _priceController.text
+                                    .replaceAll(',', '.')
+                                    : _priceController.text),
                               );
 
-                              widget.party==null? _eventsViewModel.createPartyForSpace(event).then((event) async {
-                                if (_galleryViewModel.image != null) {
-                                  await _eventsViewModel.uploadImage(_galleryViewModel.image!, event.idEvent!).then((_) {
+                              widget.party == null
+                                  ? _eventsViewModel
+                                  .createPartyForSpace(event)
+                                  .then((event) async {
+                                if (event == null) {
+                                  setState(() {
+                                    eventTitleError =
+                                        AppLocalizations.of(
+                                            context)!
+                                            .eventExiste;
+                                  });
+                                  _addNewPartyFormKey
+                                      .currentState!
+                                      .validate();
+                                } else {
+                                  eventTitleError = null;
+                                  if (_galleryViewModel.image !=
+                                      null) {
+                                    await _eventsViewModel
+                                        .uploadImage(
+                                        _galleryViewModel
+                                            .image!,
+                                        event.idEvent!)
+                                        .then((_) {
+                                      Navigator.pop(context);
+                                    }).catchError((error) {
+                                      print(error);
+                                    });
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                }
+                              }).catchError((error) {
+                                print(error);
+                              })
+                                  : _eventsViewModel
+                                  .updateParty(
+                                  widget.party!.idEvent!, event)
+                                  .then((event) async {
+                                if (_galleryViewModel.image !=
+                                    null) {
+                                  await _eventsViewModel
+                                      .uploadImage(
+                                      _galleryViewModel.image!,
+                                      widget.party!.idEvent!)
+                                      .then((_) {
                                     Navigator.pop(context);
                                   }).catchError((error) {
                                     print(error);
@@ -419,20 +491,7 @@ class _AddPartyEventState extends State<AddPartyEvent> {
                                 }
                               }).catchError((error) {
                                 print(error);
-                              }):
-                              _eventsViewModel.updateParty(widget.party!.idEvent!, event).then((event) async {
-                                if (_galleryViewModel.image != null) {
-                                  await _eventsViewModel.uploadImage(_galleryViewModel.image!, widget.party!.idEvent!).then((_) {
-                                    Navigator.pop(context);
-                                  }).catchError((error) {
-                                    print(error);
-                                  });
-                                } else {
-                                  Navigator.pop(context);
-                                }
-                              }).catchError((error) {
-                                print(error);
-                              });;
+                              });
                             }
                           },
                         ),

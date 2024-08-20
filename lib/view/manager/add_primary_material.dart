@@ -221,9 +221,9 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
   String? _customValidator(String? value) {
     if (value != null && value.isNotEmpty) {
       // Check if the value contains a dot (.) or comma (,)
-      if (value.contains('.') || value.contains(',')) {
-        return AppLocalizations.of(context)!.dotsOrcommasError;
-      }
+      // if (value.contains('.') || value.contains(',')) {
+      //   return AppLocalizations.of(context)!.dotsOrcommasError;
+      // }
 
       int? numberOfParticipants = int.tryParse(value);
       if (numberOfParticipants == null) {

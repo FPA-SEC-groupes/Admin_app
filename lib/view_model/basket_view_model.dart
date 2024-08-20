@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hello_way/response/product_with_quantities.dart';
 import '../../models/command.dart';
 import '../../models/user.dart';
 import '../../response/product_with_quantity.dart';
@@ -98,6 +99,26 @@ class BasketViewModel {
     }
   }
 
+  Future<List<ProductWithQuantities>> getProductsByBasketId2(int basketId) async {
+    try {
+      // final basketId = await secureStorage.readData(basketIdKey);
+
+      final response =
+      await dioInterceptor.dio.get('$baseUrl/api/baskets/products/by_basket/$basketId');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> parsedJson = response.data;
+        final List<ProductWithQuantities> products =
+        parsedJson.map((json) => ProductWithQuantities.fromJson(json)).toList();
+        print(products.toString());
+        return products;
+      } else {
+        throw Exception('Failed to load products: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load products: $e');
+    }
+  }
 
   Future<Command> addNewCommand() async {
     try {

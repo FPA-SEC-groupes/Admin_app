@@ -78,7 +78,7 @@ class _ListZonesState extends State<ListZones> {
     if (value == null || value.isEmpty) {
       return AppLocalizations.of(context)!.inputRequiredError;
     } else if (errorText != null) {
-      return AppLocalizations.of(context)!.zoneAlreadyExists;
+      return errorText;
     }
     // Regex to allow only alphabets, numbers, spaces, and underscores
     RegExp regExp = RegExp(r'^[a-zA-Z0-9 _]*$');
@@ -88,40 +88,41 @@ class _ListZonesState extends State<ListZones> {
     return null;
   }
 
-  Future<void> _addOrUpdateZone() async {
+  Future<void> _addOrUpdateZone(Function(String?) setErrorText) async {
     String zoneTitle = _titleZoneController.text.trim();
-    String normalizedZoneTitle =
-    zoneTitle.replaceAll(' ', '').replaceAll('_', '').toLowerCase();
+    String normalizedZoneTitle = zoneTitle.replaceAll(' ', '').replaceAll('_', '').toLowerCase();
 
-    List<Zone> existingZones = await _fetchZones();
-    bool zoneExists = existingZones.any((zone) =>
-    zone.title.replaceAll(' ', '').replaceAll('_', '').toLowerCase() ==
-        normalizedZoneTitle);
+    try {
+      List<Zone> existingZones = await _fetchZones();
+      bool zoneExists = existingZones.any((zone) =>
+      zone.title.replaceAll(' ', '').replaceAll('_', '').toLowerCase() == normalizedZoneTitle);
 
-    if (zoneExists) {
-      setState(() {
-        errorText = AppLocalizations.of(context)!.zoneAlreadyExists;
-      });
-    } else {
-      Zone zone = Zone(title: zoneTitle);
-      await _zonesViewModel.addZoneByIdSpace(zone).then((_) {
-        Navigator.of(context).pop();
-        setState(() {
-          _fetchZones();
-        });
-      }).catchError((error) {
-        if (error is DioError) {
-          if (error.response?.statusCode == 400) {
-            setState(() {
-              errorText = AppLocalizations.of(context)!.zoneAlreadyExists;
-            });
+      if (zoneExists) {
+        setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
+      } else {
+        Zone zone = Zone(title: zoneTitle);
+        await _zonesViewModel.addZoneByIdSpace(zone).then((_) {
+          Navigator.of(context).pop();
+          setState(() {
+            _fetchZones();
+          });
+        }).catchError((error) {
+          if (error is DioError && error.response?.statusCode == 400) {
+            setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
+          } else {
+            print("Error: $error");
           }
-        } else {
-          print("Error: $error");
-        }
-      });
+        });
+      }
+    } catch (error) {
+      if (error is DioError && error.response?.statusCode == 400) {
+        setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
+      } else {
+        print("Error: $error");
+      }
     }
   }
+
 
   Future<void> addTable(Zone zone) async {
     if (zone.server != null) {
@@ -275,7 +276,7 @@ class _ListZonesState extends State<ListZones> {
             backgroundColor: orange,
             onPressed: () async {
               _titleZoneController.clear();
-              errorText = null;
+              String? errorText; // Declare errorText here
               await showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -283,9 +284,22 @@ class _ListZonesState extends State<ListZones> {
                     builder: (context, update) {
                       return MyDialogue(
                         title: AppLocalizations.of(context)!.addZone,
-                        validator: _validateZoneTitle,
+                        validator: (value) {
+                          // Combine _validateZoneTitle and errorText
+                          final validationError = _validateZoneTitle(value);
+                          if (validationError != null) {
+                            return validationError;
+                          }
+                          return errorText;
+                        },
                         controller: _titleZoneController,
-                        submit: _addOrUpdateZone,
+                        submit: () async {
+                          await _addOrUpdateZone((String? newErrorText) {
+                            update(() {
+                              errorText = newErrorText;
+                            });
+                          });
+                        },
                         cancel: () {
                           Navigator.of(context).pop();
                         },
@@ -299,6 +313,7 @@ class _ListZonesState extends State<ListZones> {
             child: const Icon(Icons.add),
           ),
         ),
+
         body: networkStatus == NetworkStatus.Online
             ? FutureBuilder(
           future: _fetchZones(),

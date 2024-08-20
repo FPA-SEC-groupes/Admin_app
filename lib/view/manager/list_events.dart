@@ -86,7 +86,12 @@ class _ListEventsState extends State<ListEvents> {
   @override
   Widget build(BuildContext context) {
     NetworkStatus networkStatus = Provider.of<NetworkStatus>(context);
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.pushReplacementNamed(context, calendarEventsRoute);
+      return true;
+    },
+    child: Scaffold(
         backgroundColor: lightGray,
         appBar: AppBar(
           automaticallyImplyLeading: true,
@@ -258,6 +263,7 @@ class _ListEventsState extends State<ListEvents> {
               ],
             ),
           ),
-        ),);
+        ),
+    ));
   }
 }

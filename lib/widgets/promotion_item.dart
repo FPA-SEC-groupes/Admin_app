@@ -98,7 +98,7 @@ class _ItemPromotionState extends State<ItemPromotion> {
           Text("${AppLocalizations.of(context)!.reduction} ${widget.event.percentage} %"),
           const SizedBox(height: 10,),
           Text(
-            "${DateFormat('yyyy-MM-dd hh:mm').format( widget.event.startDate)} / ${DateFormat('yyyy-MM-dd hh:mm').format( widget.event.endDate)}",
+              "${DateFormat('yyyy-MM-dd HH:mm').format(widget.event.startDate)} / ${DateFormat('yyyy-MM-dd HH:mm').format(widget.event.endDate)}",
             style: const TextStyle(
                 fontSize: 16,
 

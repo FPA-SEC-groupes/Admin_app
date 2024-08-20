@@ -45,19 +45,22 @@ class EventsViewModel {
 
 
 
-  Future<Event> createPartyForSpace(Event event) async {
+  Future<Event?> createPartyForSpace(Event event) async {
     final spaceId = await secureStorage.readData(spaceIdKey);
     String url = '$baseUrl/api/events/party/space/$spaceId';
     print(event.toJson());
     try {
       Response response = await dioInterceptor.dio.post(
         url,
-        data: event.toJson(), // Assuming Promotion class has toJson() method
+        data: event.toJson(), // Assuming Event class has toJson() method
       );
 
       if (response.statusCode == 200) {
-
-        return  Event.fromJson(response.data);
+        if (response.data == "event existe") {
+          return null; // Return null if the event already exists
+        } else {
+          return Event.fromJson(response.data);
+        }
       } else {
         // Request failed
         print('Request failed with status code: ${response.statusCode}');
@@ -69,6 +72,7 @@ class EventsViewModel {
       throw Exception("Error: $error'");
     }
   }
+
 
 
   Future<List<Event>> getEventsBySpaceId() async {

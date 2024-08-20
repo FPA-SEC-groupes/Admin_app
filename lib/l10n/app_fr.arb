@@ -21,6 +21,7 @@
     "description" : "Description",
     "add" : "Ajouter",
     "partyEvent" : "Événement de fête",
+    "eventExiste": "name event title deja existé dans cette date",
     "numberOfParticipants" : "Nombre de participants",
     "price" : "Prix",
     "addAnImage" : "Ajouter une image",

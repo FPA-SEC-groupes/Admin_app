@@ -22,6 +22,7 @@
 "description" : "الوصف",
 "add" : "إضافة",
 "partyEvent" : "حدث حفلة",
+  "eventExiste": "عنوان حدث الاسم موجود بالفعل في هذا التاريخ",
 "numberOfParticipants" : "عدد المشاركين",
 "price" : "السعر",
 "addAnImage" : "إضافة صورة",

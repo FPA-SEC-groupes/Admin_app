@@ -42,7 +42,7 @@ class _CommandDetailsState extends State<CommandDetails> {
   }
 
   Future<double> _getTotalSumByBasketId() async {
-    List<ProductWithQuantities> products = (await _basketViewModel.getProductsByBasketId(widget.commandWithNumTable.command.basket.id_basket)).cast<ProductWithQuantities>();
+    List<ProductWithQuantities> products = await _basketViewModel.getProductsByBasketId2(widget.commandWithNumTable.command.basket.id_basket);
     double totalSum = 0;
     for (var product in products) {
       var productDetails = product.product;
@@ -118,6 +118,7 @@ class _CommandDetailsState extends State<CommandDetails> {
     _commandsViewModel = CommandsViewModel(context);
     _basketViewModel = BasketViewModel(context);
     _getProductsByCommandId();
+    _getTotalSumByBasketId();
     super.initState();
   }
 
@@ -200,7 +201,7 @@ class _CommandDetailsState extends State<CommandDetails> {
                               final sum = sumSnapshot.data!;
                               double sum1 = double.parse(sum.toStringAsFixed(2));
                               return Text(
-                                "${AppLocalizations.of(context)!.total}: $sum1 ${AppLocalizations.of(context)!.tunisianDinar}",
+                                "${AppLocalizations.of(context)!.total}: ${_totalSum.toStringAsFixed(2)} ${AppLocalizations.of(context)!.tunisianDinar}",
                                 style: const TextStyle(fontSize: 16),
                               );}}),
                         SizedBox(width: 10,),

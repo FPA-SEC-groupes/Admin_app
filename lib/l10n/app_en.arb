@@ -25,6 +25,7 @@
     "description":"Description",
     "add":"Add",
     "partyEvent":"Party event",
+    "eventExiste": "name event title already existed in this date",
     "numberOfParticipants":"Number of participants",
     "price":"Price",
     "addAnImage":"Add an image",

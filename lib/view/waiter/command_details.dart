@@ -60,316 +60,316 @@ class _CommandDetailsState extends State<CommandDetails> {
     return ScaffoldMessenger(
         key: _detailsCommandScaffoldKey,
         child: Scaffold(
-      appBar: AppBar(
-        backgroundColor: orange,
-        title: Text(
-          "${AppLocalizations.of(context)!.order} N°${widget.commandWithNumTable.command.idCommand}",
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
-      body:networkStatus == NetworkStatus.Online
-          ? Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${AppLocalizations.of(context)!.order} N°${widget.commandWithNumTable.command.idCommand} - ${AppLocalizations.of(context)!.table} N°${widget.commandWithNumTable.numTable}",
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if(widget.commandWithNumTable.command.status=="CONFIRMED")
-                    // FutureBuilder(
-                    // future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
-                    // builder: (BuildContext context,
-                    // AsyncSnapshot<double> sumSnapshot) {
-                    // if (sumSnapshot.connectionState ==
-                    // ConnectionState.waiting) {
-                    // return const SizedBox
-                    //     .shrink(); // or a loading widget
-                    // } else if (sumSnapshot.hasError) {
-                    // return  Text(AppLocalizations.of(context)!.errorRetrievingData);
-                    // } else {
-                    // final sum = sumSnapshot.data!;
-                    // double sum1 = double.parse(sum.toStringAsFixed(2));
-                    // return
-                    //   Text(
-                    //   "${AppLocalizations.of(context)!.total}: $sum1",
-                    //   style: const TextStyle(fontSize: 16),
-                    // );}}),
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: widget.commandWithNumTable.command.status ==
-                                "NOT_YET"
-                            ? Colors.orangeAccent
-                            : widget.commandWithNumTable.command.status ==
-                                    "REFUSED"
-                                ? Colors.red
-                                : Colors.green,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child:Row(
-                          children: [
-                              FutureBuilder(
-                              future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
-                              builder: (BuildContext context,
-                              AsyncSnapshot<double> sumSnapshot) {
-                              if (sumSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                              return const SizedBox
-                                  .shrink(); // or a loading widget
-                              } else if (sumSnapshot.hasError) {
-                              return  Text(AppLocalizations.of(context)!.errorRetrievingData);
-                              } else {
-                              // final sum = sumSnapshot.data!;
-                              final sum = sumSnapshot.data!;
-                              double sum1 = double.parse(sum.toStringAsFixed(2));
-                              return Text(
-                              "${AppLocalizations.of(context)!.total}: $sum1 ${AppLocalizations.of(context)!.tunisianDinar} ",
-                              style: const TextStyle(fontSize: 16),
-                              );}}),
-                            Text(
-                              widget.commandWithNumTable.command.status == "NOT_YET"
-                                  ?AppLocalizations.of(context)!.pendingStatus
-                                  : widget.commandWithNumTable.command.status ==
-                                  "REFUSED"
-                                  ? AppLocalizations.of(context)!.refusedStatus
-                                  : widget.commandWithNumTable.command.status ==
-                                  "CONFIRMED"
-                                  ?AppLocalizations.of(context)!.confirmedStatus
-                                  :widget.commandWithNumTable.command.status=="UPDATED"
-                                  ?AppLocalizations.of(context)!.updatedStatus
-                                  : AppLocalizations.of(context)!.payedStatus,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                             ],)
-                    )
-                  ],
-                ),
-              ],
+          appBar: AppBar(
+            backgroundColor: orange,
+            title: Text(
+              "${AppLocalizations.of(context)!.order} N°${widget.commandWithNumTable.command.idCommand}",
+              style: const TextStyle(color: Colors.white),
             ),
           ),
-          Container(
-            color: lightGray,
-            height: 10,
-          ),
-          Expanded(
-            child: FutureBuilder(
-                future: _getProductsByCommandId(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return ListView.separated(
-                      itemCount: 5,
-                      separatorBuilder: (context, index) =>
+          body:networkStatus == NetworkStatus.Online
+              ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${AppLocalizations.of(context)!.order} N°${widget.commandWithNumTable.command.idCommand} - ${AppLocalizations.of(context)!.table} N°${widget.commandWithNumTable.numTable}",
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if(widget.commandWithNumTable.command.status=="CONFIRMED" || widget.commandWithNumTable.command.status=="PAYED")
+                        // FutureBuilder(
+                        // future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
+                        // builder: (BuildContext context,
+                        // AsyncSnapshot<double> sumSnapshot) {
+                        // if (sumSnapshot.connectionState ==
+                        // ConnectionState.waiting) {
+                        // return const SizedBox
+                        //     .shrink(); // or a loading widget
+                        // } else if (sumSnapshot.hasError) {
+                        // return  Text(AppLocalizations.of(context)!.errorRetrievingData);
+                        // } else {
+                        // final sum = sumSnapshot.data!;
+                        // double sum1 = double.parse(sum.toStringAsFixed(2));
+                        // return
+                        //   Text(
+                        //   "${AppLocalizations.of(context)!.total}: $sum1",
+                        //   style: const TextStyle(fontSize: 16),
+                        // );}}),
+                          Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: widget.commandWithNumTable.command.status ==
+                                    "NOT_YET"
+                                    ? Colors.orangeAccent
+                                    : widget.commandWithNumTable.command.status ==
+                                    "REFUSED"
+                                    ? Colors.red
+                                    : Colors.green,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child:Row(
+                                children: [
+                                  FutureBuilder(
+                                      future: getSumOfCommand(widget.commandWithNumTable.command.idCommand),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<double> sumSnapshot) {
+                                        if (sumSnapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const SizedBox
+                                              .shrink(); // or a loading widget
+                                        } else if (sumSnapshot.hasError) {
+                                          return  Text(AppLocalizations.of(context)!.errorRetrievingData);
+                                        } else {
+                                          // final sum = sumSnapshot.data!;
+                                          final sum = sumSnapshot.data!;
+                                          double sum1 = double.parse(sum.toStringAsFixed(2));
+                                          return Text(
+                                            "${AppLocalizations.of(context)!.total}: $sum1 ${AppLocalizations.of(context)!.tunisianDinar} ",
+                                            style: const TextStyle(fontSize: 16),
+                                          );}}),
+                                  Text(
+                                    widget.commandWithNumTable.command.status == "NOT_YET"
+                                        ?AppLocalizations.of(context)!.pendingStatus
+                                        : widget.commandWithNumTable.command.status ==
+                                        "REFUSED"
+                                        ? AppLocalizations.of(context)!.refusedStatus
+                                        : widget.commandWithNumTable.command.status ==
+                                        "CONFIRMED"
+                                        ?AppLocalizations.of(context)!.confirmedStatus
+                                        :widget.commandWithNumTable.command.status=="UPDATED"
+                                        ?AppLocalizations.of(context)!.updatedStatus
+                                        : AppLocalizations.of(context)!.payedStatus,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],)
+                          )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: lightGray,
+                height: 10,
+              ),
+              Expanded(
+                child: FutureBuilder(
+                    future: _getProductsByCommandId(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return ListView.separated(
+                          itemCount: 5,
+                          separatorBuilder: (context, index) =>
                           const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        return const ItemProductCommandShimmer();
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return  Center(
-                      child: Text(AppLocalizations.of(context)!.errorRetrievingData),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center();
-                  } else {
-                    final products = snapshot.data!;
-                    return ListView.separated(
-                      itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        ProductWithQuantities1 productWithQuantities =
+                          itemBuilder: (context, index) {
+                            return const ItemProductCommandShimmer();
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return  Center(
+                          child: Text(AppLocalizations.of(context)!.errorRetrievingData),
+                        );
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center();
+                      } else {
+                        final products = snapshot.data!;
+                        return ListView.separated(
+                          itemCount: products.length,
+                          itemBuilder: (context, index) {
+                            ProductWithQuantities1 productWithQuantities =
                             products[index];
 
-                        return ItemProductCommand(
-                          productWithQuantities: products[index],
+                            return ItemProductCommand(
+                              productWithQuantities: products[index],
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Container(
+                              color: lightGray,
+                              height: 10,
+                            );
+                          },
                         );
-                      },
-                      separatorBuilder: (context, index) {
-                        return Container(
-                          color: lightGray,
-                          height: 10,
-                        );
-                      },
-                    );
-                  }
-                }),
-          ),
-          if (widget.commandWithNumTable.command.status == "NOT_YET" || widget.commandWithNumTable.command.status=="UPDATED" )
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.0),
-                            color: orange,
-                          ),
-                          child: MaterialButton(
-                            height: 50,
-                            onPressed: () {
-                              _commandsViewModel
-                                  .acceptCommand(widget
+                      }
+                    }),
+              ),
+              if (widget.commandWithNumTable.command.status == "NOT_YET" || widget.commandWithNumTable.command.status=="UPDATED" )
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0),
+                                color: orange,
+                              ),
+                              child: MaterialButton(
+                                height: 50,
+                                onPressed: () {
+                                  _commandsViewModel
+                                      .acceptCommand(widget
                                       .commandWithNumTable.command.idCommand)
+                                      .then((_) async {
+
+                                    setState(() {
+                                      widget.commandWithNumTable.command.status =
+                                      "CONFIRMED";
+                                    });
+                                    var snackBar =  customSnackBar(context, AppLocalizations.of(context)!.orderConfirmed, Colors.green);
+                                    _detailsCommandScaffoldKey.currentState?.showSnackBar(snackBar);
+                                  }).catchError((error) {});
+                                },
+                                child:  Text(
+                                  widget.commandWithNumTable.command.status ==
+                                      "CONFIRMED"? AppLocalizations.of(context)!.confirmOrder
+                                      :AppLocalizations.of(context)!.confirmUpdateOrder,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 30,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _commandsViewModel
+                                  .refuseCommand(widget
+                                  .commandWithNumTable.command.idCommand)
                                   .then((_) async {
 
                                 setState(() {
                                   widget.commandWithNumTable.command.status =
-                                  "CONFIRMED";
+                                  "REFUSED";
                                 });
-                                var snackBar =  customSnackBar(context, AppLocalizations.of(context)!.orderConfirmed, Colors.green);
+                                var snackBar =  customSnackBar(context, AppLocalizations.of(context)!.orderRefused, Colors.green);
                                 _detailsCommandScaffoldKey.currentState?.showSnackBar(snackBar);
                               }).catchError((error) {});
                             },
-                            child:  Text(
-                                widget.commandWithNumTable.command.status ==
-                                "CONFIRMED"? AppLocalizations.of(context)!.confirmOrder
-                              :AppLocalizations.of(context)!.confirmUpdateOrder,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18.0,
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: gray,
+                                    width: 2.0,
+                                  )),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.close,
+                                  color: gray,
+                                  size: 30.0,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      InkWell(
-                        onTap: () {
+                        ],
+                      )),
+                ),
+              if (widget.commandWithNumTable.command.status == "CONFIRMED")
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0), color: orange),
+                      margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: MaterialButton(
+                        onPressed: () {
                           _commandsViewModel
-                              .refuseCommand(widget
+                              .payCommand(widget
                               .commandWithNumTable.command.idCommand)
                               .then((_) async {
 
                             setState(() {
                               widget.commandWithNumTable.command.status =
-                              "REFUSED";
+                              "PAYED";
                             });
-                            var snackBar =  customSnackBar(context, AppLocalizations.of(context)!.orderRefused, Colors.green);
+                            var snackBar =  customSnackBar(context, AppLocalizations.of(context)!.orderPaid, Colors.green);
                             _detailsCommandScaffoldKey.currentState?.showSnackBar(snackBar);
                           }).catchError((error) {});
                         },
-                        child: Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              color: Colors.white,
-                              border: Border.all(
-                                color: gray,
-                                width: 2.0,
-                              )),
-                          child: const Center(
-                            child: Icon(
-                              Icons.close,
-                              color: gray,
-                              size: 30.0,
-                            ),
+                        child: Text(
+                          '${AppLocalizations.of(context)!.payOrder}  ',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
                           ),
                         ),
-                      ),
-                    ],
-                  )),
-            ),
-          if (widget.commandWithNumTable.command.status == "CONFIRMED")
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5.0), color: orange),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: MaterialButton(
-                    onPressed: () {
-                      _commandsViewModel
-                          .payCommand(widget
-                          .commandWithNumTable.command.idCommand)
-                          .then((_) async {
-
-                        setState(() {
-                          widget.commandWithNumTable.command.status =
-                          "PAYED";
-                        });
-                        var snackBar =  customSnackBar(context, AppLocalizations.of(context)!.orderPaid, Colors.green);
-                        _detailsCommandScaffoldKey.currentState?.showSnackBar(snackBar);
-                      }).catchError((error) {});
-                    },
-                    child: Text(
-                      '${AppLocalizations.of(context)!.payOrder}  ',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  )),
-            ),
-        ],
-      ):Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.network_check,
-                size: 150,
-                color: gray,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)!.noInternet,
-                style: const TextStyle(fontSize: 22, color: gray),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                AppLocalizations.of(context)!.checkYourInternet,
-                style: const TextStyle(fontSize: 22, color: gray),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 10,),
-              MaterialButton(
-                color: orange,
-                height: 40,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                      )),
                 ),
-                onPressed:(){
-                  setState(() {
-
-                  });
-                },
-
-
-                child: Text(
-                  AppLocalizations.of(context)!.retry,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
-                ),
-
-              )
             ],
+          ):Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.network_check,
+                    size: 150,
+                    color: gray,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    AppLocalizations.of(context)!.noInternet,
+                    style: const TextStyle(fontSize: 22, color: gray),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.checkYourInternet,
+                    style: const TextStyle(fontSize: 22, color: gray),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 10,),
+                  MaterialButton(
+                    color: orange,
+                    height: 40,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    onPressed:(){
+                      setState(() {
+
+                      });
+                    },
+
+
+                    child: Text(
+                      AppLocalizations.of(context)!.retry,
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+
+                  )
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }

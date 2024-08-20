@@ -52,7 +52,7 @@ class _ListcommandsbywaiterState extends State<Listcommandsbywaiter> {
 
   Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
     List<CommandWithNumTable> products =
-    await _listCommandsViewModel.getCommandsByWaiterId1(status,widget.waiterId);
+    await _listCommandsViewModel.getCommandsByWaiterId1(status,widget.waiterId.toString());
     print(products.toString());
     return products;
   }
