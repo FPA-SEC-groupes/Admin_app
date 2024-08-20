@@ -39,7 +39,7 @@ class _UpadateDayOffState extends State<UpadateDayOff> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _selectedDuration = initListDurations(context).first;
+    _selectedDuration = initListDayOffDurations(context).first;
     _selectedDayOff = initListDaysOff(context).first;
   }
   Widget _buildTimePickerField({

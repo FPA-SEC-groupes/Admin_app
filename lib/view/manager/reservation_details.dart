@@ -214,6 +214,9 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                               .toUpperCase() +
                               widget.reservation.description!.substring(1),
                           style: const TextStyle(fontSize: 16)),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Text("${AppLocalizations.of(context)!.username}:",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
@@ -229,6 +232,9 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                       isPhone ?
                       Column(
                         children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
                         Text("${AppLocalizations.of(context)!.phoneNumber}:",
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
@@ -236,6 +242,9 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                             widget.reservation.user!.phone!,
                             style: const TextStyle(fontSize: 16)),
                       ],):SizedBox(),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Text("${AppLocalizations.of(context)!.email}:",
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold)),
