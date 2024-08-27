@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // const baseUrl="https://backend-production-b7ef.up.railway.app";
 
-const baseUrl = "http://192.168.1.193:8082";
+const baseUrl = "http://192.168.1.18:8082";
 const apiKey="AIzaSyCbaCcJ17jjCDAIDCIEATD3NrabhaDi1aU";
-const Url = "//192.168.1.193:8082";
+const Url = "// 172.18.16.1:8082";
 const productUrl="/photos/product/";
 const spaceUrl ="/photos/space/";
 const eventUrl ="/photos/event/";
