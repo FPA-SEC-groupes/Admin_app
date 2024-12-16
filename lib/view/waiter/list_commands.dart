@@ -41,8 +41,6 @@ class _ListCommandsState extends State<ListCommands> {
     );
 
     channel.stream.listen((message) {
-      // Handle the incoming WebSocket messages
-      // and refresh the command list
       setState(() {
         getCommandsByWaiterId(status);
       });
@@ -50,14 +48,11 @@ class _ListCommandsState extends State<ListCommands> {
   }
 
   Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
-    List<CommandWithNumTable> products =
-    await _listCommandsViewModel.getCommandsByWaiterId(status);
-    return products;
+    return await _listCommandsViewModel.getCommandsByWaiterId(status);
   }
 
   Future<double> getSumOfCommand(int commandId) async {
-    double sum = await _listCommandsViewModel.getSumOfCommand(commandId);
-    return sum;
+    return await _listCommandsViewModel.getSumOfCommand(commandId);
   }
 
   @override
@@ -80,28 +75,9 @@ class _ListCommandsState extends State<ListCommands> {
         children: [
           CommandStatusTabBar(
             onChanged: (index) {
-              switch (index) {
-                case 0:
-                  status = "ALL";
-                  break;
-                case 1:
-                  status = "NOT_YET";
-                  break;
-                case 2:
-                  status = "CONFIRMED";
-                  break;
-                case 3:
-                  status = "UPDATED";
-                  break;
-                case 4:
-                  status = "PAYED";
-                  break;
-                default:
-                  status = "ALL";
-                  break;
-              }
               setState(() {
                 selectedStatusIndex = index;
+                status = _mapIndexToStatus(index);
                 getCommandsByWaiterId(status);
               });
             },
@@ -113,82 +89,24 @@ class _ListCommandsState extends State<ListCommands> {
               future: getCommandsByWaiterId(status),
               builder: (BuildContext context,
                   AsyncSnapshot<List<CommandWithNumTable>> snapshot) {
-                if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return ListView.separated(
-                    itemCount: 10,
-                    separatorBuilder: (context, index) =>
-                        Container(color: lightGray, height: 10),
-                    itemBuilder: (context, index) {
-                      return const ItemCommandShimmer();
-                    },
-                  );
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return _buildLoadingList();
                 } else if (snapshot.hasError) {
                   return Center(
-                    child: Text(AppLocalizations.of(context)!
-                        .errorRetrievingData),
+                    child: Text(AppLocalizations.of(context)!.errorRetrievingData),
                   );
-                } else if (!snapshot.hasData ||
-                    snapshot.data!.isEmpty) {
-                  return Center();
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.noOrdersAvailable),
+                  );
                 } else {
                   final commands = snapshot.data!;
                   return ListView.separated(
                     itemCount: commands.length,
                     itemBuilder: (context, index) {
-                      CommandWithNumTable commandWithNumTable =
-                      commands[index];
-                      return FutureBuilder(
-                        future: getSumOfCommand(
-                            commandWithNumTable.command.idCommand),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<double> sumSnapshot) {
-                          if (sumSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox.shrink();
-                          } else if (sumSnapshot.hasError) {
-                            return Text(AppLocalizations.of(context)!
-                                .errorRetrievingData);
-                          } else {
-                            final sum = sumSnapshot.data!;
-                            return GestureDetector(
-                              child: ItemCommand(
-                                commandWithNumTable:
-                                commandWithNumTable,
-                                sum: sum,
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        CommandDetails(
-                                          commandWithNumTable:
-                                          commandWithNumTable,
-                                        ),
-                                  ),
-                                ).then((user) {
-                                  setState(() {
-                                    getCommandsByWaiterId("ALL");
-                                    getSumOfCommand(
-                                        commandWithNumTable
-                                            .command.idCommand);
-                                  });
-                                }).catchError((error) {
-                                  print(error);
-                                });
-                              },
-                            );
-                          }
-                        },
-                      );
+                      return _buildCommandCard(commands[index]);
                     },
-                    separatorBuilder: (context, index) {
-                      return Container(
-                        color: lightGray,
-                        height: 10,
-                      );
-                    },
+                    separatorBuilder: (context, index) => Divider(color: lightGray),
                   );
                 }
               },
@@ -196,53 +114,140 @@ class _ListCommandsState extends State<ListCommands> {
           )
         ],
       )
-          : Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.network_check,
-                size: 150,
-                color: gray,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)!.noInternet,
-                style: const TextStyle(fontSize: 22, color: gray),
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                AppLocalizations.of(context)!.checkYourInternet,
-                style: const TextStyle(fontSize: 22, color: gray),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              MaterialButton(
-                color: orange,
-                height: 40,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+          : _buildOfflineUI(context),
+    );
+  }
+
+  Widget _buildLoadingList() {
+    return ListView.separated(
+      itemCount: 10,
+      separatorBuilder: (context, index) => Divider(color: lightGray),
+      itemBuilder: (context, index) => const ItemCommandShimmer(),
+    );
+  }
+
+  Widget _buildCommandCard(CommandWithNumTable commandWithNumTable) {
+    return FutureBuilder(
+      future: getSumOfCommand(commandWithNumTable.command.idCommand),
+      builder: (BuildContext context, AsyncSnapshot<double> sumSnapshot) {
+        if (sumSnapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        } else if (sumSnapshot.hasError) {
+          return Text(AppLocalizations.of(context)!.errorRetrievingData);
+        } else {
+          final sum = sumSnapshot.data ?? 0.0;
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CommandDetails(
+                    commandWithNumTable: commandWithNumTable,
+                  ),
                 ),
-                onPressed: () {
-                  setState(() {});
-                },
-                child: Text(
-                  AppLocalizations.of(context)!.retry,
-                  style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+              ).then((_) => setState(() => getCommandsByWaiterId("ALL")));
+            },
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 4,
+              margin: const EdgeInsets.all(8),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          commandWithNumTable.command.name,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Total: \$${sum.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Icon(
+                      Icons.receipt_long,
+                      color: orange,
+                      size: 32,
+                    ),
+                  ],
                 ),
-              )
-            ],
-          ),
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildOfflineUI(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.network_check,
+              size: 150,
+              color: gray,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context)!.noInternet,
+              style: const TextStyle(fontSize: 22, color: gray),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              AppLocalizations.of(context)!.checkYourInternet,
+              style: const TextStyle(fontSize: 18, color: gray),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            MaterialButton(
+              color: orange,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              onPressed: () => setState(() {}),
+              child: Text(
+                AppLocalizations.of(context)!.retry,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  String _mapIndexToStatus(int index) {
+    switch (index) {
+      case 1:
+        return "NOT_YET";
+      case 2:
+        return "CONFIRMED";
+      case 3:
+        return "UPDATED";
+      case 4:
+        return "PAYED";
+      default:
+        return "ALL";
+    }
   }
 }
