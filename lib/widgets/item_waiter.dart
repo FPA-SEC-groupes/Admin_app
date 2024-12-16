@@ -147,7 +147,7 @@ class _ItemWaiterState extends State<ItemWaiter> {
                 )
               ],
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 5),
             Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,17 +214,21 @@ class _ItemWaiterState extends State<ItemWaiter> {
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(AppLocalizations.of(context)!.activateTheAccount),
                         ),
-                        Switch(
-                          activeColor: orange,
-                          value: isActivated,
-                          onChanged: (bool value) async {
-                            setState(() {
-                              isActivated = value;
-                            });
-                            widget.user.activated = value;
-                            await _modertorsViewModel.activateAccount(widget.user);
-                          },
-                        ),
+                        SizedBox(
+                          width: 50,  // Adjust the width as needed
+                          height: 30, // Adjust the height as needed
+                          child: Switch(
+                            activeColor: orange,
+                            value: isActivated,
+                            onChanged: (bool value) async {
+                              setState(() {
+                                isActivated = value;
+                              });
+                              widget.user.activated = value;
+                              await _modertorsViewModel.activateAccount(widget.user);
+                            },
+                          ),
+                        )
                       ],
                     ),
                     const SizedBox(height: 10),

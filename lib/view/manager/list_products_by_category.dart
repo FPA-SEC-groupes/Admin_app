@@ -1,5 +1,9 @@
+import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/product.dart';
+import 'package:hello_way/utils/const.dart';
+import 'package:hello_way/utils/routes.dart';
+import 'package:hello_way/utils/secure_storage.dart';
 import 'package:hello_way/view/manager/add_new_promotion.dart';
 import 'package:hello_way/view_model/list_products_by_category_view_model.dart';
 import 'package:hello_way/view_model/menu_view_model.dart';
@@ -23,6 +27,7 @@ class ListProductsByCategory extends StatefulWidget {
 
 class _ListProductsByCategoryState extends State<ListProductsByCategory> {
   late final ListProductsViewModel _listProductsViewModel;
+  final SecureStorage secureStorage = SecureStorage();
   late MenuViewModel _menuViewModel;
 
   List<Product> _products = [];
@@ -32,6 +37,7 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
     var category = await _listProductsViewModel.getCategorieId(widget.idCategory);
     title = category.categoryTitle;
     var fetchedProducts = await _menuViewModel.getProductsByIdCategory(widget.idCategory);
+
     setState(() {
       _products = fetchedProducts;
     });
@@ -74,6 +80,22 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
 
     return Scaffold(
       appBar: Toolbar(title: title),
+      floatingActionButton: DraggableFab(
+        child:FloatingActionButton(
+          backgroundColor: orange,
+          onPressed: () async {
+            await secureStorage.writeData(
+                categoryId, widget.idCategory!.toString());
+
+            final resulat=await Navigator.pushNamed(context, addProductRoute);
+            if(resulat!=null){
+              setState(() {
+                _fetchProducts();
+              });
+            }
+          },
+          child: const Icon(Icons.add),
+        ),),
       body: networkStatus == NetworkStatus.Online
           ? _products.isNotEmpty
           ? ReorderableGridView.builder(
@@ -88,18 +110,15 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
             key: ValueKey(_products[i].idProduct), // Ensure each item has a unique key
             product: _products[i],
             onTap: () {
-              print("prompppppppppppppppppp"+_products[i].hasActivePromotion.toString());
+              print("prompppppppppppppppppp" + _products[i].hasActivePromotion.toString());
               _products[i].promotionId == 0
                   ? Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder:
-                      (context) =>
-                      AddNewPromotion(
-                        product:
-                        _products[i],
-                        hasActivePromotion: _products[i].hasActivePromotion,
-                      ),
+                  builder: (context) => AddNewPromotion(
+                    product: _products[i],
+                    hasActivePromotion: _products[i].hasActivePromotion,
+                  ),
                 ),
               ).then((value) {
                 setState(() {
@@ -109,17 +128,11 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
                   : Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder:
-                          (context) =>
-                          AddNewPromotion(
-                            product:
-                            _products[i],
-                            promotionId:
-                            _products[i]
-                                .promotionId,
-                            hasActivePromotion: _products[i].hasActivePromotion,
-                          )
-                  )).then((value) {
+                      builder: (context) => AddNewPromotion(
+                        product: _products[i],
+                        promotionId: _products[i].promotionId,
+                        hasActivePromotion: _products[i].hasActivePromotion,
+                      ))).then((value) {
                 setState(() {
                   _fetchProducts();
                 });
@@ -129,8 +142,24 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
         },
         onReorder: _onReorder,
       )
-          : const Center(
-        child: CircularProgressIndicator(),
+          : Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 100,
+              color: gray,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              AppLocalizations.of(context)!.noProductsInThisCategory, // Ensure you have this string in localization
+              style: const TextStyle(fontSize: 22, color: gray),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
       )
           : Center(
         child: Padding(
@@ -155,7 +184,7 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
                 style: const TextStyle(fontSize: 22, color: gray),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               MaterialButton(
                 color: orange,
                 height: 40,
@@ -170,9 +199,7 @@ class _ListProductsByCategoryState extends State<ListProductsByCategory> {
                 child: Text(
                   AppLocalizations.of(context)!.retry,
                   style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                      fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               )
             ],

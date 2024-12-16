@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hello_way/models/reservation.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/view/manager/reservation_details.dart';
 import 'package:hello_way/view_model/RestrictionsViewModel.dart';
 import 'package:provider/provider.dart';
-import '../../models/reservation.dart';
+import '../../models/Restriction.dart';
 import '../../services/network_service.dart';
 import '../../shimmer/item_reservation_shimmer.dart';
 import '../../view_model/reservations_view_model.dart';
@@ -98,21 +99,33 @@ class _ListReservationsState extends State<ListReservations> {
 
                         ),
                         onTap: () async{
-                         _restrictionsViewModel.getRestrictionByReservationId(reservation.idReservation!).then((Restriction) {
-                           Navigator.push(
-                             context,
-                             MaterialPageRoute(
-                               builder: (context) => ReservationDetails(reservation: reservation,restriction:Restriction
+                          _restrictionsViewModel.getRestrictionByReservationId(reservation.idReservation!)
+                              .then((restriction) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReservationDetails(
+                                  reservation: reservation,
+                                  restriction: restriction,  // Pass the restriction to the details page
+                                ),
+                              ),
+                            );
+                          }).catchError((error) {
+                            print("Error fetching restriction: $error");
+                            final errorRestriction = Restriction(description: "Error loading restriction");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReservationDetails(
+                                  reservation: reservation,
+                                  restriction: errorRestriction,  // Pass a default value in case of error
+                                ),
+                              ),
+                            );
+                          });
 
-                               ),
-                             ),
-                           );
-                         }).catchError((error) {
-                           // Handle signup error
-                         });;
-
-                        },
-                      );
+                        }
+                );
 
               },
               separatorBuilder: (context, index) {

@@ -66,23 +66,44 @@ class RestrictionsViewModel {
   }
   Future<Restriction> getRestrictionByReservationId(int reservationId) async {
     try {
+      print(reservationId);
       var response = await dioInterceptor.dio.get('$baseUrl/api/restrictions/restrictions/$reservationId');
 
-      if (response.statusCode == 200) {
-        try{
-          return Restriction.fromJson(response.data);
-        }
-        catch(e){
-          return Restriction(description: "");
+      if (response.statusCode == 200 && response.data != null) {
+        if (response.data['body'] is Map<String, dynamic>) {
+          // Handle the case where the API returns a Restrictions object
+          try {
+            return Restriction.fromJson(response.data['body']); // Extract the 'body' part of the response
+          } catch (e) {
+            // Handle JSON parsing error, return default restriction with empty description
+            print('Error parsing restriction JSON: $e');
+            return Restriction(description: "No restriction");
+          }
+        } else if (response.data['body'] is String) {
+          // Handle the case where the API returns a string message
+          print("No restriction found");
+          return Restriction(description: "No restriction");  // Use the message directly as the restriction description
+        } else {
+          // Handle unexpected response types
+          return Restriction(description: "Unexpected response from server");
         }
       } else {
-        throw Exception('Failed to load restriction by reservation ID: ${response.statusCode}');
+        // Handle unexpected status codes
+        print('Unexpected status code: ${response.statusCode}');
+        throw Exception('Failed to load restriction: ${response.statusCode}');
       }
+    } on DioError catch (dioError) {
+      // Handle Dio-specific errors
+      print('Exception fetching restriction: $dioError');
+      throw Exception('Failed to load restriction due to Dio error: $dioError');
     } catch (error) {
-      print('Exception: $error');
-      throw Exception('Failed to load restriction by reservation ID: $error');
+      // Catch any other errors
+      print('Exception fetching restriction: $error');
+      throw Exception('Failed to load restriction due to error: $error');
     }
   }
+
+
 
 
   Future<Restriction> updateRestriction(int id, Restriction restriction) async {

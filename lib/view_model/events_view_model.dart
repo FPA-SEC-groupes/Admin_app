@@ -220,6 +220,7 @@ class EventsViewModel {
       );
 
       if (response.statusCode == 200) {
+        print(response.data);
         // Successful response, parse the data and return the updated Event object
         return response.data;
       } else {

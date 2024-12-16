@@ -140,7 +140,9 @@ class _ListcommandsbywaiterState extends State<Listcommandsbywaiter> {
                   );
                 } else if (!snapshot.hasData ||
                     snapshot.data!.isEmpty) {
-                  return Center();
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.noorder), // Display "no order" message
+                  );
                 } else {
                   final commands = snapshot.data!;
                   return ListView.separated(

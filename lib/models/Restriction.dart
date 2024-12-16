@@ -17,7 +17,7 @@ class Restriction {
   factory Restriction.fromJson(Map<String, dynamic> json) {
     return Restriction(
       id: json['id'],
-      description: json['description'],
+      description: json['description'] ?? "No restriction",
       user: json['user'] != null ? User.fromJson(json['user']) : null,
       reservation: json['reservation'] != null ? Reservation.fromJson(json['reservation']) : null,
     );

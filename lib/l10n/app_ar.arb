@@ -232,12 +232,14 @@
   "wifiName": "Nom du WiFi",
   "wifiPassword": "Mot de passe WiFi",
   "addAnotherWifi": "Ajouter un autre WiFi",
-  "addRestriction": "إضافة تقييد",
+  "addRestriction": "إضافة تبليغ",
+  "hasRestriction": "تبليغ",
+  "descriptionrestriction": "وصف تبليغ",
   "restrictionType": "نوع التقييد",
-  "restrictionDescription": "وصف التقييد",
+  "restrictionDescription": "وصف تبليغ",
   "cancel": "إلغاء",
   "submit": "إرسال",
-  "restrictionAdded": "تم إضافة التقييد",
+  "restrictionAdded": "تم إضافة تبليغ",
   "errorOccurred": "حدث خطأ",
   "oneDay": "يوم واحد",
   "oneWeek": "أسبوع واحد",
@@ -270,5 +272,6 @@
   "ntComandeUpdate": "تم تحديث طلب:",
   "ntCommandeNew": "طلب جديد تم وضعه بواسطة رقم الجدول:",
   "ntCommandeConfermed": "لقد قمت بتأكيد الطلب الذي تم تمريره بواسطة رقم الجدول:",
-  "ntCommandePassed": "لقد قمت بتأكيد الطلب الذي تم تمريره بواسطة رقم الجدول:"
+  "ntCommandePassed": "لقد قمت بتأكيد الطلب الذي تم تمريره بواسطة رقم الجدول:",
+  "noorder": "لا توجد طلبات"
 }

@@ -19,11 +19,11 @@ import 'AddRestrictionDialog.dart';
 
 class ReservationDetails extends StatefulWidget {
   final Reservation reservation;
-  final restriction;
+  final Restriction restriction;
   const ReservationDetails({
     super.key,
     required this.reservation,
-    this.restriction
+    required this.restriction
   });
 
   @override
@@ -39,19 +39,30 @@ class _ReservationDetailsState extends State<ReservationDetails> {
   late final TablesViewModel _tablesViewModel;
   List<Board> tables = [];
   List<Board> assignedTables = [];
-  bool res=true;
+  bool res=false;
   @override
   void initState() {
     super.initState();
     _tablesViewModel = TablesViewModel(context);
     _reservationsViewModel = ReservationsViewModel(context);
     _restrictionsViewModel = RestrictionsViewModel(context);
-    _fetchres();
     if (widget.reservation.status == "NOT_YET") {
       _fetchBoards(formatDateToIso(widget.reservation.startDate));
     } else {
       _fetchTablesByIdReservation(widget.reservation.idReservation!);
     }
+    if(widget.restriction.description=="No restriction"){
+
+      setState(() {
+        res=false;
+      });
+    }
+    else {
+      setState(() {
+        res=true;
+      });
+    }
+
   }
 
   String formatDateToIso(DateTime date) {
@@ -79,26 +90,6 @@ class _ReservationDetailsState extends State<ReservationDetails> {
       assignedTables = boards;
     });
     return boards;
-  }
-
-  Future<void> _fetchres() async {
-    try {
-      final id = widget.reservation!.idReservation!;
-      print('id $id');
-      Restriction restriction = await _restrictionsViewModel.getRestrictionByReservationId(id);
-      if (restriction != null) {
-        setState(() {
-          res = false;
-        });
-      } else {
-        setState(() {
-          res = true;
-        });
-      }
-    } catch (e) {
-      print("Error loading restriction: $e");
-      // Handle the error here, e.g., show a message to the user
-    }
   }
 
   List<MultiSelectItem<Board>> _items = [];
@@ -157,7 +148,18 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                                   : AppLocalizations.of(context)!.canceledStatus,
                               style: const TextStyle(color: Colors.white),
                             ),
-                          )
+                          ),
+                          res?
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: Text(AppLocalizations.of(context)!.hasRestriction,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ): SizedBox(width: 0,)
                         ],
                       ),
                       const SizedBox(
@@ -320,6 +322,16 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                                 );
                               },
                             )),
+                            res?Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(AppLocalizations.of(context)!.descriptionrestriction+": ",
+                                    style: const TextStyle(
+                                        fontSize: 16, fontWeight: FontWeight.bold)),
+                                Text(
+                                    widget.restriction.description)
+                              ],
+                            ):SizedBox()
                     ],
                   ),
                 ),

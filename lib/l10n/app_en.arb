@@ -241,6 +241,8 @@
     "submit": "Submit",
     "restrictionAdded": "Restriction added",
     "errorOccurred": "An error occurred",
+    "hasRestriction": "Restricted",
+    "descriptionrestriction": "Description of restriction",
     "oneDay": "1 day",
     "oneWeek": "1 week",
     "twoWeeks": "2 weeks",
@@ -272,7 +274,8 @@
     "ntComandeUpdate": "Commande updated: ",
     "ntCommandeNew": "New command placed by the table number: ",
     "ntCommandeConfermed": "You have confirmed the command passed by the table number : ",
-    "ntCommandePassed": "You have confirmed the command passed by the table number : "
+    "ntCommandePassed": "You have confirmed the command passed by the table number : ",
+    "noorder": "no order"
 }
 
 

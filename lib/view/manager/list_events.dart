@@ -68,18 +68,28 @@ class _ListEventsState extends State<ListEvents> {
 
   Future<void> actionPopUpItemSelected(String value,Event event) async {
     if (value == delete) {
-      // Your delete logic
-    }
-    else if (value == edit) {
+      _eventsViewModel.DeleteEvent(event.idEvent).then((_) {
+        setState(() {
+          _fetchEvents();
+        });
+      }).catchError((error) {
+        // Handle signup error
+      });
+
+    } else if (value == edit) {
       Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AddNewPromotion(promotionId: event.idEvent),
-        ),
-      ).then((value) {
-       setState(() {
-         _fetchEvents();
-       });
+          context,
+          MaterialPageRoute(
+            builder: (context) =>  AddPartyEvent(
+              party: event,
+            ),
+          )
+      ).then((_) {
+        setState(() {
+          _fetchEvents();
+        });
+      }).catchError((error) {
+        // Handle signup error
       });
     }
   }

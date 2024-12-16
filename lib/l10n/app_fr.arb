@@ -236,6 +236,8 @@
     "cancel": "Annuler",
     "submit": "Soumettre",
     "restrictionAdded": "Restriction ajoutée",
+    "hasRestriction": "Restreint",
+    "descriptionrestriction": "Description de la Restriction",
     "errorOccurred": "Une erreur est survenue",
     "oneDay": "1 jour",
     "oneWeek": "1 semaine",
@@ -268,6 +270,7 @@
     "ntComandeUpdate": "Commande mise à jour :",
     "ntCommandeNew": "Nouvelle commande placée par le numéro de table :",
     "ntCommandeConfermed": "Vous avez confirmé la commande passée par le numéro de table :",
-    "ntCommandePassed": "Vous avez confirmé la commande passée par le numéro de table :"
+    "ntCommandePassed": "Vous avez confirmé la commande passée par le numéro de table :",
+    "noorder": "aucune commande"
 
 }
