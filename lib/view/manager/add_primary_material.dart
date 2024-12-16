@@ -114,36 +114,45 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
     stockTitle.replaceAll(' ', '').replaceAll('_', '').toLowerCase();
 
     List<PrimaryMaterial> existingStock = await _getStockBySpaceId();
-    if (existingStock.isNotEmpty) {
-      String normalizedStockTitle2 =
-      existingStock[0].title.replaceAll(' ', '').replaceAll('_', '').toLowerCase();
-      bool stockExists = existingStock.any((primaryMaterial) =>
-      primaryMaterial.title.replaceAll(' ', '').replaceAll('_', '').toLowerCase() ==
-          normalizedStockTitle);
-      if (_addPrimaryMaterialFormKey.currentState!.validate()) {
-        _addPrimaryMaterialFormKey.currentState!.save();
-        String sanitizedInputTitle = sanitizeTitle(_titleController.text.trim());
 
-        // Create the primaryMaterial object
-        var primaryMaterial = PrimaryMaterial(
-          title: _titleController.text.trim(),
-          description: _descriptionController.text.trim(),
-          unitOfMeasure: _selectedUnitOfMeasure!,
-          stockQuantity: double.parse(_quantityController.text.trim()),
-          price: double.parse(_priceController.text.contains(',')
-              ? _priceController.text.replaceAll(',', '.')
-              : _priceController.text),
-          supplier: _supplierController.text.trim(),
-          supplierNumber: _supplierNumberController.text.trim(),
+    if (_addPrimaryMaterialFormKey.currentState!.validate()) {
+      _addPrimaryMaterialFormKey.currentState!.save();
+
+      // Create the primaryMaterial object
+      var primaryMaterial = PrimaryMaterial(
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        unitOfMeasure: _selectedUnitOfMeasure!,
+        stockQuantity: double.parse(_quantityController.text.trim()),
+        price: double.parse(_priceController.text.contains(',')
+            ? _priceController.text.replaceAll(',', '.')
+            : _priceController.text),
+        supplier: _supplierController.text.trim(),
+        supplierNumber: _supplierNumberController.text.trim(),
+      );
+
+      // Check for existing material
+      bool stockExists = existingStock.any((material) =>
+      material.title.replaceAll(' ', '').replaceAll('_', '').toLowerCase() ==
+          normalizedStockTitle &&
+          material.id != widget.primaryMaterial?.id);
+
+      if (stockExists) {
+        // Show error if a different material with the same title exists
+        Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.existedmaterial,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
         );
-
-        // Check if this is a new material or an update
-        if (widget.primaryMaterial == null && !stockExists) {
+      } else {
+        if (widget.primaryMaterial == null) {
           // Add new PrimaryMaterial
-          _stockViewModel.addPrimaryMaterialToSpace(primaryMaterial).then((primaryMaterial) async {
+          _stockViewModel.addPrimaryMaterialToSpace(primaryMaterial).then((primaryMaterial) {
             Navigator.pop(context, primaryMaterial);
           }).catchError((error) {
-            // Handle error
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Error adding material: $error'),
@@ -151,16 +160,12 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
               ),
             );
           });
-        }
-        else if (widget.primaryMaterial != null) {
+        } else {
           // Update existing PrimaryMaterial
           _stockViewModel.updatePrimaryMaterialInSpace(
-              widget.primaryMaterial!.id!,
-              primaryMaterial
-          ).then((primaryMaterial) async {
-            Navigator.pop(context, primaryMaterial);
+              widget.primaryMaterial!.id!, primaryMaterial).then((updatedMaterial) {
+            Navigator.pop(context, updatedMaterial);
           }).catchError((error) {
-            // Handle error
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Error updating material: $error'),
@@ -170,52 +175,9 @@ class _AddPrimaryMaterialState extends State<AddPrimaryMaterial> {
           });
         }
       }
-        else if (stockExists) {
-          // Display error message for existing material
-          Fluttertoast.showToast(
-              msg: AppLocalizations.of(context)!.existedmaterial,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0
-          );
-        }
-
-    } else {
-      if (_addPrimaryMaterialFormKey.currentState!.validate()) {
-        _addPrimaryMaterialFormKey.currentState!.save();
-        String sanitizedInputTitle = sanitizeTitle(_titleController.text.trim());
-
-        // Create the primaryMaterial object
-        var primaryMaterial = PrimaryMaterial(
-          title: _titleController.text.trim(),
-          description: _descriptionController.text.trim(),
-          unitOfMeasure: _selectedUnitOfMeasure!,
-          stockQuantity: double.parse(_quantityController.text.trim()),
-          price: double.parse(_priceController.text.contains(',')
-              ? _priceController.text.replaceAll(',', '.')
-              : _priceController.text),
-          supplier: _supplierController.text.trim(),
-          supplierNumber: _supplierNumberController.text.trim(),
-        );
-
-        // Add new PrimaryMaterial
-        _stockViewModel.addPrimaryMaterialToSpace(primaryMaterial).then((primaryMaterial) async {
-          Navigator.pop(context, primaryMaterial);
-        }).catchError((error) {
-          // Handle error
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error adding material: $error'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        });
-      }
     }
   }
+
 
 
   String? _customValidator(String? value) {
