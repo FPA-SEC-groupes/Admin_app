@@ -85,6 +85,7 @@ class MyApp extends StatelessWidget {
           create: (_) => NetworkStatusService().networkStatusController.stream,
           initialData: NetworkStatus.Online,
         ),
+
       ],
       child: Consumer<LanguageProvider>(
         builder: (_, languageProvider, __) {

@@ -70,6 +70,7 @@ class _CommandDetailsState extends State<CommandDetails> {
 
   Future<double> getSumOfCommand(int commandId) async {
     double sum = await _commandsViewModel.getSumOfCommand(commandId);
+    print("summmmmmmmmmmmmmmmmmmmmmm"+sum.toString());
     return sum;
   }
   Future<void> _showDeleteConfirmationDialog(ProductWithQuantities1 product,int id_basket) async {
@@ -198,10 +199,9 @@ class _CommandDetailsState extends State<CommandDetails> {
                             } else if (sumSnapshot.hasError) {
                               return  Text(AppLocalizations.of(context)!.errorRetrievingData);
                             } else {
-                              final sum = sumSnapshot.data!;
-                              double sum1 = double.parse(sum.toStringAsFixed(2));
-                              return Text(
-                                "${AppLocalizations.of(context)!.total}: ${_totalSum.toStringAsFixed(2)} ${AppLocalizations.of(context)!.tunisianDinar}",
+                              return  Text(
+                                "${AppLocalizations.of(context)!.total}: ${ widget.commandWithNumTable.command.status ==
+                                    "PAYED" ? sumSnapshot.data?.toStringAsFixed(2): _totalSum.toStringAsFixed(2)} ${AppLocalizations.of(context)!.tunisianDinar}",
                                 style: const TextStyle(fontSize: 16),
                               );}}),
                         SizedBox(width: 10,),

@@ -79,7 +79,8 @@ Future<List<CommandWithNumTable>> getCommandsByWaiterId(String status) async {
       final response = await dioInterceptor.dio.get('$baseUrl/api/commands/calculate/sum/$commandId');
 
       if (response.statusCode == 200) {
-        return response.data as double;
+        final responseData = response.data as Map<String, dynamic>;
+        return responseData['sum'] as double; // Access the sum value from the key
       } else {
         // Handle other status codes
         return 0.0;
