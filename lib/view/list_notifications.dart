@@ -27,17 +27,24 @@ class _ListNotificationsState extends State<ListNotifications> {
   final SecureStorage secureStorage = SecureStorage();
   bool authentifiedUser = false;
   String? savedLanguageCode;
+  Future<void> _updateUnreadNotificationsCount() async {
+    List<notif.Notification> notifications = await _notificationViewModel.fetchNotificationsForUser();
+
+    // Count unread notifications (assuming 'seen' field exists)
+    int unreadCount = notifications.where((n) => !n.seen).length;
+
+    // Save count in SecureStorage
+    await secureStorage.writeData(nbNewNotifications, unreadCount.toString());
+  }
 
 
   @override
   void initState() {
     super.initState();
     _notificationViewModel = NotificationViewModel(context);
-
-
+    _updateUnreadNotificationsCount();
     _getNotifications();
   }
-
   Future<List<notif.Notification>> _getNotifications() async {
 
     return _notificationViewModel.fetchNotificationsForUser();

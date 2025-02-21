@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hello_way/models/notifcation.dart' as notif;
@@ -6,75 +5,56 @@ import 'package:hello_way/utils/secure_storage.dart';
 import '../interceptors/dio_interceptor.dart';
 import '../utils/const.dart';
 
-
-class NotificationViewModel{
-
+class NotificationViewModel {
   final DioInterceptor dioInterceptor;
+
   NotificationViewModel(BuildContext context)
       : dioInterceptor = DioInterceptor(context);
+
   final SecureStorage secureStorage = SecureStorage();
 
-  Future<List<notif.Notification>> fetchNewNotificationsForUser(String userId) async {
-    final Dio dio = Dio();
-    final String url = '$baseUrl/api/notifications/providers/$userId/notifications';
-    final jwtCookie = await secureStorage.readData('jwtCookie');
-    final options = Options(headers: {'Cookie': jwtCookie});
-
-    try {
-      final response = await dio.get(url, options: options);
-
-      if (response.statusCode == 200) {
-        final List<dynamic> parsedJson = response.data;
-        final List<notif.Notification> notifications =
-        parsedJson.map((json) => notif.Notification.fromJson(json)).where((notification) => notification.seen == false)
-            .toList();
-        return notifications;
-      } else {
-        // Handle error cases here, such as invalid response status codes.
-        throw Exception('Failed to load notifications');
-      }
-    } on DioError catch (e) {
-      // Handle DioError
-      if (e.response?.statusCode == 401) {
-        // Handle 401 Unauthorized, for example, perform token refresh or prompt the user to log in again.
-        // You can use a separate function for token refresh or any other relevant logic.
-        secureStorage.deleteAll();
-        throw Exception('Failed to load notifications: ${e.message}');
-
-      } else {
-        // Handle other DioError cases
-        throw Exception('Failed to load notifications: ${e.message}');
-      }
-    } catch (e) {
-      // Handle other potential exceptions or network errors
-      throw Exception('Failed to load notifications: $e');
-    }
-  }
+  /// Fetch all notifications
   Future<List<notif.Notification>> fetchNotificationsForUser() async {
     String? userId = await secureStorage.readData(authentifiedUserId);
     final String url = '$baseUrl/api/notifications/providers/$userId/notifications';
 
     try {
-    final response = await dioInterceptor.dio.get(url);
-    if (response.statusCode == 200) {
-
-      final List<dynamic> parsedJson = response.data;
-      final List<notif.Notification> notifications =
-      parsedJson.map((json) => notif.Notification.fromJson(json)).toList();
-      return notifications;
-    } else {
-      // Handle error cases here, such as invalid response status codes.
-      throw Exception('Failed to load notifications');
-    }   } catch (error) {
-      // Handle exceptions
+      final response = await dioInterceptor.dio.get(url);
+      if (response.statusCode == 200) {
+        final List<dynamic> parsedJson = response.data;
+        final List<notif.Notification> notifications =
+        parsedJson.map((json) => notif.Notification.fromJson(json)).toList();
+        return notifications;
+      } else {
+        throw Exception('Failed to load notifications');
+      }
+    } catch (error) {
       print('Exception: $error');
-      throw Exception('failed to load reservations: $error');
+      throw Exception('Failed to load notifications: $error');
     }
   }
 
+  /// Mark all notifications as seen
+  Future<void> markAllNotificationsAsSeen() async {
+    String? userId = await secureStorage.readData(authentifiedUserId);
+    final String url = '$baseUrl/api/notifications/providers/$userId/mark-seen';
+
+    try {
+      final response = await dioInterceptor.dio.put(url);
+      if (response.statusCode == 200) {
+        print('All notifications marked as seen');
+      } else {
+        print('Failed to mark notifications as seen');
+      }
+    } catch (error) {
+      print('Error marking notifications as seen: $error');
+    }
+  }
+
+
   Future<void> updateNotificationAPI(
-  int notificationId, String title, message, bool seen,
-  ) async {
+      int notificationId, String title, message, bool seen,
+      ) async {
     try {
       final String url = '$baseUrl/api/notifications/$notificationId';
       final response = await dioInterceptor.dio.put(
@@ -119,5 +99,4 @@ class NotificationViewModel{
       // Handle DioError or other exceptions
     }
   }
-
 }
