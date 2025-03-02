@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:draggable_fab/draggable_fab.dart';
 import 'package:flutter/material.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hello_way/models/zone.dart';
 import 'package:hello_way/navigation/manager_bottom_navigation.dart';
 import 'package:hello_way/view/manager/list_waiters_by_zone.dart';
@@ -11,7 +10,6 @@ import '../../models/board.dart';
 import '../../res/app_colors.dart';
 import '../../services/network_service.dart';
 import '../../shimmer/item_zone_shimmer.dart';
-import '../../utils/routes.dart';
 import '../../view_model/tables_view_model.dart';
 import '../../view_model/zones_view_model.dart';
 import '../../widgets/custom_alert_dialog.dart';
@@ -23,6 +21,8 @@ import '../../widgets/item_zone.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListZones extends StatefulWidget {
+  const ListZones({super.key});
+
   @override
   _ListZonesState createState() => _ListZonesState();
 }
@@ -90,15 +90,20 @@ class _ListZonesState extends State<ListZones> {
 
   Future<void> _addOrUpdateZone(Function(String?) setErrorText) async {
     String zoneTitle = _titleZoneController.text.trim();
-    String normalizedZoneTitle = zoneTitle.replaceAll(' ', '').replaceAll('_', '').toLowerCase();
+
+    // Normalize the input title: remove ALL spaces, underscores, and convert to lowercase
+    String normalizedZoneTitle = zoneTitle.replaceAll(RegExp(r'\s+'), '').replaceAll('_', '').toLowerCase();
 
     try {
       List<Zone> existingZones = await _fetchZones();
-      bool zoneExists = existingZones.any((zone) =>
-      zone.title.replaceAll(' ', '').replaceAll('_', '').toLowerCase() == normalizedZoneTitle);
+
+      bool zoneExists = existingZones.any((zone) {
+        String existingZoneTitle = zone.title.replaceAll(RegExp(r'\s+'), '').replaceAll('_', '').toLowerCase();
+        return existingZoneTitle == normalizedZoneTitle;
+      });
 
       if (zoneExists) {
-        setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
+        return setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
       } else {
         Zone zone = Zone(title: zoneTitle);
         await _zonesViewModel.addZoneByIdSpace(zone).then((_) {
@@ -115,13 +120,11 @@ class _ListZonesState extends State<ListZones> {
         });
       }
     } catch (error) {
-      if (error is DioError && error.response?.statusCode == 400) {
-        setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
-      } else {
-        print("Error: $error");
-      }
+      print("Error: $error");
     }
   }
+
+
 
 
   Future<void> addTable(Zone zone) async {
@@ -173,7 +176,7 @@ class _ListZonesState extends State<ListZones> {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.cancel,
-                      style: TextStyle(color: orange),
+                      style: const TextStyle(color: orange),
                     ),
                   ),
                   TextButton(
@@ -216,7 +219,7 @@ class _ListZonesState extends State<ListZones> {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.confirm,
-                      style: TextStyle(color: orange),
+                      style: const TextStyle(color: orange),
                     ),
                   ),
                 ],
@@ -248,303 +251,303 @@ class _ListZonesState extends State<ListZones> {
               ),
             ),
           );
-      // Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
-      return true;
-    },
-    child: ScaffoldMessenger(
-      key: _zonesScaffoldKey,
-      child: Scaffold(
-        backgroundColor: lightGray,
-        appBar: CustomAppBarWithSearch(
-          title: AppLocalizations.of(context)!.myZones,
-          isSearching: _isSearching,
-          onSearchChanged: (String value) {
-            setState(() {
-              _searchQuery = value;
-            });
-          },
-          onSearchToggle: () {
-            setState(() {
-              _isSearching = !_isSearching;
-              _searchQuery = '';
-            });
-          },
-          automaticallyImplyLeading: true,
-        ),
-        floatingActionButton: DraggableFab(
-          child: FloatingActionButton(
-            backgroundColor: orange,
-            onPressed: () async {
-              _titleZoneController.clear();
-              String? errorText; // Declare errorText here
-              await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return StatefulBuilder(
-                    builder: (context, update) {
-                      return MyDialogue(
-                        title: AppLocalizations.of(context)!.addZone,
-                        validator: (value) {
-                          // Combine _validateZoneTitle and errorText
-                          final validationError = _validateZoneTitle(value);
-                          if (validationError != null) {
-                            return validationError;
-                          }
-                          return errorText;
-                        },
-                        controller: _titleZoneController,
-                        submit: () async {
-                          await _addOrUpdateZone((String? newErrorText) {
-                            update(() {
-                              errorText = newErrorText;
-                            });
-                          });
-                        },
-                        cancel: () {
-                          Navigator.of(context).pop();
+          // Navigator.pushReplacementNamed(context, managerBottomNavigationRoute);
+          return true;
+        },
+        child: ScaffoldMessenger(
+          key: _zonesScaffoldKey,
+          child: Scaffold(
+            backgroundColor: lightGray,
+            appBar: CustomAppBarWithSearch(
+              title: AppLocalizations.of(context)!.myZones,
+              isSearching: _isSearching,
+              onSearchChanged: (String value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              onSearchToggle: () {
+                setState(() {
+                  _isSearching = !_isSearching;
+                  _searchQuery = '';
+                });
+              },
+              automaticallyImplyLeading: true,
+            ),
+            floatingActionButton: DraggableFab(
+              child: FloatingActionButton(
+                backgroundColor: orange,
+                onPressed: () async {
+                  _titleZoneController.clear();
+                  String? errorText; // Declare errorText here
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(
+                        builder: (context, update) {
+                          return MyDialogue(
+                            title: AppLocalizations.of(context)!.addZone,
+                            validator: (value) {
+                              // Combine _validateZoneTitle and errorText
+                              final validationError = _validateZoneTitle(value);
+                              if (validationError != null) {
+                                return validationError;
+                              }
+                              return errorText;
+                            },
+                            controller: _titleZoneController,
+                            submit: () async {
+                              await _addOrUpdateZone((String? newErrorText) {
+                                update(() {
+                                  errorText = newErrorText;
+                                });
+                              });
+                            },
+                            cancel: () {
+                              Navigator.of(context).pop();
+                            },
+                          );
                         },
                       );
                     },
                   );
+                  _titleZoneController.clear();
                 },
-              );
-              _titleZoneController.clear();
-            },
-            child: const Icon(Icons.add),
-          ),
-        ),
+                child: const Icon(Icons.add),
+              ),
+            ),
 
-        body: networkStatus == NetworkStatus.Online
-            ? FutureBuilder(
-          future: _fetchZones(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return ListView.separated(
-                itemCount: 10,
-                separatorBuilder: (context, index) =>
-                    Container(color: lightGray, height: 10),
-                itemBuilder: (context, index) {
-                  return ItemZoneShimmer();
-                },
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.group_work_outlined,
-                        size: 150,
-                        color: gray,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        AppLocalizations.of(context)!.noZonesInSpace,
-                        style:
-                        const TextStyle(fontSize: 22, color: gray),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.group_work_outlined,
-                        size: 150,
-                        color: gray,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        AppLocalizations.of(context)!.noZonesInSpace,
-                        style:
-                        const TextStyle(fontSize: 22, color: gray),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            } else {
-              final List<Zone> zones;
-              if (_searchQuery.isEmpty) {
-                zones = snapshot.data!;
-              } else {
-                zones = (snapshot.data! as List<Zone>)
-                    .where((zone) => zone.title
-                    .toLowerCase()
-                    .contains(_searchQuery.toLowerCase()))
-                    .toList();
-              }
-              return ListView.separated(
-                itemCount: zones.length,
-                itemBuilder: (context, index) {
-                  Zone zone = zones[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ListWaitersByZone(
-                            zoneId: zone.id!,
-                            zone: zone!,
-                          ),
-                        ),
-                      );
+            body: networkStatus == NetworkStatus.Online
+                ? FutureBuilder(
+              future: _fetchZones(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return ListView.separated(
+                    itemCount: 10,
+                    separatorBuilder: (context, index) =>
+                        Container(color: lightGray, height: 10),
+                    itemBuilder: (context, index) {
+                      return const ItemZoneShimmer();
                     },
-                    child: ItemZone(
-                      zone: zone,
-                      onDelete: () async {
-                        await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CustomAlertDialog(
-                              title: AppLocalizations.of(context)!
-                                  .deleteZoneDialogTitle,
-                              message: AppLocalizations.of(context)!
-                                  .deleteZoneMessage,
-                              submit: () {
-                                _zonesViewModel
-                                    .deleteZone(zone.id!)
-                                    .then((_) async {
-                                  setState(() {
-                                    _fetchZones();
-                                  });
-                                  Navigator.of(context).pop();
-                                }).catchError((error) {
-                                  print(error);
-                                });
-                              },
-                              cancel: () {
-                                Navigator.of(context).pop();
-                              },
-                              textSubmitButton:
-                              AppLocalizations.of(context)!.delete,
-                              textCancelButton:
-                              AppLocalizations.of(context)!.cancel,
-                            );
-                          },
-                        );
-                      },
-                      onUpdate: () async {
-                        errorText = null;
-                        _titleZoneController.text = zone.title;
-                        await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return StatefulBuilder(
-                              builder: (context, update) {
-                                return CustomDialog(
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.group_work_outlined,
+                            size: 150,
+                            color: gray,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            AppLocalizations.of(context)!.noZonesInSpace,
+                            style:
+                            const TextStyle(fontSize: 22, color: gray),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.group_work_outlined,
+                            size: 150,
+                            color: gray,
+                          ),
+                          const SizedBox(height: 20),
+                          Text(
+                            AppLocalizations.of(context)!.noZonesInSpace,
+                            style:
+                            const TextStyle(fontSize: 22, color: gray),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  final List<Zone> zones;
+                  if (_searchQuery.isEmpty) {
+                    zones = snapshot.data!;
+                  } else {
+                    zones = (snapshot.data! as List<Zone>)
+                        .where((zone) => zone.title
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase()))
+                        .toList();
+                  }
+                  return ListView.separated(
+                    itemCount: zones.length,
+                    itemBuilder: (context, index) {
+                      Zone zone = zones[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListWaitersByZone(
+                                zoneId: zone.id!,
+                                zone: zone,
+                              ),
+                            ),
+                          );
+                        },
+                        child: ItemZone(
+                          zone: zone,
+                          onDelete: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CustomAlertDialog(
                                   title: AppLocalizations.of(context)!
-                                      .renameZone,
-                                  validator: _validation,
-                                  controller: _titleZoneController,
-                                  hint: AppLocalizations.of(context)!
-                                      .title,
-                                  keyboardType: TextInputType.text,
+                                      .deleteZoneDialogTitle,
                                   message: AppLocalizations.of(context)!
-                                      .renameZoneMessage,
+                                      .deleteZoneMessage,
                                   submit: () {
-                                    zone.title = _titleZoneController.text.trim();
-                                    _zonesViewModel.updateZone(zone).then((_) async {
+                                    _zonesViewModel
+                                        .deleteZone(zone.id!)
+                                        .then((_) async {
                                       setState(() {
                                         _fetchZones();
                                       });
                                       Navigator.of(context).pop();
                                     }).catchError((error) {
-                                      if (error is DioError) {
-                                        if (error.response?.statusCode == 400) {
-                                          update(() {
-                                            errorText = AppLocalizations.of(context)!.zoneAlreadyExists;
-                                          });
-                                        }
-                                      } else {
-                                        print("Error: $error");
-                                      }
+                                      print(error);
                                     });
                                   },
                                   cancel: () {
                                     Navigator.of(context).pop();
                                   },
+                                  textSubmitButton:
+                                  AppLocalizations.of(context)!.delete,
+                                  textCancelButton:
+                                  AppLocalizations.of(context)!.cancel,
                                 );
                               },
                             );
                           },
-                        );
-                      },
-                      onAdd: () {
-                        addTable(zone);
-                      },
+                          onUpdate: () async {
+                            errorText = null;
+                            _titleZoneController.text = zone.title;
+                            await showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                  builder: (context, update) {
+                                    return CustomDialog(
+                                      title: AppLocalizations.of(context)!
+                                          .renameZone,
+                                      validator: _validation,
+                                      controller: _titleZoneController,
+                                      hint: AppLocalizations.of(context)!
+                                          .title,
+                                      keyboardType: TextInputType.text,
+                                      message: AppLocalizations.of(context)!
+                                          .renameZoneMessage,
+                                      submit: () {
+                                        zone.title = _titleZoneController.text.trim();
+                                        _zonesViewModel.updateZone(zone).then((_) async {
+                                          setState(() {
+                                            _fetchZones();
+                                          });
+                                          Navigator.of(context).pop();
+                                        }).catchError((error) {
+                                          if (error is DioError) {
+                                            if (error.response?.statusCode == 400) {
+                                              update(() {
+                                                errorText = AppLocalizations.of(context)!.zoneAlreadyExists;
+                                              });
+                                            }
+                                          } else {
+                                            print("Error: $error");
+                                          }
+                                        });
+                                      },
+                                      cancel: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          onAdd: () {
+                            addTable(zone);
+                          },
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Container(
+                        color: lightGray,
+                        height: 10,
+                      );
+                    },
+                  );
+                }
+              },
+            )
+                : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.network_check,
+                      size: 150,
+                      color: gray,
                     ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return Container(
-                    color: lightGray,
-                    height: 10,
-                  );
-                },
-              );
-            }
-          },
-        )
-            : Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.network_check,
-                  size: 150,
-                  color: gray,
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)!.noInternet,
+                      style: const TextStyle(fontSize: 22, color: gray),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.checkYourInternet,
+                      style: const TextStyle(fontSize: 22, color: gray),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    MaterialButton(
+                      color: orange,
+                      height: 40,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.retry,
+                        style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  AppLocalizations.of(context)!.noInternet,
-                  style: const TextStyle(fontSize: 22, color: gray),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  AppLocalizations.of(context)!.checkYourInternet,
-                  style: const TextStyle(fontSize: 22, color: gray),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-                MaterialButton(
-                  color: orange,
-                  height: 40,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  onPressed: () {
-                    setState(() {});
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)!.retry,
-                    style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    )
+        )
     );
   }
 

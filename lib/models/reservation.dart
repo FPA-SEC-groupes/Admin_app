@@ -9,6 +9,7 @@ class Reservation {
   DateTime? cancelDate;
   DateTime startDate;
   DateTime? confirmedDate;
+  int?   nbReserveOfSpace;
   String? description;
   User? user;
 
@@ -21,6 +22,7 @@ class Reservation {
     this.cancelDate,
     required this.startDate,
     this.confirmedDate,
+    this.nbReserveOfSpace,
     this.description,
     this.user,
   });
@@ -35,6 +37,7 @@ class Reservation {
       cancelDate: json['cancelDate'] != null ? DateTime.parse(json['cancelDate']) : null,
       startDate: DateTime.parse(json['startDate']),
       confirmedDate: json['confirmedDate'] != null ? DateTime.parse(json['confirmedDate']) : null,
+      nbReserveOfSpace: json['nbReserveOfSpace'] != null ?json['nbReserveOfSpace']:0,
       description: json['description'],
       user: json['user'] != null ? User.fromJson(json['user']) : null,
     );

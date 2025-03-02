@@ -42,6 +42,7 @@ class _WaiterBottomNavigationState extends State<WaiterBottomNavigation> {
       });
     });
   }
+
   @override
   void dispose() {
     _streamSubscription!.cancel();

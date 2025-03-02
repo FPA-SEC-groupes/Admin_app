@@ -86,9 +86,9 @@ class _ManagerBottomNavigationState extends State<ManagerBottomNavigation> {
     setupFirebaseNotifications();
 
     // Periodic check every 10 seconds
-    _streamSubscription = Stream.periodic(const Duration(seconds: 10)).listen((_) async {
-      await fetchUnseenNotifications();
-    });
+    // _streamSubscription = Stream.periodic(const Duration(seconds: 10)).listen((_) async {
+    //   await fetchUnseenNotifications();
+    // });
   }
 
   @override

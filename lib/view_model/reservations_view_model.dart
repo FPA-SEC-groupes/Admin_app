@@ -19,7 +19,6 @@ class ReservationsViewModel {
     String? spaceId = await secureStorage.readData(spaceIdKey);
     try {
       var response = await dioInterceptor.dio.get('$baseUrl/api/reservations/space/$spaceId');
-
       if (response.statusCode == 200) {
         var reservationList = (response.data as List)
             .map((json) => Reservation.fromJson(json))
@@ -89,6 +88,20 @@ class ReservationsViewModel {
       // Request failed
       throw Exception('Failed to assign reservation to tables. Status code: ${response.statusCode}');
 
+    }
+  }
+
+  Future<Map<int, int>> getReservationsByEspace() async {
+    String? spaceId = await secureStorage.readData(spaceIdKey);
+    try {
+      var response = await dioInterceptor.dio.get('$baseUrl/api/reservations/count-by-espace/$spaceId');
+      if (response.statusCode == 200) {
+        return Map<int, int>.from(response.data);
+      } else {
+        throw Exception('Failed to get reservations by espace: ${response.statusCode}');
+      }
+    } catch (error) {
+      throw Exception('Failed to get reservations by espace: $error');
     }
   }
 

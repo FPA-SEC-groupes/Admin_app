@@ -106,7 +106,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
           appBar: AppBar(
             backgroundColor: orange,
             title: Text(
-              "${AppLocalizations.of(context)!.reservation} N°${widget.reservation.idReservation}",
+              "${AppLocalizations.of(context)!.reservation} N°${widget.reservation.nbReserveOfSpace}",
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -197,7 +197,7 @@ class _ReservationDetailsState extends State<ReservationDetails> {
                                   color: Colors.black),
                             ),
                             TextSpan(
-                              text: "${widget.reservation.numberOfGuests}${AppLocalizations.of(context)!.people}",
+                              text: "${widget.reservation.numberOfGuests} ${AppLocalizations.of(context)!.people}",
                               style: const TextStyle(
                                   fontSize: 16, color: Colors.black),
                             ),

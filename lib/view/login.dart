@@ -96,11 +96,13 @@ class _LoginState extends State<Login> {
                             contentPadding: const EdgeInsets.all(10),
                             validator: MultiValidator([
                               LengthRangeValidator(
-                                  min: 4,
-                                  max: 20,
-                                  errorText:
-                                  AppLocalizations.of(context)!.inputRequiredError),
-                              RequiredValidator(errorText: AppLocalizations.of(context)!.inputRequiredError),
+                                min: 4,
+                                max: 20,
+                                errorText: AppLocalizations.of(context)!.inputRequiredError,
+                              ),
+                              RequiredValidator(
+                                errorText: AppLocalizations.of(context)!.inputRequiredError,
+                              ),
                             ]),
                           ),
                           const SizedBox(
@@ -151,13 +153,8 @@ class _LoginState extends State<Login> {
                                       print("Error getting space by ID for manager: $error");
                                     });
                                   } else if(user.role![0].toString()==roleWaiter){
-                                    print("fgg");
                                     await _spaceViewModel.getSpaceByIdWaiter(user.id!).then((space) async {
                                       Navigator.pushReplacementNamed(context,waiterBottomNavigationRoute);
-
-
-                                      print("hhh");
-
                                     }).catchError((error) {
 
                                     });

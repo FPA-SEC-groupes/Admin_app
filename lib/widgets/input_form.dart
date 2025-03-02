@@ -34,7 +34,7 @@ class InputForm extends StatelessWidget {
 
       keyboardType: keyboardType,
       maxLines: maxLines,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.disabled,  // 👈 FIXED: No auto-validation while typing
       decoration: InputDecoration(
         errorMaxLines: 2,
         border: OutlineInputBorder(
