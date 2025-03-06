@@ -91,19 +91,19 @@ class _ListZonesState extends State<ListZones> {
   Future<void> _addOrUpdateZone(Function(String?) setErrorText) async {
     String zoneTitle = _titleZoneController.text.trim();
 
-    // Normalize the input title: remove ALL spaces, underscores, and convert to lowercase
-    String normalizedZoneTitle = zoneTitle.replaceAll(RegExp(r'\s+'), '').replaceAll('_', '').toLowerCase();
+    // Normalize: remove spaces, underscores, convert to lowercase
+    String normalizedZoneTitle = zoneTitle.replaceAll(RegExp(r'[\s_]'), '').toLowerCase();
 
     try {
       List<Zone> existingZones = await _fetchZones();
 
       bool zoneExists = existingZones.any((zone) {
-        String existingZoneTitle = zone.title.replaceAll(RegExp(r'\s+'), '').replaceAll('_', '').toLowerCase();
+        String existingZoneTitle = zone.title.replaceAll(RegExp(r'[\s_]'), '').toLowerCase();
         return existingZoneTitle == normalizedZoneTitle;
       });
 
       if (zoneExists) {
-        return setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
+        setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
       } else {
         Zone zone = Zone(title: zoneTitle);
         await _zonesViewModel.addZoneByIdSpace(zone).then((_) {
@@ -123,6 +123,7 @@ class _ListZonesState extends State<ListZones> {
       print("Error: $error");
     }
   }
+
 
 
 

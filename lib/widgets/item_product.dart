@@ -28,68 +28,98 @@ class _ItemProductState extends State<ItemProduct> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      child: Column(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 5,
+            spreadRadius: 2,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            height: 120, // Reduced image height for better fit
-            width: MediaQuery.of(context).size.width,
-            child: FittedBox(
-              fit: BoxFit.cover, // Adjust the image fit
-              child: widget.product.images!.isEmpty
-                  ? Icon(Icons.image_outlined, color: gray.withOpacity(0.5))
-                  : Image.network(baseUrl + productUrl + widget.product.images![widget.product.images!.length - 1].fileName),
+          // Reduced image size for better display
+          Container(
+            width: 80, // Adjusted for better fit
+            height: 80,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.shade200,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Text(
-              widget.product.productTitle.substring(0, 1).toUpperCase() +
-                  widget.product.productTitle.substring(1),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-          widget.product.hasActivePromotion!
-              ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    "${(widget.product.price * (100 - widget.product.percentage!)) / 100} ${AppLocalizations.of(context)!.tunisianDinar}",
-                  ),
-                  const SizedBox(width: 5),
-                  const Text("(", style: TextStyle(fontSize: 16, color: gray)),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Text(
-                        "${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}",
-                        style: TextStyle(fontSize: 16, color: gray, decoration: TextDecoration.lineThrough), // Strike-through text
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                  const Text(")", style: TextStyle(fontSize: 16, color: gray)),
-                  const SizedBox(width: 20),
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      "-${widget.product.percentage}%",
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  )
-                ],
+            child: widget.product.images!.isEmpty
+                ? Icon(Icons.image_outlined, color: gray.withOpacity(0.5))
+                : ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                baseUrl + productUrl + widget.product.images!.last.fileName,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.broken_image, size: 50, color: Colors.grey),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: Row(
+            ),
+          ),
+
+          const SizedBox(width: 10), // Spacing between image and text
+
+          // Expanded to ensure text and details fit properly
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.product.productTitle[0].toUpperCase() +
+                      widget.product.productTitle.substring(1),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  overflow: TextOverflow.ellipsis, // Prevents text overflow
+                  maxLines: 1, // Limits text to one line
+                ),
+                const SizedBox(height: 5),
+
+                // Price & Discount Section
+                widget.product.hasActivePromotion!
+                    ? Row(
+                  children: [
+                    Text(
+                      "${(widget.product.price * (100 - widget.product.percentage!)) / 100} ${AppLocalizations.of(context)!.tunisianDinar}",
+                      style: const TextStyle(fontSize: 14, color: Colors.black),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      "(${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar})",
+                      style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                          decoration: TextDecoration.lineThrough),
+                    ),
+                    const SizedBox(width: 5),
+                    Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "-${widget.product.percentage}%",
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    )
+                  ],
+                )
+                    : Text(
+                  "${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}",
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                ),
+
+                const SizedBox(height: 5),
+
+                // Availability Checkbox
+                Row(
                   children: [
                     SizedBox(
                       height: 20,
@@ -102,7 +132,8 @@ class _ItemProductState extends State<ItemProduct> {
                           setState(() {
                             widget.product.available = !newValue!;
                           });
-                          await _updateProductViewModel.updateProduct(widget.product, widget.product.idProduct!);
+                          await _updateProductViewModel.updateProduct(
+                              widget.product, widget.product.idProduct!);
                         },
                       ),
                     ),
@@ -110,35 +141,8 @@ class _ItemProductState extends State<ItemProduct> {
                     Text(AppLocalizations.of(context)!.outOfStock),
                   ],
                 ),
-              ),
-            ],
-          )
-              : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("${widget.product.price} ${AppLocalizations.of(context)!.tunisianDinar}"),
-              Row(
-                children: [
-                  SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: Checkbox(
-                      activeColor: orange,
-                      checkColor: Colors.white,
-                      value: !widget.product.available,
-                      onChanged: (bool? newValue) async {
-                        setState(() {
-                          widget.product.available = !newValue!;
-                        });
-                        await _updateProductViewModel.updateProduct(widget.product, widget.product.idProduct!);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 5), // Added padding between checkbox and text
-                  Text(AppLocalizations.of(context)!.outOfStock),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
