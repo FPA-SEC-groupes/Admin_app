@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hello_way/view/list_notifications.dart';
@@ -34,11 +35,29 @@ class _WaiterBottomNavigationState extends State<WaiterBottomNavigation> {
   Future<void> getNbNewNotiofications() async {
     const interval = Duration(seconds: 15);
 
-    _streamSubscription=Stream.periodic(interval).listen((_) async {
+    _streamSubscription = Stream.periodic(interval).listen((_) async {
       var _nbNotifications = await secureStorage.readData(nbNewNotifications);
 
       setState(() {
         nbNotifications = _nbNotifications;
+      });
+    });
+  }
+  @override
+  void initState() {
+    super.initState();
+    getNbNewNotiofications();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      print("New Notification Received: ${message.notification?.title}");
+
+      // Increase unseen notification count
+      var storedCount = await secureStorage.readData(nbNewNotifications);
+      int newCount = (storedCount != null) ? int.parse(storedCount) + 1 : 1;
+      await secureStorage.writeData(nbNewNotifications, newCount.toString());
+
+      setState(() {
+        nbNotifications = newCount.toString();
       });
     });
   }

@@ -336,8 +336,8 @@ class _CommandDetailsState extends State<CommandDetails> {
                             },
                             child:  Text(
                                 widget.commandWithNumTable.command.status ==
-                                "CONFIRMED"? AppLocalizations.of(context)!.confirmOrder
-                              :AppLocalizations.of(context)!.confirmUpdateOrder,
+                                "CONFIRMED"? AppLocalizations.of(context)!.confirmUpdateOrder
+                                :AppLocalizations.of(context)!.confirmOrder,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18.0,

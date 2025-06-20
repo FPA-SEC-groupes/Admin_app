@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hello_way/models/shift.dart';
-import 'package:hello_way/view_model/ShiftViewModel.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../models/shift.dart';
+import '../../view_model/ShiftViewModel.dart';
+import '../../res/app_colors.dart';
 
 class WaiterShiftPage extends StatefulWidget {
   WaiterShiftPage({Key? key}) : super(key: key);
@@ -13,10 +14,8 @@ class WaiterShiftPage extends StatefulWidget {
 }
 
 class _WaiterShiftPageState extends State<WaiterShiftPage> {
-  bool _isSearching = false;
   DateTime? _selectedDate;
   List<Shift> _shifts = [];
-  List<Shift> _selectedShifts = [];
   late ShiftViewModel shiftViewModel;
 
   @override
@@ -26,83 +25,75 @@ class _WaiterShiftPageState extends State<WaiterShiftPage> {
     _fetchShifts();
   }
 
-  void _fetchShifts() async {
+  Future<void> _fetchShifts() async {
     try {
       List<Shift> fetchedShifts = await shiftViewModel.getShiftsByWaiterId();
       setState(() {
         _shifts = fetchedShifts;
       });
-      print(_shifts.toString());
     } catch (e) {
       print("Error fetching shifts: $e");
     }
   }
 
-  List<Shift> _getShiftsForDay(DateTime day) {
-    return _shifts.where((shift) => shift.date == DateFormat('yyyy-MM-dd').format(day)).toList();
+  List<Appointment> _getAppointments() {
+    return _shifts.map((shift) {
+      DateTime shiftDate = DateTime.parse(shift.date);
+      return Appointment(
+        startTime: shiftDate,
+        endTime: shiftDate,
+        subject: shift.type == 'shift' ? AppLocalizations.of(context)!.shift : AppLocalizations.of(context)!.dayOff,
+        color: shift.type == 'shift' ? Colors.green : Colors.red,
+      );
+    }).toList();
+  }
+
+  void _onCalendarTap(CalendarTapDetails details) {
+    if (details.targetElement == CalendarElement.calendarCell) {
+      setState(() {
+        _selectedDate = details.date;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        backgroundColor: Colors.orange,
-        title: Text('Shifts'),
+        title: Text(AppLocalizations.of(context)!.shift),
       ),
       body: Column(
         children: [
-          Container(
-            height: 500, // Increase this height to make the calendar bigger
+          Expanded(
             child: SfCalendar(
               view: CalendarView.month,
+              dataSource: ShiftDataSource(_getAppointments()),
               monthViewSettings: MonthViewSettings(
                 showAgenda: true,
-                agendaItemHeight: 0, // Set the agenda item height to 0 to remove "No events"
+                agendaItemHeight: 50,
               ),
-              onTap: (CalendarTapDetails details) {
-                if (details.targetElement == CalendarElement.calendarCell) {
-                  setState(() {
-                    _selectedDate = details.date;
-                    _selectedShifts = _getShiftsForDay(_selectedDate!);
-                  });
-                }
-              },
+              onTap: _onCalendarTap,
             ),
           ),
-          Expanded(
-            child: _selectedDate != null
-                ? _selectedShifts.isNotEmpty
-                ? ListView.builder(
-              itemCount: _selectedShifts.length,
-              itemBuilder: (context, index) {
-                Shift shift = _selectedShifts[index];
-                return ListTile(
-                  title: shift.type=="shift" ?Text('${shift.date} ${AppLocalizations.of(context)!.shift}'):Text(AppLocalizations.of(context)!.dayOff),
-                  subtitle:shift.type=="shift" ? Text('${shift.startTime} - ${shift.endTime}'):Text(''),
-                );
-              },
-            )
-                : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(AppLocalizations.of(context)!.noShifts),
-                ],
-              ),
-            )
-                : Center(
-              child: Text(AppLocalizations.of(context)!.selectDate),
-            ),
-          ),
+          // if (_selectedDate != null)
+          //   Expanded(
+          //     child: ListView(
+          //       children: _shifts.where((shift) => shift.date == DateFormat('yyyy-MM-dd').format(_selectedDate!)).map((shift) {
+          //         return ListTile(
+          //           title: Text(shift.type == "shift" ? "${shift.date} ${AppLocalizations.of(context)!.shift}" : AppLocalizations.of(context)!.dayOff),
+          //           subtitle: shift.type == "shift" ? Text('${shift.startTime} - ${shift.endTime}') : null,
+          //         );
+          //       }).toList(),
+          //     ),
+          //   ),
         ],
       ),
     );
+  }
+}
+
+class ShiftDataSource extends CalendarDataSource {
+  ShiftDataSource(List<Appointment> source) {
+    appointments = source;
   }
 }

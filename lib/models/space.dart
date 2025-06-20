@@ -12,6 +12,8 @@
      int phoneNumber;
      num? rating;
      int? numberOfRatings;
+     int?numberOfRate;
+     int? nbReserveOfSpace;
     String? category;
     double surfaceEnM2;
     String? validation;
@@ -27,6 +29,8 @@
       this.validation,
       this.rating,
        this.numberOfRatings,
+      this.numberOfRate,
+      this.nbReserveOfSpace,
       this.category,
       required this.surfaceEnM2,
       this.wifis,
@@ -47,6 +51,8 @@
           phoneNumber: json['phoneNumber'],
           rating: json['rating'],
           numberOfRatings: json['numberOfRate'],
+          nbReserveOfSpace:json['nbReserveOfSpace'],
+          numberOfRate: json['numberOfRate'],
           category: json['spaceCategorie'],
           surfaceEnM2: json['surfaceEnM2'],
           validation:json['validation'],
@@ -64,6 +70,8 @@
        'phoneNumber': phoneNumber,
        'rating': rating,
        'numberOfRate': numberOfRatings,
+       'numberOfRate':numberOfRate,
+       "nbReserveOfSpace": nbReserveOfSpace,
        'spaceCategorie': category,
        'surfaceEnM2': surfaceEnM2,
        'validation': validation,

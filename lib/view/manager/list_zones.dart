@@ -41,6 +41,7 @@ class _ListZonesState extends State<ListZones> {
   String _searchQuery = '';
   String? errorText;
 
+
   @override
   void initState() {
     _zonesViewModel = ZonesViewModel(context);
@@ -90,8 +91,6 @@ class _ListZonesState extends State<ListZones> {
 
   Future<void> _addOrUpdateZone(Function(String?) setErrorText) async {
     String zoneTitle = _titleZoneController.text.trim();
-
-    // Normalize: remove spaces, underscores, convert to lowercase
     String normalizedZoneTitle = zoneTitle.replaceAll(RegExp(r'[\s_]'), '').toLowerCase();
 
     try {
@@ -104,6 +103,8 @@ class _ListZonesState extends State<ListZones> {
 
       if (zoneExists) {
         setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
+        // Manually trigger form validation to display the error
+        _dialogFormKey.currentState?.validate();
       } else {
         Zone zone = Zone(title: zoneTitle);
         await _zonesViewModel.addZoneByIdSpace(zone).then((_) {
@@ -114,8 +115,7 @@ class _ListZonesState extends State<ListZones> {
         }).catchError((error) {
           if (error is DioError && error.response?.statusCode == 400) {
             setErrorText(AppLocalizations.of(context)!.zoneAlreadyExists);
-          } else {
-            print("Error: $error");
+            _dialogFormKey.currentState?.validate();
           }
         });
       }
@@ -123,8 +123,6 @@ class _ListZonesState extends State<ListZones> {
       print("Error: $error");
     }
   }
-
-
 
 
 
@@ -284,9 +282,11 @@ class _ListZonesState extends State<ListZones> {
                   await showDialog(
                     context: context,
                     builder: (BuildContext context) {
+                      GlobalKey<FormState> dialogFormKey = GlobalKey<FormState>(); // Create form key
                       return StatefulBuilder(
                         builder: (context, update) {
                           return MyDialogue(
+                            formKey: dialogFormKey,
                             title: AppLocalizations.of(context)!.addZone,
                             validator: (value) {
                               // Combine _validateZoneTitle and errorText

@@ -149,7 +149,7 @@ class _AddSpaceState extends State<AddSpace> {
                   ),
                   Icon(Icons.image_outlined,color: Colors.white),
                   Icon(Icons.verified, color: Colors.white),
-                  Icon(Icons.location_on_outlined,color: Colors.white),
+                  _selectedRadioValue == 'wifi'? Icon(Icons.wifi,color: Colors.white):Icon(Icons.location_on_outlined,color: Colors.white),
                 ],
 
                 // activeStep property set to activeStep variable defined above.
@@ -296,12 +296,14 @@ class _AddSpaceState extends State<AddSpace> {
           print(category);
           Space space = Space(
             title: _spaceNameController.text.trim(),
-            latitude:  _currentPosition!.latitude ,
-            longitude:  _currentPosition!.longitude ,
-            description: _descriptionController.text.trim().toString(),
+            latitude: _currentPosition!.latitude,
+            longitude: _currentPosition!.longitude,
+            description: _descriptionController.text.trim(),
             phoneNumber: int.parse(_phoneNumberController.text.trim()),
             surfaceEnM2: double.parse(_surfaceController.text),
             numberOfRatings: 0,
+            numberOfRate: 0,
+            nbReserveOfSpace: 0, // ✅ MUST be included!
             validation: _selectedRadioValue,
             wifis: wifis,
           );
@@ -567,102 +569,102 @@ class _AddSpaceState extends State<AddSpace> {
                   });
                 },
               ),
-              _selectedRadioValue == 'wifi'?
-              SingleChildScrollView(
-                child: Column(
-                    children: [
-                      Form(
-                        key: _addSpaceFormKey,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              ...wifiControllers.map((wifiController) {
-                                return Column(
-                                  children: [
-                                    InputForm(
-                                      hint: AppLocalizations.of(context)!.wifiName,
-                                      controller: wifiController['name']!,
-                                      contentPadding: const EdgeInsets.all(10),
-                                      validator: MultiValidator([
-                                        RequiredValidator(
-                                            errorText: AppLocalizations.of(context)!.inputRequiredError),
-                                      ]),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    InputForm(
-                                      hint: AppLocalizations.of(context)!.wifiPassword,
-                                      controller: wifiController['password']!,
-                                      contentPadding: const EdgeInsets.all(10),
-                                      validator: MultiValidator([
-                                        RequiredValidator(
-                                            errorText: AppLocalizations.of(context)!.inputRequiredError),
-                                      ]),
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
-                                );
-                              }).toList(),
-                              Row(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: addWifiController,
-                                    child:  Text(AppLocalizations.of(context)!.addAnotherWifi),
-                                  ),
-                                  const Spacer(),
-                                  // ElevatedButton(
-                                  //   onPressed: () {
-                                  //     if (_addSpaceFormKey.currentState!.validate()) {
-                                  //       // Validation logic
-                                  //     }
-                                  //   },
-                                  //   child: const Text('Valider'),
-                                  // ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ]
-                ),
-              )
-                  :Text(""),
+
             ],
           )),
         );
       case 3:
-       return  _isLoading
+       return _selectedRadioValue == 'wifi'?
+       SingleChildScrollView(
+         child: Column(
+             children: [
+               Form(
+                 key: _addSpaceFormKey,
+                 child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                   child: Column(
+                     children: [
+                       const SizedBox(height: 20),
+                       ...wifiControllers.map((wifiController) {
+                         return Column(
+                           children: [
+                             InputForm(
+                               hint: AppLocalizations.of(context)!.wifiName,
+                               controller: wifiController['name']!,
+                               contentPadding: const EdgeInsets.all(10),
+                               validator: MultiValidator([
+                                 RequiredValidator(
+                                     errorText: AppLocalizations.of(context)!.inputRequiredError),
+                               ]),
+                             ),
+                             const SizedBox(height: 10),
+                             InputForm(
+                               hint: AppLocalizations.of(context)!.wifiPassword,
+                               controller: wifiController['password']!,
+                               contentPadding: const EdgeInsets.all(10),
+                               validator: MultiValidator([
+                                 RequiredValidator(
+                                     errorText: AppLocalizations.of(context)!.inputRequiredError),
+                               ]),
+                             ),
+                             const SizedBox(height: 20),
+                           ],
+                         );
+                       }).toList(),
+                       Row(
+                         children: [
+                           ElevatedButton(
+                             onPressed: addWifiController,
+                             child:  Text(AppLocalizations.of(context)!.addAnotherWifi),
+                           ),
+                           const Spacer(),
+                           // ElevatedButton(
+                           //   onPressed: () {
+                           //     if (_addSpaceFormKey.currentState!.validate()) {
+                           //       // Validation logic
+                           //     }
+                           //   },
+                           //   child: const Text('Valider'),
+                           // ),
+                         ],
+                       ),
+                     ],
+                   ),
+                 ),
+               )
+             ]
+         ),
+       )
+           : _isLoading
             ? const Center(child: CircularProgressIndicator())
             : GoogleMap(
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: CameraPosition(
-            target: _currentPosition!,
-            zoom: 16.0,
-          ),
-          zoomControlsEnabled: true,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-          markers: _markers,
-          onTap: (newPosition) {
-            setState(() {
-              _markers = {
-                Marker(
-                  markerId: MarkerId("marker_1"),
-                  position: newPosition,
-                  draggable: true,
-                  onDragEnd: (newPosition) {
-                    setState(() {
-                      _currentPosition = newPosition;
-                    });
-                  },
+                onMapCreated: _onMapCreated,
+                initialCameraPosition: CameraPosition(
+                  target: _currentPosition!,
+                  zoom: 16.0,
                 ),
-              };
-              _currentPosition = newPosition;
-            });
-          },
-        ) ;
+                zoomControlsEnabled: true,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                markers: _markers,
+                onTap: (newPosition) {
+                  setState(() {
+                    _markers = {
+                      Marker(
+                        markerId: MarkerId("marker_1"),
+                        position: newPosition,
+                        draggable: true,
+                        onDragEnd: (newPosition) {
+                          setState(() {
+                            _currentPosition = newPosition;
+                          });
+                        },
+                      ),
+                    };
+                    _currentPosition = newPosition;
+                  });
+                },
+              ) ;
 
     // This checks if the value is not 'wifi'// Optionally handle the case when none of the conditions are met.
       default:

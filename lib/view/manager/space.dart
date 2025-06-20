@@ -389,7 +389,7 @@ class _DetailsSpaceState extends State<DetailsSpace> {
                               );
                             } else if (snapshot.hasError) {
                               return Center(
-                                child: Text('Error: ${snapshot.error}'),
+                                child: Text(AppLocalizations.of(context)!.errorRetrievingData),
                               );
                             } else {
                               double sum = snapshot.data!;
@@ -445,7 +445,7 @@ class _DetailsSpaceState extends State<DetailsSpace> {
                       //         );
                       //       } else if (snapshot.hasError) {
                       //         return Center(
-                      //           child: Text('Error: ${snapshot.error}'),
+                      //           child: Text(AppLocalizations.of(context)!.errorRetrievingData),
                       //         );
                       //       } else {
                       //         int nbOrders = snapshot.data!;

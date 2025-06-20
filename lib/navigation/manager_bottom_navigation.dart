@@ -53,25 +53,27 @@ class _ManagerBottomNavigationState extends State<ManagerBottomNavigation> {
     }
   }
 
+
   /// Listen for Firebase Push Notifications
   void setupFirebaseNotifications() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      print("New Notification: ${message.notification?.title}");
+      print("New Notification Received: ${message.notification?.title}");
 
-      // Refresh unseen notifications count
+      // Fetch unseen notifications
       fetchUnseenNotifications();
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       print("Notification Clicked: ${message.notification?.title}");
 
-      // When clicked, mark notifications as read
+      // Mark notifications as seen
       await _notificationViewModel.markAllNotificationsAsSeen();
       setState(() {
         unseenNotifications = 0;
       });
     });
   }
+
 
   @override
   void initState() {

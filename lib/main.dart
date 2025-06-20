@@ -7,7 +7,9 @@ import 'package:hello_way/navigation/manager_bottom_navigation.dart';
 import 'package:hello_way/res/app_colors.dart';
 import 'package:hello_way/services/network_service.dart';
 import 'package:hello_way/services/push_notification_service.dart';
+import 'package:hello_way/utils/const.dart';
 import 'package:hello_way/utils/routes.dart';
+import 'package:hello_way/utils/secure_storage.dart';
 import 'package:hello_way/view/add_user.dart';
 import 'package:hello_way/view/admin/list_moderators.dart';
 import 'package:hello_way/view/change_password.dart';
@@ -38,8 +40,13 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling a background message: ${message.messageId}');
-}
 
+  // Save unseen notification count to secure storage
+  SecureStorage secureStorage = SecureStorage();
+  String? storedCount = await secureStorage.readData(nbNewNotifications);
+  int newCount = (storedCount != null) ? int.parse(storedCount) + 1 : 1;
+  await secureStorage.writeData(nbNewNotifications, newCount.toString());
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -90,6 +97,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<LanguageProvider>(
         builder: (_, languageProvider, __) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             navigatorObservers: [routeObserver],
             theme: ThemeData().copyWith(
               colorScheme: ThemeData().colorScheme.copyWith(primary: orange),

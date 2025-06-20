@@ -292,7 +292,7 @@ class _ProfileState extends State<Profile> {
                       ],
                     );
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Text(AppLocalizations.of(context)!.errorRetrievingData);
                   } else {
                     return Column(
                       children: [

@@ -217,6 +217,7 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
           currentDayOff = DateFormat('EEEE').format(date).toUpperCase();
           break;
         }
+
       }
 
       // Find a new day off if there is no current day off
@@ -238,7 +239,24 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
       print("Error fetching shifts: $e");
     }
   }
-
+  List<Appointment> _getAppointments() {
+    return _shifts.map((shift) {
+      DateTime shiftDate = DateTime.parse(shift.date);
+      return Appointment(
+        startTime: shiftDate,
+        endTime: shiftDate,
+        subject: shift.type == 'shift' ? AppLocalizations.of(context)!.shift : AppLocalizations.of(context)!.dayOff,
+        color: shift.type == 'shift' ? Colors.green : Colors.red,
+      );
+    }).toList();
+  }
+  void _onCalendarTap(CalendarTapDetails details) {
+    if (details.targetElement == CalendarElement.calendarCell) {
+      setState(() {
+        _selectedDate = details.date;
+      });
+    }
+  }
   List<Shift> _getShiftsForDay(DateTime day) {
     return _shifts.where((shift) => shift.date == DateFormat('yyyy-MM-dd').format(day)).toList();
   }
@@ -366,6 +384,7 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
             height: 500,
             child: SfCalendar(
               view: CalendarView.month,
+              dataSource: ShiftDataSource(_getAppointments()),
               monthViewSettings: MonthViewSettings(
                 showAgenda: true,
                 agendaItemHeight: 0,
@@ -414,3 +433,9 @@ class _ListShiftsByWaiterIdState extends State<ListShiftsByWaiterId>  {
     );
   }
 }
+class ShiftDataSource extends CalendarDataSource {
+  ShiftDataSource(List<Appointment> source) {
+    appointments = source;
+  }
+}
+
